@@ -29,7 +29,7 @@ CSL Boot Information Layout v1
 
 ### Kernel Entry ABI
 
-#### ANYTHING THAT ISNT GUARENTEED HERE IS NOT TO BE ASSUMED
+> ANYTHING THAT ISNT GUARANTEED HERE IS NOT TO BE ASSUMED
 
 On entry to the kernel:
 
@@ -41,6 +41,10 @@ On entry to the kernel:
 - .data has been initialized.
 - The CPU is executing at EL1.
 - Interrupts are disabled.
+
+### Current Limitations
+
+- Kernel Address Space Layout Randomization (KASLR) is not implemented.
 
 ## Protocol Versions
 
