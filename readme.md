@@ -19,8 +19,8 @@ A Personal project for my Low Level Projects
 
 CSL Boot Information Layout v1
 
-Offset  Size  Description
-------  ----  ----------------------------
-0x00    4     CSL Boot Info Version
-0x04    8     RAM Base
-0x0C    8     RAM Size
+| Offset | Size | Description            |
+| ------ | ---- | -----------------------|
+| 0x00   | 4    | CSL Boot Info Version  |
+| 0x04   | 8    | RAM Base               |
+| 0x0C   | 8    | RAM Size               |
