@@ -29,6 +29,8 @@ CSL Boot Information Layout v1
 
 ### Kernel Entry ABI
 
+#### ANYTHING THAT ISNT GUARENTEED HERE IS NOT TO BE ASSUMED
+
 On entry to the kernel:
 
 - x0 contains the address of the CSL Boot Information block.
@@ -39,8 +41,6 @@ On entry to the kernel:
 - .data has been initialized.
 - The CPU is executing at EL1.
 - Interrupts are disabled.
-
-#### ANYTHING THAT ISNT GUARENTEED HERE IS NOT TO BE ASSUMED
 
 ## Protocol Versions
 
