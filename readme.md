@@ -40,6 +40,7 @@ On entry to the kernel:
 - The CPU is executing at EL1.
 - Interrupts are disabled.
 
+#### ANYTHING THAT ISNT GUARENTEED HERE IS NOT TO BE ASSUMED
 
 ## Protocol Versions
 
