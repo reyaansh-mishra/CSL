@@ -1,4 +1,4 @@
-#### Current CSL Version:   <Added Later>
+#### Current CSL Version:   (Added Later)
 # Common System Loader
 A Personal project for my Low Level Projects
 All multi-byte fields are little-endian.
