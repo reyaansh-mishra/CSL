@@ -7,21 +7,28 @@ AS="clang"
 
 TARGET="aarch64-none-elf"
 
-CFLAGS=(
+COMMON_FLAGS=(
     -target "$TARGET"
     -ffreestanding
-    -fno-stack-protector
     -Wall
     -Wextra
     -Isrc
-    -Iincludes/
-    -MMD -MP
+    -Iincludes
+)
+
+CFLAGS=(
+    "${COMMON_FLAGS[@]}"
+    -fno-stack-protector
+    -MMD
+    -MP
 )
 
 CPPFLAGS=(
-    "${CFLAGS[@]}"
+    "${COMMON_FLAGS[@]}"
     -fno-exceptions
     -fno-rtti
+    -MMD
+    -MP
 )
 
 ASFLAGS=(
