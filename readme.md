@@ -2,6 +2,13 @@
 # Common System Loader
 A Personal project for my Low Level Projects
 All multi-byte fields are little-endian.
+AArch64/ARM64 only
+
+## Target Architecture
+
+- AArch64
+- ARMv8-A (minimum: ARMv8.0-A)
+- Little-endian
 
 ## Goals:
 1. Prepare a minimal execution environment such that the kernel can begin executing C code immediately.
@@ -45,6 +52,8 @@ On entry to the kernel:
 ### Current Limitations
 
 - Kernel Address Space Layout Randomization (KASLR) is not implemented.
+- Only little-endian systems are supported.
+- Only EL1 kernels are supported.
 
 ## Protocol Versions
 
