@@ -5,8 +5,10 @@
 
 
 typedef struct {
-    EFI_HANDLE          this;
+    EFI_HANDLE          ImageHandle;
     EFI_SYSTEM_TABLE*   SystemTable;
+    EFI_BOOT_SERVICES   BootServices;
 } EFI_CONTEXT;
+
 
 extern EFI_CONTEXT efi_context;
