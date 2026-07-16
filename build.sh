@@ -5,15 +5,25 @@ CC="clang"
 CXX="clang++"
 AS="clang"
 
-TARGET="aarch64-none-elf"
+TARGET="aarch64-unknown-windows"
 
 COMMON_FLAGS=(
-    -target "$TARGET"
+    --target=$TARGET
     -ffreestanding
     -Wall
     -Wextra
     -Isrc
     -Iincludes
+    -Iincludes/uefi-headers
+    -Iincludes/uefi-headers/AArch64
+
+    -Weverything
+    -Wno-extra-semi
+    -Wno-extra-semi-stmt
+    -Wno-c++98-compat
+    -Wno-c++98-compat-pedantic
+    -Wno-missing-prototypes
+    -Wno-implicit-int-conversion
 )
 
 CFLAGS=(
@@ -37,10 +47,12 @@ ASFLAGS=(
 
 LD=(
     clang
-    -target aarch64-none-elf
-    -fuse-ld=lld
+    -target $TARGET
+    -fuse-ld=lld-link
     -nostdlib
-    -Tsrc/linker.ld
+    -Wl,/entry:_start
+    -Wl,/subsystem:efi_application
+    -o BOOTAA64.EFI
 )
 
 rm -r build
@@ -77,4 +89,6 @@ while IFS= read -r -d '' obj; do
     OBJS+=("$obj")
 done < <(find build -type f -name '*.o' -print0)
 
-"${LD[@]}" "${OBJS[@]}" -o csl.elf
+"${LD[@]}" "${OBJS[@]}" -o csl.efi
+
+cp -v csl.efi esp/EFI/BOOT/BOOTAA64.efi
