@@ -1,28 +1,28 @@
+#include "Base.h"
 #include <csl.h>
 #include <utils.h>
 
 #include <Uefi.h>
 
-EFI_HANDLE EFI_ImageHandle;
-EFI_SYSTEM_TABLE *EFI_SystemTable;
+EFI_CONTEXT efi_context;
 
 static void csl_main(void) {
     print("CSL Version ");
     print(CSL_VERSION);
-    print("\n");
+    print("\n\r");
     print("Hi Guys!\n");
 };
 
 
-EFI_STATUS EFIAPI efi_main(
-    EFI_HANDLE ImageHandle,
-    EFI_SYSTEM_TABLE *SystemTable
-)
-{
-    SystemTable->ConOut->OutputString(
-        SystemTable->ConOut,
-        L"CSL Version 0.001\r\n"
-    );
+EFI_STATUS EFIAPI efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable) {
+    efi_context.this = ImageHandle;
+    efi_context.SystemTable = SystemTable;
+
+    csl_main();
+
+    while (TRUE) {
+        __asm__ volatile("wfi");
+    };
 
     return EFI_SUCCESS;
-}
+};

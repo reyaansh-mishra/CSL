@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# build.sh
+
 set -euo pipefail
 
 CC="clang"
@@ -16,14 +18,6 @@ COMMON_FLAGS=(
     -Iincludes
     -Iincludes/uefi-headers
     -Iincludes/uefi-headers/AArch64
-
-    -Weverything
-    -Wno-extra-semi
-    -Wno-extra-semi-stmt
-    -Wno-c++98-compat
-    -Wno-c++98-compat-pedantic
-    -Wno-missing-prototypes
-    -Wno-implicit-int-conversion
 )
 
 CFLAGS=(
@@ -50,7 +44,7 @@ LD=(
     -target $TARGET
     -fuse-ld=lld-link
     -nostdlib
-    -Wl,/entry:_start
+    -Wl,/entry:efi_main
     -Wl,/subsystem:efi_application
     -o BOOTAA64.EFI
 )
