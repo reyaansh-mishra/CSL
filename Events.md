@@ -13,3 +13,7 @@ ld.lld: error: duplicate symbol: uart_ptr
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 
 Fix: Use #pragma once
+
+---
+
+[16/07/2026 @ 10:07PM]: Switched to C++

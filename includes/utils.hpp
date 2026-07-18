@@ -1,11 +1,16 @@
 #pragma once
+#include <csl.h>
 
-#include <stdint.h>
-#include <stddef.h>
+#include <specific-includes/terminal.hpp>
 
-void print(const char* string);
-void print(uint32_t val);
+#define INFO(string)    pr_info("[CSL]: ", (string))
+#define ERR(string)     pr_info("[ERR] [CSL]: ", (string))
 
-void terminal_reset(void);
-size_t strlen(const char* str);
-uint32_t get_current_el(void);
+
+extern "C" inline size_t strlen(const char* str);
+
+#include <specific-includes/arm64.hpp>
+
+#include <specific-includes/memory.hpp>
+
+#include <specific-includes/bootstrappr.hpp>

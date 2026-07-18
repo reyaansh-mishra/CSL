@@ -8,13 +8,16 @@ CXX="clang++"
 AS="clang"
 
 TARGET="aarch64-unknown-windows"
+SRC_DIR="src"
 
 COMMON_FLAGS=(
     --target=$TARGET
     -ffreestanding
     -Wall
     -Wextra
-    -Isrc
+    -fno-unwind-tables
+    -fno-asynchronous-unwind-tables
+
     -Iincludes
     -Iincludes/uefi-headers
     -Iincludes/uefi-headers/AArch64
@@ -44,7 +47,7 @@ LD=(
     -target $TARGET
     -fuse-ld=lld-link
     -nostdlib
-    -Wl,/entry:efi_main
+    -Wl,/entry:payload_init
     -Wl,/subsystem:efi_application
     -o BOOTAA64.EFI
 )
@@ -53,7 +56,7 @@ rm -r build
 
 mkdir -p build
 
-find src -type f | while read -r file; do
+find $SRC_DIR -type f | while read -r file; do
     rel="${file#src/}"
     obj="build/${rel%.*}.o"
 
@@ -75,7 +78,7 @@ find src -type f | while read -r file; do
     esac
 done
 
-echo "[LD] csl.elf"
+echo "[LD] csl.efi"
 
 OBJS=()
 
@@ -86,3 +89,5 @@ done < <(find build -type f -name '*.o' -print0)
 "${LD[@]}" "${OBJS[@]}" -o csl.efi
 
 cp -v csl.efi esp/EFI/BOOT/BOOTAA64.efi
+
+llvm-readobj --coff-basereloc csl.efi

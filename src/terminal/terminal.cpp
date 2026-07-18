@@ -1,3 +1,4 @@
+#include "specific-includes/terminal.hpp"
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -7,11 +8,15 @@
 
 #define CSL_PRINT_BUFFER_SIZE 512
 
+void terminal_reset() {
+    efi.SystemTable->ConOut->ClearScreen(efi.SystemTable->ConOut);
+};
+
 /* -------------------------------------------------------- */
 /* General Util funcs to be realloced later */
 /* -------------------------------------------------------- */
 
-size_t strlen(const char* str) 
+extern "C" inline size_t strlen(const char* str) 
 {
 	size_t len = 0;
 	while (str[len])
@@ -31,14 +36,14 @@ void efi_print(const char *str) {		/* MAX SUPPORTED CSL_PRINT_BUFFER_SIZE LENGTH
 	size_t string_length = strlen(str);
 
 	if (string_length >= CSL_PRINT_BUFFER_SIZE) {
-		efi_context.SystemTable->ConOut->OutputString(efi_context.SystemTable->ConOut, (CHAR16*)u"ERR_PRINT_MESSAGE_LOST. Message Too Big Not printing message.");
+		efi.SystemTable->ConOut->OutputString(efi.SystemTable->ConOut, (CHAR16*)u"ERR_PRINT_MESSAGE_LOST. Message Too Big Not printing message.");
 		return;
 	};
 
     for (; i_in < string_length && i_out < CSL_PRINT_BUFFER_SIZE - 1; i_in++) {
         if (str[i_in] == '\n') {
             if (i_out >= CSL_PRINT_BUFFER_SIZE - 2) {	// need room for \r\n + terminator
-				efi_context.SystemTable->ConOut->OutputString(efi_context.SystemTable->ConOut, (CHAR16*)u"ERR_PRINT_MESSAGE_LOST. BUFFER ALMOST DIED. Not printing message.");
+				efi.SystemTable->ConOut->OutputString(efi.SystemTable->ConOut, (CHAR16*)u"ERR_PRINT_MESSAGE_LOST. BUFFER ALMOST DIED. Not printing message.");
 				return;
 			};
 
@@ -53,17 +58,17 @@ void efi_print(const char *str) {		/* MAX SUPPORTED CSL_PRINT_BUFFER_SIZE LENGTH
 
 	buf_out[i_out] = L'\0';
 
-	efi_context.SystemTable->ConOut->OutputString(efi_context.SystemTable->ConOut, buf_out);
+	efi.SystemTable->ConOut->OutputString(efi.SystemTable->ConOut, buf_out);
 };
 
 void print(const char* string) {
     efi_print(string);
 };
 
-void print(uint32_t val) {
-    char buf[12]; // enough for a 32-bit uint + null terminator
-    int i = 10;
-    buf[11] = '\0';
+void print(uint64_t val) {
+    char buf[24]; // enough for a 64-bit uint + null terminator
+    int i = 22;
+    buf[23] = '\0';
 
     if (val == 0) {
         print("0");
@@ -77,4 +82,28 @@ void print(uint32_t val) {
     }
 
     print(&buf[i + 1]);
-}
+};
+
+void print(int val) {
+    if (val < 0) {
+        print("-");
+        print((uint64_t)(-(int64_t)val));  // careful with INT_MIN edge case
+        return;
+    }
+    print((uint64_t)val);
+};
+
+void print(bool state) {
+    if (state) print("TRUE");
+    else print("FALSE");
+};
+
+void pr_info(const char* pre_message, const char* string) {
+    print(pre_message);
+    print(string);
+};
+
+void pr_info(const char* pre_message, const bool state) {
+    print(pre_message);
+    print(state);
+};

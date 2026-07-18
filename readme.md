@@ -11,17 +11,16 @@ AArch64/ARM64 only
 - Little-endian
 
 ## Goals:
-1. Prepare a minimal execution environment such that the kernel can begin executing C code immediately.
-2. Load Kernel into Memory
+1. Prepare a minimal execution environment such that the Payload can begin executing C/C++ code immediately.
 3. Load Initrd if needed (LATER_GOAL)
-4. Transfer control to the kernel.
+4. Transfer control to the Payload.
 
 ## Non-Goals:
 1. Anything not **EXPLICITLY** stated in Goals.
 
 ---
 
-## What does the Kernel Expect?
+## What does the Payload Expect?
 ### -> KASLR DOESNT EXIST (LATER_GOAL)
 
 ### How it looks:
@@ -33,27 +32,27 @@ CSL Boot Information Layout v1
 | 0x00   | 4    | uint32_t | CSL Boot Info Version |
 | 0x04   | 8    | uint64_t | RAM Base              |
 | 0x0C   | 8    | uint64_t | RAM Size              |
+| xxxxxx | xxxx | void*    | EFI (base addr Image) |
 
-### Kernel Entry ABI
+### Payload Entry ABI
 
 > ANYTHING THAT ISNT GUARANTEED HERE IS NOT TO BE ASSUMED
 
-On entry to the kernel:
+On entry to the Payload:
 
-- x0 contains the address of the CSL Boot Information block.
+- The Given Boot Information Layout is Fixed for every boot and is where the Payload MUST check.
+- The Payload is executing from a fixed load address defined by UEFI during boot
 - SP is initialized and 16-byte aligned.
 - MMU is enabled.
-- The kernel image has been fully relocated.
 - .bss has been zero-initialized.
 - .data has been initialized.
-- The CPU is executing at EL1.
+- The CPU is executing at EL2/EL1 (based on config).
 - Interrupts are disabled.
 
 ### Current Limitations
 
-- Kernel Address Space Layout Randomization (KASLR) is not implemented.
+- Payload Address Space Layout Randomization (KASLR) is not implemented.
 - Only little-endian systems are supported.
-- Only EL1 kernels are supported.
 
 ## Protocol Versions
 
