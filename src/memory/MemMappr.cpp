@@ -1,5 +1,8 @@
-#include "Uefi/UefiBaseType.h"
 #include <utils.hpp>
+#include <payload-includes/payload.h>
+
+PAYLOAD_REMAP_ADDRS remap_addrs[PAYLOAD_MAX_REMAP_ADDRS] = {};
+uint8_t             remap_addrs_count = 0;
 
 struct MemMapprInfo MemMapprInfo;
 
@@ -46,7 +49,7 @@ void mem_map_init() {
 
     if (EFI_ERROR(status)) {
         ERR("\n MemMappr.cpp: mem_map_init:     status = efi.SystemTable->BootServices->GetMemoryMap( #2: Failed Alloc with Code: ");
-        print(status);
+        print((uint64_t)status);
         print("\n");
         return;
     };
@@ -64,4 +67,20 @@ void mem_map_init() {
 
 struct MemMapprInfo getMemMap() {
     return MemMapprInfo;
+};
+
+void add_virtual_mapping(uintptr_t phy_start_addr, uintptr_t virt_start_addr, size_t size, enum VIRT_ADDR_PERMISSIONS permissions)
+{
+    #undef INFO
+    #define INFO(string) pr_info("[PAYLOAD]: ", string)
+
+    PAYLOAD_REMAP_ADDRS* remap_addr = &remap_addrs[remap_addrs_count];
+    remap_addr->phy_start_addr           = phy_start_addr;
+    remap_addr->virt_start_addr          = virt_start_addr;
+    remap_addr->size                     = size;
+    remap_addr->virtual_addr_permissions = permissions;
+
+    remap_addr->active                   = true; /* COMMIT */
+    
+    remap_addrs_count++;
 };

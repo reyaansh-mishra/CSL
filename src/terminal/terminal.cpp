@@ -107,3 +107,5 @@ void pr_info(const char* pre_message, const bool state) {
     print(pre_message);
     print(state);
 };
+
+void pr_newline() { print("\n"); };

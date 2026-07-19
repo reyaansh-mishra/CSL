@@ -31,7 +31,7 @@ void* alloc_pages(UINTN num_pages, EFI_MEMORY_TYPE memory_type) {
 
     if (EFI_ERROR(status)) {
         ERR("MemBasicOps.cpp: mem_alloc_pages: AllocatePages failed with Code: ");
-        print(status);
+        print((uint64_t)status);
         print("\n");
         return NULL;
     }

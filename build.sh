@@ -10,6 +10,8 @@ AS="clang"
 TARGET="aarch64-unknown-windows"
 SRC_DIR="src"
 
+pkill qemu-system-aar || true
+
 COMMON_FLAGS=(
     --target=$TARGET
     -ffreestanding
@@ -19,6 +21,7 @@ COMMON_FLAGS=(
     -fno-asynchronous-unwind-tables
 
     -Iincludes
+    -Iincludes/CSL
     -Iincludes/uefi-headers
     -Iincludes/uefi-headers/AArch64
 )
@@ -47,7 +50,7 @@ LD=(
     -target $TARGET
     -fuse-ld=lld-link
     -nostdlib
-    -Wl,/entry:payload_init
+    -Wl,/entry:csl_bootstrap
     -Wl,/subsystem:efi_application
     -o BOOTAA64.EFI
 )

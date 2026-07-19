@@ -2,7 +2,16 @@
 -ffreestanding
 -Wall
 -Wextra
--Isrc
+-fno-unwind-tables
+-fno-asynchronous-unwind-tables
+
 -Iincludes
+-Iincludes/CSL
 -Iincludes/uefi-headers
 -Iincludes/uefi-headers/AArch64
+
+-fno-exceptions
+-fno-stack-protector
+-fno-rtti
+-MMD
+-MP
