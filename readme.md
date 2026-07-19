@@ -29,9 +29,10 @@ AArch64/ARM64 only
 On entry to the Payload:
 
 - The Payload is provided a BOOT_INFORMATION struct as its entry arg
-- The Payload is executing from a fixed load address defined by UEFI during boot
-- SP is initialized and 16-byte aligned.
-- MMU is enabled.
+- The Payload is **PHYSICALLY** executing from a fixed load address defined by UEFI during boot
+- A valid stack has been established.
+- SP is 16-byte aligned in accordance with the AArch64 Procedure Call Standard.
+- The MMU is enabled using the translation tables constructed by CSL.
 - .bss has been zero-initialized.
 - .data has been initialized.
 - The CPU is executing at EL2 OR EL1 based on Payload-Set config.
@@ -44,7 +45,7 @@ On entry to the Payload:
 
 ## Payload Lifecycle:
 1. csl_bootstrap()  -> Setup Core Runtimes & POST all the EFI System Details to Underlying Subsystems.
-2. paylod_init()    -> Tell CSL about Virtual Address Mappings, Exception Vectors, etc. MUST CALL `csl_main()`
+2. payload_init()   -> Tell CSL about Virtual Address Mappings, Exception Vectors, etc. MUST CALL `csl_main()`
 3. csl_main()       -> Initialize CSL & Actually Setup Whatever `payload_init()` Requested.
 4. payload_main()   -> Actual Payload Entry Point. Can Assume Whatever above Section(s) Specify
 
