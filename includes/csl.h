@@ -15,3 +15,9 @@ typedef struct {
 } EFI_CONTEXT;
 
 extern                      EFI_CONTEXT efi;
+
+
+/* RETURN CODES */
+#define SUCCESS             0
+#define ERR_UNKNOWN         1
+#define ERR_ALLOC_FAILED    2

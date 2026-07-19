@@ -9,8 +9,7 @@ struct MemMapprInfo {
     UINT32 descriptor_version;
 };
 
-void mem_map_init();
-
+int                 mem_map_init();
 void*               mem_alloc(size_t size, EFI_MEMORY_TYPE memory_type = EfiLoaderData);
 void*               alloc_page();
 struct MemMapprInfo getMemMap();

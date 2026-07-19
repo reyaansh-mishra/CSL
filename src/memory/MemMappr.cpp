@@ -6,7 +6,7 @@ uint8_t             remap_addrs_count = 0;
 
 struct MemMapprInfo MemMapprInfo;
 
-void mem_map_init() {
+int mem_map_init() {
     UINTN memory_map_size = 0;
     EFI_MEMORY_DESCRIPTOR *memory_map = 0;
     UINTN map_key = 0;
@@ -27,7 +27,7 @@ void mem_map_init() {
 
     if (status != EFI_BUFFER_TOO_SMALL) {
         ERR("MemMappr.cpp: mem_map_init:     GetMemoryMap probe failed\n");
-        return;
+        return -ERR_UNKNOWN;
     }
 
     memory_map_size += 2 * descriptor_size; // pad, common convention
@@ -35,7 +35,7 @@ void mem_map_init() {
     void* alloc_addr = mem_alloc(memory_map_size);
     if (alloc_addr == NULL) {
         ERR("MemMappr: allocation failed\n");
-        return;
+        return -ERR_ALLOC_FAILED;
     }
 
     // --- Call #2: Actually Call ---
@@ -51,7 +51,7 @@ void mem_map_init() {
         ERR("\n MemMappr.cpp: mem_map_init:     status = efi.SystemTable->BootServices->GetMemoryMap( #2: Failed Alloc with Code: ");
         print((uint64_t)status);
         print("\n");
-        return;
+        return -ERR_ALLOC_FAILED;
     };
 
     /* If all above succeded, NOW commit to struct */
@@ -63,6 +63,7 @@ void mem_map_init() {
     MemMapprInfo.map_key            = map_key;
 
     INFO("Initialized MemMappr!\n");
+    return SUCCESS;
 };
 
 struct MemMapprInfo getMemMap() {
@@ -73,6 +74,12 @@ void add_virtual_mapping(uintptr_t phy_start_addr, uintptr_t virt_start_addr, si
 {
     #undef INFO
     #define INFO(string) pr_info("[PAYLOAD]: ", string)
+
+    if (remap_addrs_count >= PAYLOAD_MAX_REMAP_ADDRS) {
+        ERR("PAYLOAD_REMAP_ADDRS full. Refusing mapping.\n");
+        return;
+    }
+
 
     PAYLOAD_REMAP_ADDRS* remap_addr = &remap_addrs[remap_addrs_count];
     remap_addr->phy_start_addr           = phy_start_addr;

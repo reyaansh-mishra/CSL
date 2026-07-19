@@ -7,7 +7,7 @@ EFI_STATUS EFIAPI payload_init();
 
 EFI_CONTEXT efi;
 
-static int csl_main(void)
+static EFI_STATUS EFIAPI csl_main(void)
 { /* Actually run CSL */
 
     uint32_t currentEL = get_current_el();
@@ -20,14 +20,19 @@ static int csl_main(void)
         not_in_el2();
     };
 
-    mem_map_init();
+    int err = mem_map_init();
+    if (err != SUCCESS) {
+        ERR("csl_main: FAILED mem_map_init WITH ERR: ");
+        print(err);
+
+        return EFI_DEVICE_ERROR;
+    };
 
     struct MemMapprInfo mem_map = getMemMap();
 
-    // INFO(is1GbAligned(mem_map.memory_map->PhysicalStart));
     bootstrappr(mem_map);
 
-    return 0;
+    return EFI_SUCCESS;
 };
 
 extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
@@ -39,12 +44,12 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
     terminal_reset();
     int err = payload_init();
 
-    if (err != 0) {
+    if (err != EFI_SUCCESS) {
         ERR("CSL_BOOT_STUB: Unable to conitnue, Err: ");
         print(err);
         print("\n");
 
-        return EFI_ERROR(err);
+        return err;
     };
 
     while (TRUE) {
