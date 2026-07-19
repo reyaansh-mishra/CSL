@@ -21,18 +21,6 @@ AArch64/ARM64 only
 ---
 
 ## What does the Payload Expect?
-### -> KASLR DOESNT EXIST (LATER_GOAL)
-
-### How it looks:
-
-CSL Boot Information Layout v1
-
-| Offset | Size | Type     | Description           |
-|--------|------|----------|-----------------------|
-| 0x00   | 4    | uint32_t | CSL Boot Info Version |
-| 0x04   | 8    | uint64_t | RAM Base              |
-| 0x0C   | 8    | uint64_t | RAM Size              |
-| xxxxxx | xxxx | void*    | EFI (base addr Image) |
 
 ### Payload Entry ABI
 
@@ -40,19 +28,25 @@ CSL Boot Information Layout v1
 
 On entry to the Payload:
 
-- The Given Boot Information Layout is Fixed for every boot and is where the Payload MUST check.
+- The Payload is provided a BOOT_INFORMATION struct as its entry arg
 - The Payload is executing from a fixed load address defined by UEFI during boot
 - SP is initialized and 16-byte aligned.
 - MMU is enabled.
 - .bss has been zero-initialized.
 - .data has been initialized.
-- The CPU is executing at EL2/EL1 (based on config).
-- Interrupts are disabled.
+- The CPU is executing at EL2 OR EL1 based on Payload-Set config.
+- Interrupts may be disabled based on Payload-Set Config.
 
 ### Current Limitations
 
 - Payload Address Space Layout Randomization (KASLR) is not implemented.
 - Only little-endian systems are supported.
+
+## Payload Lifecycle:
+1. csl_bootstrap()  -> Setup Core Runtimes & POST all the EFI System Details to Underlying Subsystems.
+2. paylod_init()    -> Tell CSL about Virtual Address Mappings, Exception Vectors, etc. MUST CALL `csl_main()`
+3. csl_main()       -> Initialize CSL & Actually Setup Whatever `payload_init()` Requested.
+4. payload_main()   -> Actual Payload Entry Point. Can Assume Whatever above Section(s) Specify
 
 ## Protocol Versions
 
