@@ -1,9 +1,5 @@
-#include "specific-includes/terminal.hpp"
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
+/* src/terminal/terminal.cpp */
 
-#include <csl.h>
 #include <utils.hpp>
 
 #define CSL_PRINT_BUFFER_SIZE 512
@@ -13,7 +9,7 @@ void terminal_reset() {
 };
 
 /* -------------------------------------------------------- */
-/* General Util funcs to be realloced later */
+/* General Util func(s) to be relocated later */
 /* -------------------------------------------------------- */
 
 extern "C" inline size_t strlen(const char* str) 

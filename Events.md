@@ -1,6 +1,6 @@
 [11/07/2026 @ 6:56PM]: First Double-Include-Double-Define Error:
 
-```
+```console
  *  Executing task: ./build.sh 
 
 [AS] src/boot.s
