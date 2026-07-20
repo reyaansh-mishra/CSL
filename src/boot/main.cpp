@@ -10,15 +10,15 @@ EFI_CONTEXT efi;
 static EFI_STATUS EFIAPI csl_main(void)
 { /* Actually run CSL */
 
-    uint32_t currentEL = get_current_el();
+    #ifndef BUILD_FOR_AMD64
+    if (get_current_el() != 2) {
+        not_in_el2();
+    };
+    #endif
 
     INFO("CSL Version ");
     print(CSL_VERSION);
     print("\n");
- 
-    if (currentEL != 2) {
-        not_in_el2();
-    };
 
     int err = mem_map_init();
     if (err != SUCCESS) {
@@ -52,10 +52,15 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
         return err;
     };
 
+    #ifndef BUILD_FOR_AMD64
     while (TRUE) {
         __asm__ volatile("wfi");
     };
-
+    #else
+    while (TRUE) {
+        __asm__ volatile("hlt");
+    };
+    #endif
     return EFI_SUCCESS;
 };
 

@@ -1,5 +1,7 @@
 #include <utils.hpp>
 
+#ifndef BUILD_FOR_AMD64
+
 uint32_t get_current_el(void) {
     uint64_t el_reg;
     
@@ -17,3 +19,5 @@ extern "C" void not_in_el2(void) {
         __asm__ volatile("wfi");
     };
 };
+
+#endif

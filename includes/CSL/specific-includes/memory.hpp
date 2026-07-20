@@ -1,6 +1,8 @@
 #pragma once
 #include <csl.h>
 
+#define MAX_FREE_REGIONS  1024
+
 struct MemMapprInfo {
     EFI_MEMORY_DESCRIPTOR* memory_map;
     UINTN memory_map_size;
@@ -8,6 +10,13 @@ struct MemMapprInfo {
     UINTN descriptor_size;
     UINT32 descriptor_version;
 };
+
+struct FreeRegion {
+    uint64_t base;
+    uint64_t page_count;
+};
+
+extern FreeRegion FreeRegion[MAX_FREE_REGIONS];
 
 int                 mem_map_init();
 void*               mem_alloc(size_t size, EFI_MEMORY_TYPE memory_type = EfiLoaderData);

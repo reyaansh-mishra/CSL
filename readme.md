@@ -49,9 +49,14 @@ On entry to the Payload:
 3. csl_main()       -> Initialize CSL & Actually Setup Whatever `payload_init()` Requested.
 4. payload_main()   -> Actual Payload Entry Point. Can Assume Whatever above Section(s) Specify
 
-## Protocol Versions
+## About AMD64
+As I develop on an AMD64 machine, its also important to keep checking - from time-to-time - whether CSL boots correctly on actual UEFI-compliant systems. Hence I will be providing a `#define BUILD_FOR_AMD64`, which just Stubs-Out the ARM64 Specific Parts, and brings in AMD64 Parts if needed for Proper Operations.
+
+#### This is NOT an AMD64 version of CSL. I will be maintaining this JUST to make sure it compiles or maybe just till it boots.
+
+## Protocol Versions for Boot Entry Struct
 
 ### v1
-- Boot info version
-- RAM base
-- RAM size
+1. uint8_t  boot_info_version
+2. uint64_t ram_phy_base
+3. size_t   ram_size
