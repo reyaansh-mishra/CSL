@@ -54,9 +54,10 @@ As I develop on an AMD64 machine, its also important to keep checking - from tim
 
 #### This is NOT an AMD64 version of CSL. I will be maintaining this JUST to make sure it compiles or maybe just till it boots.
 
-## Protocol Versions for Boot Entry Struct
+## Protocol Versions for Boot Info Struct
 
 ### v1
 1. uint8_t  boot_info_version
 2. uint64_t ram_phy_base
 3. size_t   ram_size
+4. __attribute__((packed))
