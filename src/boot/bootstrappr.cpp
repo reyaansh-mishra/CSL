@@ -22,8 +22,10 @@ void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to boo
     // pr_newline();
 
     // INFO("bootstrappr: Printing ALL entries of mem_info...\n");
+
+    // size_t number_of_pages  = 0;
     
-    size_t itr = 0;
+    size_t itr              = 0;
     uint8_t*    entry       = (uint8_t*)mem_info.memory_map;
     uint8_t*    end         = entry + mem_info.memory_map_size; // memory_map_size should be total bytes here
     size_t      type_7_ctr  = 0;
@@ -47,16 +49,23 @@ void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to boo
         // pr_newline();
         // pr_newline();
 
-        if (uefi_type == 7) {
-            FreeRegion[type_7_ctr].base         = phy_start;
-            FreeRegion[type_7_ctr].page_count   = no_of_pgs;
-
-            type_7_ctr++;
+        if (uefi_type == EfiConventionalMemory) {
+            if (type_7_ctr >= MAX_FREE_REGIONS) {
+                    ERR("FreeRegion array full. Some conventional memory regions dropped.\n");
+                } else {
+                    FreeRegion[type_7_ctr].base       = phy_start;
+                    FreeRegion[type_7_ctr].page_count = no_of_pgs;
+                    type_7_ctr++;
+                }
         };
 
         entry += mem_info.descriptor_size;
         itr++;
     }
+
+    for (size_t i = 0; i < type_7_ctr; i++) {
+        // number_of_pages += FreeRegion[i].page_count;
+    };
     
 
     INFO("Entries: ");
@@ -67,7 +76,8 @@ void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to boo
     print(type_7_ctr);
     pr_newline();
 
-
+    setup_translation_tables();
+    
     payload_main();
     return;
 };

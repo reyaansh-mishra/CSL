@@ -24,3 +24,4 @@ extern                      EFI_CONTEXT efi;
 #define SUCCESS             0
 #define ERR_UNKNOWN         1
 #define ERR_ALLOC_FAILED    2
+#define ERROR_NO_MEMORY     3

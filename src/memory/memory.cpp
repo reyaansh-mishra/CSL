@@ -20,7 +20,7 @@ void* mem_alloc(size_t size, EFI_MEMORY_TYPE memory_type) {
 };
 
 void* alloc_pages(UINTN num_pages, EFI_MEMORY_TYPE memory_type) {
-        EFI_STATUS status;
+    EFI_STATUS status;
     EFI_PHYSICAL_ADDRESS addr = 0;
 
     status = efi.SystemTable->BootServices->AllocatePages(

@@ -14,12 +14,6 @@ EFI_CONTEXT efi;
 static EFI_STATUS EFIAPI csl_main(void)
 { /* Actually run CSL */
 
-    #ifndef BUILD_FOR_AMD64
-    if (get_current_el() != 2) {
-        not_in_el2();
-    };
-    #endif
-
     INFO("CSL Version ");
     print(CSL_VERSION);
     print("\n");
@@ -41,6 +35,15 @@ static EFI_STATUS EFIAPI csl_main(void)
 
 extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
 {  /* Setup Core CSL UEFI Runtime */
+
+    #ifndef BUILD_FOR_AMD64
+    if (get_current_el() != 2) {
+        not_in_el2();
+    };
+    
+    mask_interrupts();
+    #endif
+
     efi.ImageHandle     = ImageHandle;
     efi.SystemTable     = SystemTable;
     efi.BootServices    = efi.SystemTable->BootServices;
@@ -78,7 +81,8 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
 
 EFI_STATUS EFIAPI payload_init()
 {
-    add_virtual_mapping(2,4,2,NONE);
+    add_virtual_mapping(2, 0xFF, CSL_PAGE_SIZE*100, NONE);
+
     return csl_main();
 };
 

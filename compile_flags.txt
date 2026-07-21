@@ -4,6 +4,8 @@
 -Wextra
 -fno-unwind-tables
 -fno-asynchronous-unwind-tables
+-Wnewline-eof
+-Werror
 
 -Iincludes
 -Iincludes/CSL

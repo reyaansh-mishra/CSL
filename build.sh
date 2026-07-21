@@ -19,6 +19,10 @@ COMMON_FLAGS=(
     -Wextra
     -fno-unwind-tables
     -fno-asynchronous-unwind-tables
+    -Werror
+
+    -Wno-unused-variable
+    -Wno-c++17-extensions
 
     -Iincludes
     -Iincludes/CSL

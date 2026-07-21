@@ -83,13 +83,13 @@ void add_virtual_mapping(uintptr_t phy_start_addr, uintptr_t virt_start_addr, si
     }
 
 
-    PAYLOAD_REMAP_ADDRS* remap_addr = &remap_addrs[remap_addrs_count];
-    remap_addr->phy_start_addr           = phy_start_addr;
-    remap_addr->virt_start_addr          = virt_start_addr;
-    remap_addr->size                     = size;
-    remap_addr->virtual_addr_permissions = permissions;
+    PAYLOAD_REMAP_ADDRS* remap_addr         = &remap_addrs[remap_addrs_count];
+    remap_addr->phy_start_addr              = phy_start_addr;
+    remap_addr->virt_start_addr             = virt_start_addr;
+    remap_addr->size                        = size;
+    remap_addr->virtual_addr_permissions    = permissions;
 
-    remap_addr->active                   = true; /* COMMIT */
+    remap_addr->active                      = true; /* COMMIT */
     
     remap_addrs_count++;
 };

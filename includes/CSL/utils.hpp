@@ -16,3 +16,5 @@ extern "C" inline size_t strlen(const char* str);
 #include <specific-includes/memory.hpp>
 
 #include <specific-includes/bootstrappr.hpp>
+
+#include <specific-includes/mmu-go-BRRRRRR.hpp>

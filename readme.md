@@ -36,7 +36,7 @@ On entry to the Payload:
 - .bss has been zero-initialized.
 - .data has been initialized.
 - The CPU is executing at EL2 OR EL1 based on Payload-Set config.
-- Interrupts may be disabled based on Payload-Set Config.
+- Interrupts are be disabled.
 
 ### Current Limitations
 
@@ -53,6 +53,14 @@ On entry to the Payload:
 As I develop on an AMD64 machine, its also important to keep checking - from time-to-time - whether CSL boots correctly on actual UEFI-compliant systems. Hence I will be providing a `#define BUILD_FOR_AMD64`, which just Stubs-Out the ARM64 Specific Parts, and brings in AMD64 Parts if needed for Proper Operations.
 
 #### This is NOT an AMD64 version of CSL. I will be maintaining this JUST to make sure it compiles or maybe just till it boots.
+
+## Quick Info on Certain Decisions:
+### Why are Interrupts ALWAYS Disabled?
+- I categorize CSL + payload_main() is a "critical phase" - payload_main() is still the payload bringing itself up. Its not the full OS.
+- "Exception Vectors Exists" != "Safe to Unmask"
+Hence, CSL Should make sure that Interrupts are disabled, even though we may have installed the Exception Vectors.
+
+
 
 ## Protocol Versions for Boot Info Struct
 
