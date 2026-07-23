@@ -20,6 +20,7 @@ COMMON_FLAGS=(
     -fno-unwind-tables
     -fno-asynchronous-unwind-tables
     -Werror
+    -g
 
     -Wno-unused-variable
     -Wno-c++17-extensions
@@ -57,6 +58,7 @@ LD=(
     -Wl,/entry:csl_bootstrap
     -Wl,/subsystem:efi_application
     -o BOOTAA64.EFI
+    -g
 )
 
 rm -r build

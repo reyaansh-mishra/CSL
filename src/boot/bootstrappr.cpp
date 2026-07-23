@@ -75,8 +75,6 @@ void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to boo
     INFO("Type 7 Entries: ");
     print(type_7_ctr);
     pr_newline();
-
-    setup_translation_tables();
     
     payload_main();
     return;

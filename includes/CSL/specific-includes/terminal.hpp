@@ -3,7 +3,7 @@
 #pragma once
 #include <csl.h>
 
-void print(const char* string);
+void print(const char* string, ...);
 void print(uint64_t val);
 void print(int val);
 void print(bool state);

@@ -39,6 +39,7 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
     #ifndef BUILD_FOR_AMD64
     if (get_current_el() != 2) {
         not_in_el2();
+        install_vbar();
     };
     
     mask_interrupts();

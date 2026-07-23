@@ -1,8 +1,13 @@
 /* src/terminal/terminal.cpp */
 
 #include <utils.hpp>
+#include <stdarg.h>
 
-#define CSL_PRINT_BUFFER_SIZE 512
+
+#define UART0_BASE              0x09000000
+
+volatile uint32_t* const uart = (volatile uint32_t*)UART0_BASE;
+
 
 void terminal_reset() {
     efi.SystemTable->ConOut->ClearScreen(efi.SystemTable->ConOut);
@@ -12,7 +17,7 @@ void terminal_reset() {
 /* General Util func(s) to be relocated later */
 /* -------------------------------------------------------- */
 
-extern "C" inline size_t strlen(const char* str) 
+inline size_t strlen(const char* str) 
 {
 	size_t len = 0;
 	while (str[len])
@@ -21,45 +26,102 @@ extern "C" inline size_t strlen(const char* str)
 }
 
 /* -------------------------------------------------------- */
-/* FB + UART Logic using EFI */
+/* FB + UART Logic */
 /* -------------------------------------------------------- */
 
-void efi_print(const char *str) {		/* MAX SUPPORTED CSL_PRINT_BUFFER_SIZE LENGTH*/
+static void put_char(const char c) {
+    if (c == '\n')
+        *uart = '\r';
 
-	CHAR16 buf_out[CSL_PRINT_BUFFER_SIZE];
-	size_t i_in = 0;
-	size_t i_out = 0;
-	size_t string_length = strlen(str);
-
-	if (string_length >= CSL_PRINT_BUFFER_SIZE) {
-		efi.SystemTable->ConOut->OutputString(efi.SystemTable->ConOut, (CHAR16*)u"ERR_PRINT_MESSAGE_LOST. Message Too Big Not printing message.");
-		return;
-	};
-
-    for (; i_in < string_length && i_out < CSL_PRINT_BUFFER_SIZE - 1; i_in++) {
-        if (str[i_in] == '\n') {
-            if (i_out >= CSL_PRINT_BUFFER_SIZE - 2) {	// need room for \r\n + terminator
-				efi.SystemTable->ConOut->OutputString(efi.SystemTable->ConOut, (CHAR16*)u"ERR_PRINT_MESSAGE_LOST. BUFFER ALMOST DIED. Not printing message.");
-				return;
-			};
-
-            buf_out[i_out] = L'\r';
-            buf_out[i_out + 1] = L'\n';
-            i_out += 2;
-        } else {
-            buf_out[i_out] = str[i_in];
-            i_out++;
-        };
-	};
-
-	buf_out[i_out] = L'\0';
-
-	efi.SystemTable->ConOut->OutputString(efi.SystemTable->ConOut, buf_out);
+    *uart = c;
 };
 
-void print(const char* string) {
-    efi_print(string);
+void dump_str_to_uart(const char* str, size_t string_length) {
+    for (size_t i = 0; i < string_length; i++) {
+        put_char(str[i]);
+    };
 };
+
+static inline void puts_raw(const char *s)  /* NOPE. dump_str_to_uart is canotical or whatever the spelling is. */
+{
+    dump_str_to_uart(s, strlen(s));
+};
+
+void efi_print(const char *str) {
+    size_t string_len = strlen(str);
+
+    dump_str_to_uart(str, string_len);
+};
+
+void vprint(const char* fmt, va_list args)
+{
+    while (*fmt) {
+        if (*fmt != '%') {
+            put_char(*fmt++);
+            continue;
+        }
+
+        fmt++; // Skip '%'
+
+        switch (*fmt++) {
+            case '%':
+                put_char('%');
+                break;
+
+            case 'c': {
+                char c = (char)va_arg(args, int);
+                put_char(c);
+                break;
+            }
+
+            case 's': {
+                const char* s = va_arg(args, const char*);
+                if (!s)
+                    s = "(null)";
+                puts_raw(s);
+                break;
+            }
+
+            case 'd': {
+                int n = va_arg(args, int);
+                print(n);      // TODO
+                break;
+            }
+
+            case 'u': {
+                unsigned n = va_arg(args, unsigned);
+                print((uint64_t)n);     // TODO
+                break;
+            }
+
+            case 'x': {
+                unsigned n = va_arg(args, unsigned);
+                print((uint64_t)n);      // TODO
+                break;
+            }
+
+            case 'p': {
+                uintptr_t p = va_arg(args, uintptr_t);
+                efi_print("0x");
+                print(p);      // TODO
+                break;
+            }
+
+            default:
+                put_char('%');
+                put_char(fmt[-1]); // Unknown specifier
+                break;
+        }
+    };
+};
+
+void print(const char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    vprint(fmt, args);
+    va_end(args);
+}
 
 void print(uint64_t val) {
     char buf[24]; // enough for a 64-bit uint + null terminator
@@ -67,7 +129,7 @@ void print(uint64_t val) {
     buf[23] = '\0';
 
     if (val == 0) {
-        print("0");
+        put_char('0');
         return;
     }
 
@@ -77,21 +139,23 @@ void print(uint64_t val) {
         i--;
     }
 
-    print(&buf[i + 1]);
+    puts_raw(&buf[i + 1]);
 };
 
-void print(int val) {
+void print(int val)
+{
     if (val < 0) {
-        print("-");
-        print((uint64_t)(-(int64_t)val));  // careful with INT_MIN edge case
+        put_char('-');
+        print((uint64_t)(-(int64_t)val));
         return;
     }
+
     print((uint64_t)val);
 };
 
 void print(bool state) {
-    if (state) print("TRUE");
-    else print("FALSE");
+    if (state) puts_raw("TRUE");
+    else puts_raw("FALSE");
 };
 
 void pr_info(const char* pre_message, const char* string) {
@@ -105,3 +169,25 @@ void pr_info(const char* pre_message, const bool state) {
 };
 
 void pr_newline() { print("\n"); };
+
+void print_hex(const uint64_t val) {
+    puts_raw("0x");
+    for (int i = 60; i >= 0; i -= 4) {
+        uint8_t nibble = (val >> i) & 0xF;
+        char c = (nibble < 10) ? ('0' + nibble) : ('A' + (nibble - 10));
+        put_char(c);
+    };
+};
+
+
+/* DUMP YAY */
+
+extern "C" void exception_dump(uint64_t esr, uint64_t far, uint64_t elr, uint64_t spsr, uint64_t exception) {
+    INFO("Taking exception\n");
+    print("ESR: "); print_hex(esr); pr_newline();
+    print("FAR: "); print_hex(far); pr_newline();
+    print("ELR: "); print_hex(elr); pr_newline();
+    print("SPSR: "); print_hex(spsr); pr_newline();
+    print("EXCEPTION: ");print(exception);pr_newline();
+    // deliberately no eret — halt below in vec_common instead
+};

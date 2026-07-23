@@ -11,10 +11,11 @@
 
 extern "C" inline size_t strlen(const char* str);
 
+#ifndef BUILD_FOR_AMD64
 #include <specific-includes/arm64.hpp>
+#endif
+
 
 #include <specific-includes/memory.hpp>
 
 #include <specific-includes/bootstrappr.hpp>
-
-#include <specific-includes/mmu-go-BRRRRRR.hpp>
