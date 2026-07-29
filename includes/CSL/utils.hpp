@@ -5,8 +5,8 @@
 
 #include <specific-includes/terminal.hpp>
 
-#define INFO(string)    pr_info("[CSL]: ", (string))
-#define ERR(string)     pr_info("[ERR] [CSL]: ", (string))
+#define INFO(string)    print("[CSL]: %s", string)
+#define ERR(string)     print("[ERR] [CSL]: %s", string)
 
 
 extern "C" inline size_t strlen(const char* str);
@@ -19,3 +19,5 @@ extern "C" inline size_t strlen(const char* str);
 #include <specific-includes/memory.hpp>
 
 #include <specific-includes/bootstrappr.hpp>
+
+#include <specific-includes/mmu.hpp>

@@ -9,8 +9,8 @@ void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to boo
 
     #undef INFO
     #undef ERR
-    #define INFO(string)    pr_info("[CSL] <bootstrappr>: ", (string))
-    #define ERR(string)     pr_info("[ERR] [CSL] <bootstrappr>: ", (string))
+    #define INFO(string)    print("[CSL] <bootstrappr>: %s", (string))
+    #define ERR(string)     print("[ERR] [CSL] <bootstrappr>: %s", (string))
 
 
     // INFO("sizeof(EFI_MEMORY_DESCRIPTOR): ");
@@ -75,6 +75,9 @@ void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to boo
     INFO("Type 7 Entries: ");
     print(type_7_ctr);
     pr_newline();
+
+    INFO("RUN MMU\n");
+    setup_tables();
     
     payload_main();
     return;

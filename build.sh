@@ -61,9 +61,8 @@ LD=(
     -g
 )
 
-rm -r build
-
-mkdir -p build
+rm -rf build
+mkdir build
 
 find $SRC_DIR -type f | while read -r file; do
     rel="${file#src/}"

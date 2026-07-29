@@ -75,7 +75,7 @@ struct MemMapprInfo getMemMap() {
 void add_virtual_mapping(uintptr_t phy_start_addr, uintptr_t virt_start_addr, size_t size, enum VIRT_ADDR_PERMISSIONS permissions)
 {
     #undef INFO
-    #define INFO(string) pr_info("[PAYLOAD]: ", string)
+    #define INFO(string) pr_info("[PAYLOAD]: %s", string)
 
     if (remap_addrs_count >= PAYLOAD_MAX_REMAP_ADDRS) {
         ERR("PAYLOAD_REMAP_ADDRS full. Refusing mapping.\n");

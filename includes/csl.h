@@ -11,6 +11,8 @@
 #define CSL_PAGE_SIZE           4096
 // #define BUILD_FOR_AMD64         /* Stubs Out the AMD64-Specific Parts */
 
+#define ASSERT(args)            if (!(args)) { ERR("ASSERT FAILED: "); print(args); pr_newline(); return;}
+
 typedef struct {
     EFI_HANDLE          ImageHandle;
     EFI_SYSTEM_TABLE*   SystemTable;
@@ -21,7 +23,8 @@ extern                      EFI_CONTEXT efi;
 
 
 /* RETURN CODES */
-#define SUCCESS             0
-#define ERR_UNKNOWN         1
-#define ERR_ALLOC_FAILED    2
-#define ERROR_NO_MEMORY     3
+#define SUCCESS                 0
+#define ERR_UNKNOWN             1
+#define ERR_ALLOC_FAILED        2
+#define ERROR_NO_MEMORY         3
+#define ERROR_ALREADY_MAPPED    4

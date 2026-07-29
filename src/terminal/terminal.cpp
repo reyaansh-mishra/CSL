@@ -61,6 +61,10 @@ void vprint(const char* fmt, va_list args)
             continue;
         }
 
+
+        if (*fmt == '\0') break;
+
+
         fmt++; // Skip '%'
 
         switch (*fmt++) {
@@ -101,7 +105,8 @@ void vprint(const char* fmt, va_list args)
             }
 
             case 'p': {
-                uintptr_t p = va_arg(args, uintptr_t);
+                void *p = va_arg(args, void *);
+                print((uintptr_t)p);
                 efi_print("0x");
                 print(p);      // TODO
                 break;
@@ -157,17 +162,6 @@ void print(bool state) {
     if (state) puts_raw("TRUE");
     else puts_raw("FALSE");
 };
-
-void pr_info(const char* pre_message, const char* string) {
-    print(pre_message);
-    print(string);
-};
-
-void pr_info(const char* pre_message, const bool state) {
-    print(pre_message);
-    print(state);
-};
-
 void pr_newline() { print("\n"); };
 
 void print_hex(const uint64_t val) {

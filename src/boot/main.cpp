@@ -77,8 +77,8 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
 #ifdef CSL_FAKE_PAYLOAD_TEST
 
 #include <payload-includes/payload.h>
-#undef INFO
-#define INFO(string) pr_info("[PAYLOAD]: ", string)
+#undef  INFO
+#define INFO(string) print("[PAYLOAD]: %s", string)
 
 EFI_STATUS EFIAPI payload_init()
 {
