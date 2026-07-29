@@ -51,5 +51,5 @@ void setup_tables();
 extern "C" void write_mair(uint64_t data);
 extern "C" void write_tcr(uint64_t data);
 extern "C" void write_ttbr0(uint64_t data);
-extern "C" void enable_mmu(uint64_t data);
-extern "C" void disable_mmu(uint64_t data);
+extern "C" void enable_mmu();
+extern "C" void disable_mmu();

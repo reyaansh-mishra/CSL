@@ -50,6 +50,7 @@ void Table_Descriptor::init() /* Make sure Table Descriptor is in a ""State"" */
     raw = 0;
 
     set_bit(raw, 1, 1);
+    set_bit(raw, 10, 1);
 };
 
 

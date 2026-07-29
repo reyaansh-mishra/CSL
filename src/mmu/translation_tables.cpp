@@ -1,7 +1,11 @@
 /* src/mmu/mmu.c */
 #include <utils.hpp>
 
-#define TTBR_BASE   &L1_table[0]
+#define TTBR_BASE   (uint64_t)&L1_table[0]
+// Common ARM64 MAIR attributes:
+#define MAIR_ATTR_DEVICE_nGnRnE  0x00  // Attr0: Device memory (UART, GIC, MMIO)
+#define MAIR_ATTR_NORMAL_NOCACHE 0x44  // Attr1: Normal Uncached RAM
+#define MAIR_ATTR_NORMAL_WB      0xFF  // Attr2: Normal Write-Back Cacheable RAM
 
 /* ----------------------------------------------------------------------- */
 /* GLOBALS */
@@ -86,7 +90,7 @@ int setup_l3(uintptr_t L3_leaf, uintptr_t phy_addr, uintptr_t va)
 
     if (current_L3_table->is_valid()) {
         INFO("L3 Exists\n");
-        return ERROR_ALREADY_MAPPED;
+        return SUCCESS;
     };
 
     current_L3_table->init();
@@ -98,15 +102,15 @@ int setup_l3(uintptr_t L3_leaf, uintptr_t phy_addr, uintptr_t va)
 
 int setup_table_4k(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSIONS permissions)
 {
-    pr_newline();
+    // pr_newline();
 
-    INFO("setup_table_4k: phy: ");print_hex(phy);pr_newline();
-    INFO("setup_table_4k: virt: ");print_hex(virt);pr_newline();
+    // INFO("setup_table_4k: phy: ");print_hex(phy);pr_newline();
+    // INFO("setup_table_4k: virt: ");print_hex(virt);pr_newline();
 
     /* Get L1 Table */
     uintptr_t L1_bits = get_bits_from_ptr(virt, 38, 30);
 
-    INFO("setup_table_4k: run get_or_create_l2_table\n");
+    // INFO("setup_table_4k: run get_or_create_l2_table\n");
 
     auto L2_table = get_or_create_l2_table(L1_bits);
     if (L2_table == ERR_ALLOC_FAILED || L2_table == ERROR_NO_MEMORY || L2_table == ERR_UNKNOWN) {
@@ -118,7 +122,7 @@ int setup_table_4k(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSIONS per
 
     /* ---------------------------------------------------------------------------------- */
 
-    INFO("setup_table_4k: run get_or_create_l3_table\n");
+    // INFO("setup_table_4k: run get_or_create_l3_table\n");
 
     auto L3_leaf = get_or_create_l3_table(L2_table, virt);
     if (L3_leaf == ERR_ALLOC_FAILED || L3_leaf == ERROR_NO_MEMORY || L3_leaf == ERR_UNKNOWN || !L3_leaf) {
@@ -130,7 +134,7 @@ int setup_table_4k(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSIONS per
 
     /* ---------------------------------------------------------------------------------- */
 
-    INFO("setup_table_4k: run setup_l3\n");
+    // INFO("setup_table_4k: run setup_l3\n");
 
     int err = setup_l3(L3_leaf, phy, virt);
     if (err) {
@@ -143,19 +147,80 @@ int setup_table_4k(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSIONS per
     return 0;
 };
 
-void setup_tables()
+void configure_mmu()
 {
-    INFO("setup_tables: \n");
-    uintptr_t base = (uintptr_t)getMemMap().memory_map->PhysicalStart;
-    uintptr_t end  = base + getMemMap().memory_map->NumberOfPages*CSL_PAGE_SIZE;
 
-    for (uintptr_t i = base; i < end; i += CSL_PAGE_SIZE) {
-        int err = setup_table_4k(i, i, NONE);
-        if (err) {
-            ERR("setup_tables: Failed setup_table_4k with err: ");
-            print(err);
-            pr_newline();
-            return;
-        };
+    INFO("EXITING BOOT SERVICES!\n");
+    efi.BootServices->ExitBootServices(efi.ImageHandle, getMemMap().map_key);
+
+    if (get_current_el() != 2) {
+        ERR("EL NOT AT 2! EXITING!\n");
+        return;
     };
+
+    mask_FULL();
+    install_vbar();
+
+    INFO("Interrupts Masked and VBARS installed.\n");
+
+
+    uint64_t tcr    = 0;
+    uint64_t T0SZ   = 25;
+    uint64_t TG0    = 0b00;
+    uint64_t PS     = 0b0010;
+    uint64_t ATTR   = 0b0101;
+    uint64_t SH0    = 0b11;
+    for (size_t i = 0; i < 6; i++) {
+        set_bit(tcr, i, get_bit(T0SZ, i));
+    };
+    for (size_t i = 8; i < 12; i++) {
+        set_bit(tcr, i, get_bit(ATTR, i - 8));
+    };
+    for (size_t i = 12; i < 14; i++) {
+        set_bit(tcr, i, get_bit(SH0, i - 12));
+    };
+    for (size_t i = 14; i < 16; i++) {
+        set_bit(tcr, i, get_bit(TG0, i - 14));
+    };
+    for (size_t i = 16; i < 20; i++) {
+        set_bit(tcr, i, get_bit(PS, i - 16));
+    };
+
+    uint64_t mair_val = 
+        ((uint64_t)MAIR_ATTR_DEVICE_nGnRnE  << (0 * 8)) |  // Index 0
+        ((uint64_t)MAIR_ATTR_NORMAL_NOCACHE << (1 * 8)) |  // Index 1
+        ((uint64_t)MAIR_ATTR_NORMAL_WB      << (2 * 8));   // Index 2
+
+    disable_mmu();
+    write_mair(mair_val);
+    write_tcr(tcr);
+    write_ttbr0(TTBR_BASE);
+    enable_mmu();
+
+    INFO("Applied Private Translation Tables!\n");
+};
+
+
+void setup_tables() {
+    auto map_info = getMemMap();
+    uint8_t* map_buf = (uint8_t*)map_info.memory_map;
+    size_t num_entries = map_info.memory_map_size / map_info.descriptor_size;
+
+    for (size_t i = 0; i < num_entries; i++) {
+        EFI_MEMORY_DESCRIPTOR* desc = (EFI_MEMORY_DESCRIPTOR*)(map_buf + (i * map_info.descriptor_size));
+
+        uintptr_t base = desc->PhysicalStart;
+        uintptr_t size = desc->NumberOfPages * CSL_PAGE_SIZE;
+
+        // Identity map every physical memory descriptor provided by UEFI
+        for (uintptr_t addr = base; addr < base + size; addr += CSL_PAGE_SIZE) {
+            setup_table_4k(addr, addr, NONE);
+        }
+    }
+
+    // Don't forget MMIO Devices (UART at 0x09000000, GIC at 0x08000000 on QEMU virt)!
+    for (uintptr_t mmio = 0x08000000; mmio < 0x0A000000; mmio += CSL_PAGE_SIZE) {
+        setup_table_4k(mmio, mmio, NONE);
+    }
+    configure_mmu();
 };

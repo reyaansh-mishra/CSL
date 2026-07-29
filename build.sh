@@ -57,8 +57,9 @@ LD=(
     -nostdlib
     -Wl,/entry:csl_bootstrap
     -Wl,/subsystem:efi_application
-    -o BOOTAA64.EFI
-    -g
+    -Wl,/debug
+    -Wl,/pdb:build/csl.pdb
+    -Wl,/map:build/csl.map   # <-- THIS WILL SAVE MY SANITY
 )
 
 rm -rf build

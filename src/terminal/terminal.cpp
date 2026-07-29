@@ -177,11 +177,21 @@ void print_hex(const uint64_t val) {
 /* DUMP YAY */
 
 extern "C" void exception_dump(uint64_t esr, uint64_t far, uint64_t elr, uint64_t spsr, uint64_t exception) {
-    INFO("Taking exception\n");
+    ERR("Unhandled Exception Caught!\n");
     print("ESR: "); print_hex(esr); pr_newline();
     print("FAR: "); print_hex(far); pr_newline();
     print("ELR: "); print_hex(elr); pr_newline();
     print("SPSR: "); print_hex(spsr); pr_newline();
-    print("EXCEPTION: ");print(exception);pr_newline();
-    // deliberately no eret — halt below in vec_common instead
+
+    // Decode ESR for fast debugging
+    uint32_t ec = (esr >> 26) & 0x3F;
+    if (ec == 0x25 || ec == 0x24) { // Data aborts
+        print("Type: Data Abort on ");
+        print((esr & (1 << 6)) ? "WRITE\n" : "READ\n");
+    };
+
+    // Freeze here instead of looping eret
+    while (1) {
+        __asm__ volatile("wfi");
+    };
 };

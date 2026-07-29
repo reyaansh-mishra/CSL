@@ -5,27 +5,27 @@
 .global write_tcr
 .global write_ttbr0
 .global enable_mmu
-.global configure_mmu
 .global disable_mmu
 
-cleanup:
+.macro cleanup
     dsb sy  // 1. Data Synchronization Barrier
     isb     // 2. Instruction Synchronization Barrier to flush the pipeline
+.endm
 
 write_mair:
     msr mair_el2, x0
-    bl cleanup
+    cleanup
     ret
 
 write_tcr:
     msr tcr_el2, x0
-    bl cleanup
+    cleanup
     ret
 
 write_ttbr0:
     msr ttbr0_el2, x0
     tlbi alle2is    // 1. Invalidate all EL2 TLB entries (Inner Shareable)
-    bl cleanup
+    cleanup
     ret
 
 enable_mmu:
@@ -37,13 +37,13 @@ enable_mmu:
     orr x0, x0, #(1 << 12)
     */
     msr sctlr_el2, x0
-    bl cleanup
+    cleanup
     ret
 
 disable_mmu:
     mrs x0, sctlr_el2
     bic x0, x0, #1
     msr sctlr_el2, x0
-    bl cleanup
+    cleanup
     ret
     
