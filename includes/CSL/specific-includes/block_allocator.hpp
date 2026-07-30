@@ -8,13 +8,22 @@ struct BLOCK {
     size_t  cursor;         // Offset of next search position
 };
 
+struct ALLOCD_REGIONS {
+    void*   base;
+    size_t  size;
+
+    bool    currently_allocd;
+};
+
 class BlockAllocator {
     public:
         void    init(void* block_alloc_addr, size_t max_size);
-        void*   malloc(size_t pahes);
-        void    dealloc(/* void* ptr */);
+        void*   malloc(size_t pages);
+        void    dealloc(void* ptr);
     private:
         struct BLOCK        block;
 };
 
-extern BlockAllocator   allocator;
+extern          BlockAllocator   allocator;
+extern struct   ALLOCD_REGIONS   allocd_regions[512];
+extern size_t                    alloc_regions_ctr;
