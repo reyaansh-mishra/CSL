@@ -21,3 +21,5 @@ extern "C" inline size_t strlen(const char* str);
 #include <specific-includes/bootstrappr.hpp>
 
 #include <specific-includes/mmu.hpp>
+
+#include <specific-includes/block_allocator.hpp>

@@ -1,7 +1,8 @@
 /* src/mmu/mmu.c */
 #include <utils.hpp>
 
-#define TTBR_BASE   (uint64_t)&L1_table[0]
+#define TTBR_BASE               (uint64_t)&L1_table[0]
+#define MALLOC_MAX_BLOCK_PAGES  100
 // Common ARM64 MAIR attributes:
 #define MAIR_ATTR_DEVICE_nGnRnE  0x00  // Attr0: Device memory (UART, GIC, MMIO)
 #define MAIR_ATTR_NORMAL_NOCACHE 0x44  // Attr1: Normal Uncached RAM
@@ -147,8 +148,17 @@ int setup_table_4k(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSIONS per
     return 0;
 };
 
+void ensure_malloc_exists()
+{
+    void* alloc_addr = alloc_pages(MALLOC_MAX_BLOCK_PAGES, EfiLoaderData);
+    allocator.init(alloc_addr, MALLOC_MAX_BLOCK_PAGES);
+};
+
 void configure_mmu()
 {
+
+    ensure_malloc_exists();
+    
 
     INFO("EXITING BOOT SERVICES!\n");
     efi.BootServices->ExitBootServices(efi.ImageHandle, getMemMap().map_key);
@@ -197,7 +207,20 @@ void configure_mmu()
     write_ttbr0(TTBR_BASE);
     enable_mmu();
 
+    uint64_t SCTLR_EL2_VAL;
+    __asm__ volatile(
+        "msr SCTLR_EL2, x0"
+        : "=r" (SCTLR_EL2_VAL)
+        :
+        :
+    );
+
     INFO("Applied Private Translation Tables!\n");
+
+    print_hex((uint64_t)allocator.malloc(2));pr_newline();
+    print_hex((uint64_t)allocator.malloc(5));pr_newline();
+
+    INFO("malloc'd\n");
 };
 
 
@@ -218,7 +241,6 @@ void setup_tables() {
         }
     }
 
-    // Don't forget MMIO Devices (UART at 0x09000000, GIC at 0x08000000 on QEMU virt)!
     for (uintptr_t mmio = 0x08000000; mmio < 0x0A000000; mmio += CSL_PAGE_SIZE) {
         setup_table_4k(mmio, mmio, NONE);
     }

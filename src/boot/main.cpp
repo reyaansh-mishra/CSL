@@ -9,6 +9,8 @@
 EFI_STATUS EFIAPI payload_init();
 #endif
 
+BlockAllocator allocator;
+
 EFI_CONTEXT efi;
 
 static EFI_STATUS EFIAPI csl_main(void)
@@ -26,9 +28,7 @@ static EFI_STATUS EFIAPI csl_main(void)
         return EFI_DEVICE_ERROR;
     };
 
-    struct MemMapprInfo mem_map = getMemMap();
-
-    bootstrappr(mem_map);
+    bootstrappr(getMemMap());
 
     return EFI_SUCCESS;
 };

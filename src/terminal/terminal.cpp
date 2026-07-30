@@ -112,6 +112,22 @@ void vprint(const char* fmt, va_list args)
                 break;
             }
 
+            case 'l':
+                switch (*fmt++) {
+                    case 'u': {
+                        unsigned long n = va_arg(args, unsigned long);
+                        print((uint64_t)n);   // decimal
+                        break;
+                    }
+
+                    case 'x': {
+                        unsigned long n = va_arg(args, unsigned long);
+                        print_hex(n);
+                        break;
+                    }
+                }
+                break;
+
             default:
                 put_char('%');
                 put_char(fmt[-1]); // Unknown specifier

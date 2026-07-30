@@ -28,3 +28,4 @@ extern                      EFI_CONTEXT efi;
 #define ERR_ALLOC_FAILED        2
 #define ERROR_NO_MEMORY         3
 #define ERROR_ALREADY_MAPPED    4
+#define ERROR_INVALID_ARG       5
