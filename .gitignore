@@ -1,3 +1,4 @@
 **/build/
 *.fd
 vcpkg-configuration.json
+gemu.log

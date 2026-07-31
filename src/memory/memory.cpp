@@ -3,6 +3,8 @@
 #include <utils.hpp>
 
 void* mem_alloc(size_t size, EFI_MEMORY_TYPE memory_type) {
+    if (pls_use_malloc_now) { return malloc(size/CSL_PAGE_SIZE); };
+
     EFI_STATUS status;
     void *buffer = NULL;
 
@@ -20,6 +22,9 @@ void* mem_alloc(size_t size, EFI_MEMORY_TYPE memory_type) {
 };
 
 void* alloc_pages(UINTN num_pages, EFI_MEMORY_TYPE memory_type) {
+
+    if (pls_use_malloc_now) { return malloc(num_pages); };
+
     EFI_STATUS status;
     EFI_PHYSICAL_ADDRESS addr = 0;
 

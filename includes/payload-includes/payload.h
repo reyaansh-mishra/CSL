@@ -22,15 +22,14 @@ struct PAYLOAD_REMAP_ADDRS {
 
     enum VIRT_ADDR_PERMISSIONS virtual_addr_permissions;
 
-    bool active;        /* Just-In-Case Check for Bootstrappr to make sure something bad doesnt happen */
+    bool active;        /* Just-In-Case Check to make sure something bad doesnt happen */
 };
+
 
 extern struct PAYLOAD_REMAP_ADDRS   remap_addrs[PAYLOAD_MAX_REMAP_ADDRS];
 extern uint8_t                      remap_addrs_count;
-
 extern uintptr_t                    payload_virtual_entry;
-
-extern bool                         exit_boot_services;
+// extern bool                         exit_boot_services;
 
 /* FUNCTIONS */
 

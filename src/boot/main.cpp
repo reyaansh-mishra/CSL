@@ -4,12 +4,24 @@
  */
 
 #include <utils.hpp>
+#include <Protocol/LoadedImage.h>
+
 
 #ifdef CSL_FAKE_PAYLOAD_TEST
 EFI_STATUS EFIAPI payload_init();
 #endif
 
-BlockAllocator allocator;
+// Loaded Image Protocol GUID
+EFI_GUID gEfiLoadedImageProtocolGuid = 
+    { 0x5B1B31A1, 0x9562, 0x11D2, { 0x8E, 0x3F, 0x00, 0xA0, 0xC9, 0x69, 0x72, 0x3B } };
+
+// Simple Text Output Protocol GUID
+EFI_GUID gEfiSimpleTextOutProtocolGuid = 
+    { 0xD35EE3B1, 0x5775, 0x11D1, { 0x9A, 0x60, 0x00, 0x80, 0xC7, 0x3C, 0x37, 0x19 } };
+
+BlockAllocator  allocator;
+bool            pls_use_malloc_now;
+uintptr_t       payload_virtual_entry;
 
 EFI_CONTEXT efi;
 
@@ -19,6 +31,8 @@ static EFI_STATUS EFIAPI csl_main(void)
     INFO("CSL Version ");
     print(CSL_VERSION);
     print("\n");
+
+    INFO("BASE = %lx, SIZE = %d\n", efi.csl_base, efi.csl_size);
 
     int err = mem_map_init();
     if (err != SUCCESS) {
@@ -42,9 +56,20 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
     };
     #endif
 
+    pls_use_malloc_now = false;
+
     efi.ImageHandle     = ImageHandle;
     efi.SystemTable     = SystemTable;
     efi.BootServices    = efi.SystemTable->BootServices;
+
+    EFI_LOADED_IMAGE_PROTOCOL *LoadedImage;
+
+    EFI_STATUS status = efi.BootServices->OpenProtocol(efi.ImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **)&LoadedImage, ImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+    if (EFI_ERROR(status)) { return status; };
+
+    efi.csl_base = (uintptr_t)LoadedImage->ImageBase;
+    efi.csl_size = round_up(LoadedImage->ImageSize, CSL_PAGE_SIZE);
+
 
     terminal_reset();
     int err = payload_init();
@@ -79,7 +104,8 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
 
 EFI_STATUS EFIAPI payload_init()
 {
-    add_virtual_mapping(2, 0xFF, CSL_PAGE_SIZE*100, NONE);
+    add_virtual_mapping(0x0000, 0xFF000, CSL_PAGE_SIZE*100, NONE);
+    payload_virtual_entry = 0xFFF0000;
 
     return csl_main();
 };

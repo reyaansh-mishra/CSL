@@ -27,3 +27,6 @@ class BlockAllocator {
 extern          BlockAllocator   allocator;
 extern struct   ALLOCD_REGIONS   allocd_regions[512];
 extern size_t                    alloc_regions_ctr;
+
+inline void* malloc(size_t pages)    { return allocator.malloc(pages); };
+inline void mfree(void* ptr)        { allocator.dealloc(ptr); };

@@ -17,10 +17,13 @@ typedef struct {
     EFI_HANDLE          ImageHandle;
     EFI_SYSTEM_TABLE*   SystemTable;
     EFI_BOOT_SERVICES*  BootServices;
+
+    uintptr_t csl_base;
+    uint64_t  csl_size;
 } EFI_CONTEXT;
 
-extern                      EFI_CONTEXT efi;
-
+extern  EFI_CONTEXT efi;
+extern  bool        pls_use_malloc_now;  
 
 /* RETURN CODES */
 #define SUCCESS                 0

@@ -1,5 +1,6 @@
 /* src/mmu/mmu.c */
 #include <utils.hpp>
+#include <payload-includes/payload.h>
 
 #define TTBR_BASE               (uint64_t)&L1_table[0]
 #define MALLOC_MAX_BLOCK_PAGES  100
@@ -12,19 +13,13 @@
 /* GLOBALS */
 /* ----------------------------------------------------------------------- */
 
-enum VIRT_ADDR_PERMISSIONS {
-    NONE        = 1 << 0,   // To be used ONLY FOR INIT. Otherwise will Error out.
-    WRITABLE    = 1 << 1,
-    EXECUTABLE  = 1 << 2,
-};
-
 alignas(4096) Table_Descriptor    L1_table[512];
 
 /* ----------------------------------------------------------------------- */
 /* HELPERS */
 /* ----------------------------------------------------------------------- */
 
-uintptr_t get_bits_from_ptr(uintptr_t ptr, unsigned start_bit, unsigned stop_bit)   /* from Start -> Stop */
+static inline uintptr_t get_bits_from_ptr(uintptr_t ptr, unsigned start_bit, unsigned stop_bit)   /* from Start -> Stop */
 {
     return (ptr >> stop_bit) & ((1ULL << (start_bit - stop_bit + 1)) - 1);
 };
@@ -33,7 +28,7 @@ uintptr_t get_bits_from_ptr(uintptr_t ptr, unsigned start_bit, unsigned stop_bit
 /* CORE FUNCTIONS */
 /* ----------------------------------------------------------------------- */
 
-uintptr_t get_or_create_l2_table(uintptr_t L1_bits)
+static uintptr_t get_or_create_l2_table(uintptr_t L1_bits)
 {
     Table_Descriptor*       current_L1_table = &L1_table[L1_bits];
 
@@ -59,7 +54,7 @@ uintptr_t get_or_create_l2_table(uintptr_t L1_bits)
     return current_L1_table->get_next_level();
 };
 
-uintptr_t get_or_create_l3_table(uintptr_t L2_table_ptr, uintptr_t va)
+static uintptr_t get_or_create_l3_table(uintptr_t L2_table_ptr, uintptr_t va)
 {
     size_t                  L2_index            = get_bits_from_ptr(va, 29, 21);
     Table_Descriptor*       current_L2_table    = &((Table_Descriptor*)L2_table_ptr)[L2_index];
@@ -84,7 +79,7 @@ uintptr_t get_or_create_l3_table(uintptr_t L2_table_ptr, uintptr_t va)
     return current_L2_table->get_next_level();
 };
 
-int setup_l3(uintptr_t L3_leaf, uintptr_t phy_addr, uintptr_t va)
+static int setup_l3(uintptr_t L3_leaf, uintptr_t phy_addr, uintptr_t va)
 {
     size_t              L3_index            = get_bits_from_ptr(va, 20, 12);
     Page_Descriptor*    current_L3_table    = &((Page_Descriptor *)L3_leaf)[L3_index];
@@ -101,7 +96,7 @@ int setup_l3(uintptr_t L3_leaf, uintptr_t phy_addr, uintptr_t va)
     return SUCCESS;
 };
 
-int setup_table_4k(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSIONS permissions)
+static int setup_table_4k(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSIONS permissions)
 {
     // pr_newline();
 
@@ -148,13 +143,13 @@ int setup_table_4k(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSIONS per
     return 0;
 };
 
-void ensure_malloc_exists()
+static void ensure_malloc_exists()
 {
     void* alloc_addr = alloc_pages(MALLOC_MAX_BLOCK_PAGES, EfiLoaderData);
     allocator.init(alloc_addr, MALLOC_MAX_BLOCK_PAGES);
 };
 
-void configure_mmu()
+static void configure_mmu()
 {
 
     ensure_malloc_exists();
@@ -227,13 +222,9 @@ void configure_mmu()
     print_hex((uint64_t)allocator.malloc(1));pr_newline();
 };
 
-
-void setup_tables() {
-    auto map_info = getMemMap();
-    uint8_t* map_buf = (uint8_t*)map_info.memory_map;
-    size_t num_entries = map_info.memory_map_size / map_info.descriptor_size;
-
-    for (size_t i = 0; i < num_entries; i++) {
+static void identity_map_all(struct MemMapprInfo map_info, uint8_t* map_buf, size_t num_entries)
+{
+  for (size_t i = 0; i < num_entries; i++) {
         EFI_MEMORY_DESCRIPTOR* desc = (EFI_MEMORY_DESCRIPTOR*)(map_buf + (i * map_info.descriptor_size));
 
         uintptr_t base = desc->PhysicalStart;
@@ -242,11 +233,34 @@ void setup_tables() {
         // Identity map every physical memory descriptor provided by UEFI
         for (uintptr_t addr = base; addr < base + size; addr += CSL_PAGE_SIZE) {
             setup_table_4k(addr, addr, NONE);
-        }
-    }
+        };
+    };
 
     for (uintptr_t mmio = 0x08000000; mmio < 0x0A000000; mmio += CSL_PAGE_SIZE) {
         setup_table_4k(mmio, mmio, NONE);
-    }
+    };
+};
+
+static void identity_map_payload()
+{
+    INFO("Identity Mapping Payload\n");
+    for (size_t i = 0; i < PAYLOAD_MAX_REMAP_ADDRS; i++) {
+        if (remap_addrs[i].active) {
+            for (size_t size_4096 = 0; size_4096 < remap_addrs[i].size; size_4096 += 4096) {
+                INFO("For Phy Addr: %lx, Virt Addr = %lx, with Size = %lu\n", remap_addrs[i].phy_start_addr+size_4096, remap_addrs[i].virt_start_addr+size_4096, size_4096);
+                setup_table_4k(remap_addrs[i].phy_start_addr + size_4096, remap_addrs[i].virt_start_addr + size_4096, remap_addrs[i].virtual_addr_permissions);
+            };
+        }
+    };
+};
+
+void setup_tables() {
+    auto map_info = getMemMap();
+    uint8_t* map_buf = (uint8_t*)map_info.memory_map;
+    size_t num_entries = map_info.memory_map_size / map_info.descriptor_size;
+
+    identity_map_payload();
+    identity_map_all(map_info, map_buf, num_entries);
+
     configure_mmu();
 };

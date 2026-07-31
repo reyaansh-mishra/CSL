@@ -51,3 +51,7 @@ Date:   Wed Jul 29 20:28:03 2026 +0530
  src/terminal/terminal.cpp                |   16 +-
  15 files changed, 1699 insertions(+), 4231 deletions(-)
 :
+
+---
+
+[31/07/2026 @ 12:23PM]: Payload can now dicate where in virtual addr it wants to be.
