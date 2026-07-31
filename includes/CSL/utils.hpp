@@ -14,11 +14,7 @@ extern "C" inline size_t strlen(const char* str);
 extern EFI_GUID gEfiLoadedImageProtocolGuid;
 extern EFI_GUID gEfiSimpleTextOutProtocolGuid;
 
-
-#ifndef BUILD_FOR_AMD64
 #include <specific-includes/arm64.hpp>
-#endif
-
 
 #include <specific-includes/memory.hpp>
 

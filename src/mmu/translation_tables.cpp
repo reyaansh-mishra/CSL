@@ -153,7 +153,6 @@ static void configure_mmu()
 {
 
     ensure_malloc_exists();
-    
 
     INFO("EXITING BOOT SERVICES!\n");
     efi.BootServices->ExitBootServices(efi.ImageHandle, getMemMap().map_key);
@@ -201,6 +200,7 @@ static void configure_mmu()
     write_tcr(tcr);
     write_ttbr0(TTBR_BASE);
     enable_mmu();
+
 
     uint64_t SCTLR_EL2_VAL;
     __asm__ volatile(

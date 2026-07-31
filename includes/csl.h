@@ -9,7 +9,6 @@
 #define CSL_VERSION             "0.0.1"
 #define CSL_FAKE_PAYLOAD_TEST
 #define CSL_PAGE_SIZE           4096
-// #define BUILD_FOR_AMD64         /* Stubs Out the AMD64-Specific Parts */
 
 #define ASSERT(args)            if (!(args)) { ERR("ASSERT FAILED: "); print(args); pr_newline(); return;}
 
