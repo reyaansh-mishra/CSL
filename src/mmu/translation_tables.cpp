@@ -216,22 +216,15 @@ void configure_mmu()
     );
 
     INFO("Applied Private Translation Tables!\n");
+    void* a;
+    for (size_t i = 0; i < 100; i++) {
+        a = allocator.malloc(1);
+    };
 
-    auto a1 = allocator.malloc(2);
-    auto a2 = allocator.malloc(5);
+    print_hex((uint64_t)a);pr_newline();
 
-    print_hex((uint64_t)a1);pr_newline();
-    print_hex((uint64_t)a2);pr_newline();
-
-    INFO("malloc'd\n");
-
-    allocator.dealloc(a1);
-    allocator.dealloc(a2);
-
-    INFO("DEALLOC'd\n");
-
-    print_hex((uint64_t)allocator.malloc(12));
-    INFO("Alloc'd Again\n");
+    allocator.dealloc(a);
+    print_hex((uint64_t)allocator.malloc(1));pr_newline();
 };
 
 
