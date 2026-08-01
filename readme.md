@@ -1,14 +1,12 @@
 #### Current CSL Version:   0.0.1
 # Common System Loader
 A Personal project for my Low Level Projects
-All multi-byte fields are little-endian.
 AArch64/ARM64 only
 
 ## Target Architecture
 
 - AArch64
-- ARMv8-A (minimum: ARMv8.0-A)
-- Little-endian
+- ARMv8-A
 
 ## Goals:
 1. Prepare a minimal execution environment such that the Payload can begin executing C/C++ code immediately.
@@ -29,19 +27,10 @@ AArch64/ARM64 only
 On entry to the Payload:
 
 - The Payload is provided a BOOT_INFORMATION struct as its entry arg
-- The Payload is **PHYSICALLY** executing from a fixed load address defined by UEFI during boot
-- A valid stack has been established.
-- SP is 16-byte aligned in accordance with the AArch64 Procedure Call Standard.
-- The MMU is enabled using the translation tables constructed by CSL.
-- .bss has been zero-initialized.
-- .data has been initialized.
+- The Payload is **PHYSICALLY** executing from a fixed load address defined by **UEFI** during boot
+- The MMU is enabled using the translation tables constructed by CSL, as defined by Payload (otherwise full identity map).
 - The CPU is executing at EL2 OR EL1 based on Payload-Set config.
 - Interrupts are be disabled.
-
-### Current Limitations
-
-- Payload Address Space Layout Randomization (KASLR) is not implemented.
-- Only little-endian systems are supported.
 
 ## Payload Lifecycle:
 1. csl_bootstrap()  -> Setup Core Runtimes & POST all the EFI System Details to Underlying Subsystems.
@@ -51,11 +40,12 @@ On entry to the Payload:
 
 ## Quick Info on Certain Decisions:
 ### Why are Interrupts ALWAYS Disabled?
-- I categorize CSL + payload_main() is a "critical phase" - payload_main() is still the payload bringing itself up. Its not the full OS.
+- I categorize CSL + payload_main() as a "critical phase" - payload_main() is still the payload bringing itself up. Its not the full OS.
 - "Exception Vectors Exists" != "Safe to Unmask"
 Hence, CSL Should make sure that Interrupts are disabled, even though we may have installed the Exception Vectors.
 
-
+### No AMD64?
+- I wont really be developing for AMD64 on my personal projects. Hence No Support.
 
 ## Protocol Versions for Boot Info Struct
 
