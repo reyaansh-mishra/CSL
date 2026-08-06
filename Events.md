@@ -55,3 +55,39 @@ Date:   Wed Jul 29 20:28:03 2026 +0530
 ---
 
 [31/07/2026 @ 12:23PM]: Payload can now dicate where in virtual addr it wants to be.
+
+---
+
+[06/08/2026 @ 8:41PM]: CSL near v1. Payload can now physically get itself remapped.
+Boot Flow:
+
+```
+UEFI Entry
+    |
+    v
+Initialize MemMappr
+    |
+    v
+Bootstrappr
+    |
+    v
+Build translation tables
+    |
+    v
+Mask interrupts + install vectors
+    |
+    v
+ExitBootServices
+    |
+    v
+Load private TTBR
+    |
+    v
+Enable MMU
+    |
+    v
+Relocate CSL
+    |
+    v
+Jump payload
+```
