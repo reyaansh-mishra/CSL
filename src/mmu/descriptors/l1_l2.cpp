@@ -2,7 +2,7 @@
 
 #include <utils.hpp>
 #define FIRST_ADDR_TABLE_BITS               38
-#define INFORMATIVE_TABLE_ENTRIES_IN_RAW    2 + FIRST_ADDR_TABLE_BITS
+#define INFORMATIVE_TABLE_ENTRIES_IN_RAW    (2 + FIRST_ADDR_TABLE_BITS)
 
 /** INFO: 
  * [63:59]  -> ATTRIBUTES

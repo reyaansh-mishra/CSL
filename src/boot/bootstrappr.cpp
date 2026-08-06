@@ -23,9 +23,9 @@ void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to boo
     print(itr);
     pr_newline();
 
-    if (payload_virtual_entry != 0) {
-        add_virtual_mapping(efi.csl_base, payload_virtual_entry, efi.csl_size, EXECUTABLE);
-    };
+    // if (payload_virtual_entry != 0) {
+    //     add_virtual_mapping(efi.csl_base, payload_virtual_entry, efi.csl_size, EXECUTABLE);
+    // };
 
     INFO("RUN MMU\n");
     setup_tables();

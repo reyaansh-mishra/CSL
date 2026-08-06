@@ -1,3 +1,5 @@
+/* includes/CSL/specific-includes/mmu.hpp */
+
 #pragma once
 #include <csl.h>
 
@@ -18,16 +20,18 @@ class Table_Descriptor {
 
 class Page_Descriptor {
     public:
-        void init();
-        void clear();
-        void set_page_addr(uintptr_t phy_addr);
-        void set_valid(bool);
-        bool is_valid() const;
-        void validate();        // One-Shot
+        void        init();
+        void        clear();
+        void        set_valid(bool);
+        bool        is_valid() const;
+        void        validate(struct L3_Page_Descriptor_Info table, uintptr_t phy_addr);        // One-Shot
 
         uintptr_t get_page_addr();
 
+        void set_mair();
+
     private:
+        void setup_L3_table(struct L3_Page_Descriptor_Info minimal_table_info);
         uint64_t raw = 0;
 };
 

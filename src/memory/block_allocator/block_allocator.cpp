@@ -18,8 +18,6 @@ size_t                  live_alloc_count    = 0;
 
 void BlockAllocator::init(void* block_alloc_addr, size_t max_pages)
 {
-    print("Base: %lx, max_size: %d, max_page_start_addr: %lx\n", (uint64_t)block_alloc_addr, max_pages*CSL_PAGE_SIZE, (uint64_t)block_alloc_addr + max_pages*CSL_PAGE_SIZE);
-
     block.addr      = block_alloc_addr;
     block.max_size  = max_pages*CSL_PAGE_SIZE;
     block.used_size = 0;
@@ -66,7 +64,8 @@ void* BlockAllocator::malloc(size_t page)
         else {
             allocd_regions[free_region].currently_allocd = true;
             live_alloc_count++;
-            return allocd_regions[free_region].base;    // No need to overwrite entries
+            memset(allocd_regions[free_region].base, 0, allocd_regions[free_region].size);
+            return allocd_regions[free_region].base;    // No need to overwrite entries' metadata
         };
     };
 

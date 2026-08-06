@@ -1,4 +1,5 @@
-/* src/mmu/mmu.c */
+/* src/mmu/translation_tables.cpp */
+
 #include <utils.hpp>
 #include <payload-includes/payload.h>
 
@@ -13,7 +14,8 @@
 /* GLOBALS */
 /* ----------------------------------------------------------------------- */
 
-alignas(4096) Table_Descriptor    L1_table[512];
+alignas(4096) Table_Descriptor      L1_table[512];
+size_t                              L3_Leaf_entries;
 
 /* ----------------------------------------------------------------------- */
 /* HELPERS */
@@ -22,6 +24,69 @@ alignas(4096) Table_Descriptor    L1_table[512];
 static inline uintptr_t get_bits_from_ptr(uintptr_t ptr, unsigned start_bit, unsigned stop_bit)   /* from Start -> Stop */
 {
     return (ptr >> stop_bit) & ((1ULL << (start_bit - stop_bit + 1)) - 1);
+};
+
+static void ensure_malloc_exists()
+{
+    void* alloc_addr = alloc_pages(MALLOC_MAX_BLOCK_PAGES, EfiLoaderData);
+    allocator.init(alloc_addr, MALLOC_MAX_BLOCK_PAGES);
+
+    pls_use_malloc_now = true;
+};
+
+static void configure_mmu()
+{
+
+    ensure_malloc_exists();
+
+    INFO("EXITING BOOT SERVICES!\n");
+    efi.BootServices->ExitBootServices(efi.ImageHandle, getMemMap().map_key);
+
+    if (get_current_el() != 2) {
+        ERR("EL NOT AT 2! EXITING!\n");
+        return;
+    };
+
+    mask_FULL();
+    install_vbar();
+
+    INFO("Interrupts Masked and VBARS installed.\n");
+
+
+    uint64_t tcr    = 0;
+    uint64_t T0SZ   = 25;
+    uint64_t TG0    = 0b00;
+    uint64_t PS     = 0b0010;
+    uint64_t ATTR   = 0b0101;
+    uint64_t SH0    = 0b11;
+    for (size_t i = 0; i < 6; i++) {
+        set_bit(tcr, i, get_bit(T0SZ, i));
+    };
+    for (size_t i = 8; i < 12; i++) {
+        set_bit(tcr, i, get_bit(ATTR, i - 8));
+    };
+    for (size_t i = 12; i < 14; i++) {
+        set_bit(tcr, i, get_bit(SH0, i - 12));
+    };
+    for (size_t i = 14; i < 16; i++) {
+        set_bit(tcr, i, get_bit(TG0, i - 14));
+    };
+    for (size_t i = 16; i < 20; i++) {
+        set_bit(tcr, i, get_bit(PS, i - 16));
+    };
+
+    uint64_t mair_val = 
+        ((uint64_t)MAIR_ATTR_DEVICE_nGnRnE  << (0 * 8)) |  // Index 0
+        ((uint64_t)MAIR_ATTR_NORMAL_NOCACHE << (1 * 8)) |  // Index 1
+        ((uint64_t)MAIR_ATTR_NORMAL_WB      << (2 * 8));   // Index 2
+
+    disable_mmu();
+    write_mair(mair_val);
+    write_tcr(tcr);
+    write_ttbr0(TTBR_BASE);
+    enable_mmu();
+
+    INFO("Applied Private Translation Tables!\n");
 };
 
 /* ----------------------------------------------------------------------- */
@@ -79,29 +144,54 @@ static uintptr_t get_or_create_l3_table(uintptr_t L2_table_ptr, uintptr_t va)
     return current_L2_table->get_next_level();
 };
 
-static int setup_l3(uintptr_t L3_leaf, uintptr_t phy_addr, uintptr_t va)
+static struct L3_Page_Descriptor_Info set_l3_perms(enum VIRT_ADDR_PERMISSIONS permissions)
+{
+    help_me_build_page_entry table;
+
+    table.set_default_values();
+
+    if ((permissions & READ_ONLY) != 0) {
+        table.set_exec(EXEC_UNAVAIL);
+    };
+
+    if ((permissions & EXECUTABLE) != 0) {
+        table.set_exec(EXEC_AVAIL);
+    } else {
+        table.set_exec(EXEC_UNAVAIL);
+    };
+
+    if ((permissions & WRITABLE) != 0) {
+        table.set_rw_perms(EL2_RW);
+    } else {
+        table.set_rw_perms(EL2_RO);
+    };
+    return table.get();
+};
+
+static int setup_l3(uintptr_t L3_leaf, uintptr_t phy_addr, uintptr_t va, enum VIRT_ADDR_PERMISSIONS permissions)
 {
     size_t              L3_index            = get_bits_from_ptr(va, 20, 12);
     Page_Descriptor*    current_L3_table    = &((Page_Descriptor *)L3_leaf)[L3_index];
 
     if (current_L3_table->is_valid()) {
-        INFO("L3 Exists\n");
+        INFO("L3 Exists, phy_addr = %lx, to = %lx\n", phy_addr, current_L3_table->get_page_addr());
         return SUCCESS;
     };
 
+    auto table = set_l3_perms(permissions);
+
     current_L3_table->init();
-    current_L3_table->set_page_addr(phy_addr);
-    current_L3_table->validate();               /* COMMIT */
+    current_L3_table->validate(table, phy_addr);    /* COMMIT */
+    L3_Leaf_entries++;
 
     return SUCCESS;
 };
 
 static int setup_table_4k(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSIONS permissions)
 {
-    // pr_newline();
 
-    // INFO("setup_table_4k: phy: ");print_hex(phy);pr_newline();
-    // INFO("setup_table_4k: virt: ");print_hex(virt);pr_newline();
+    ASSERT((phy & 0xFFF) == 0);
+    ASSERT((virt & 0xFFF) == 0);
 
     /* Get L1 Table */
     uintptr_t L1_bits = get_bits_from_ptr(virt, 38, 30);
@@ -132,7 +222,7 @@ static int setup_table_4k(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSI
 
     // INFO("setup_table_4k: run setup_l3\n");
 
-    int err = setup_l3(L3_leaf, phy, virt);
+    int err = setup_l3(L3_leaf, phy, virt, permissions);
     if (err) {
         ERR("setup_table_4k: Error_In_L3: ");
         print(err);
@@ -143,88 +233,28 @@ static int setup_table_4k(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSI
     return 0;
 };
 
-static void ensure_malloc_exists()
-{
-    void* alloc_addr = alloc_pages(MALLOC_MAX_BLOCK_PAGES, EfiLoaderData);
-    allocator.init(alloc_addr, MALLOC_MAX_BLOCK_PAGES);
-};
-
-static void configure_mmu()
-{
-
-    ensure_malloc_exists();
-
-    INFO("EXITING BOOT SERVICES!\n");
-    efi.BootServices->ExitBootServices(efi.ImageHandle, getMemMap().map_key);
-
-    if (get_current_el() != 2) {
-        ERR("EL NOT AT 2! EXITING!\n");
-        return;
-    };
-
-    mask_FULL();
-    install_vbar();
-
-    INFO("Interrupts Masked and VBARS installed.\n");
-
-
-    uint64_t tcr    = 0;
-    uint64_t T0SZ   = 25;
-    uint64_t TG0    = 0b00;
-    uint64_t PS     = 0b0010;
-    uint64_t ATTR   = 0b0101;
-    uint64_t SH0    = 0b11;
-    for (size_t i = 0; i < 6; i++) {
-        set_bit(tcr, i, get_bit(T0SZ, i));
-    };
-    for (size_t i = 8; i < 12; i++) {
-        set_bit(tcr, i, get_bit(ATTR, i - 8));
-    };
-    for (size_t i = 12; i < 14; i++) {
-        set_bit(tcr, i, get_bit(SH0, i - 12));
-    };
-    for (size_t i = 14; i < 16; i++) {
-        set_bit(tcr, i, get_bit(TG0, i - 14));
-    };
-    for (size_t i = 16; i < 20; i++) {
-        set_bit(tcr, i, get_bit(PS, i - 16));
-    };
-
-    uint64_t mair_val = 
-        ((uint64_t)MAIR_ATTR_DEVICE_nGnRnE  << (0 * 8)) |  // Index 0
-        ((uint64_t)MAIR_ATTR_NORMAL_NOCACHE << (1 * 8)) |  // Index 1
-        ((uint64_t)MAIR_ATTR_NORMAL_WB      << (2 * 8));   // Index 2
-
-    disable_mmu();
-    write_mair(mair_val);
-    write_tcr(tcr);
-    write_ttbr0(TTBR_BASE);
-    enable_mmu();
-
-
-    uint64_t SCTLR_EL2_VAL;
-    __asm__ volatile(
-        "msr SCTLR_EL2, x0"
-        : "=r" (SCTLR_EL2_VAL)
-        :
-        :
-    );
-
-    INFO("Applied Private Translation Tables!\n");
-    void* a;
-    for (size_t i = 0; i < 100; i++) {
-        a = allocator.malloc(1);
-    };
-
-    print_hex((uint64_t)a);pr_newline();
-
-    allocator.dealloc(a);
-    print_hex((uint64_t)allocator.malloc(1));pr_newline();
-};
-
 static void identity_map_all(struct MemMapprInfo map_info, uint8_t* map_buf, size_t num_entries)
 {
-  for (size_t i = 0; i < num_entries; i++) {
+    INFO("Identity Mapping CSL!\n");
+    for (uintptr_t cursor_4k = efi.csl_base; cursor_4k < efi.csl_base + efi.csl_size; cursor_4k += CSL_PAGE_SIZE) {
+        int err = setup_table_4k(cursor_4k, cursor_4k, EXECUTABLE);
+        if (err) {
+            ERR("ERROR: setup_table_4k, %lu", err);
+            return;
+        };
+    };
+
+    INFO("Identity Mapping MMIO!\n");
+    for (uintptr_t mmio = 0x08000000; mmio < 0x0A000000; mmio += CSL_PAGE_SIZE) {
+        int err = setup_table_4k(mmio, mmio, WRITABLE);
+        if (err) {
+            ERR("ERROR: setup_table_4k, %lu", err);
+            return;
+        };
+    };
+
+    INFO("Identity Mapping Rest of UEFI RAM!\n");
+    for (size_t i = 0; i < num_entries; i++) {
         EFI_MEMORY_DESCRIPTOR* desc = (EFI_MEMORY_DESCRIPTOR*)(map_buf + (i * map_info.descriptor_size));
 
         uintptr_t base = desc->PhysicalStart;
@@ -232,12 +262,12 @@ static void identity_map_all(struct MemMapprInfo map_info, uint8_t* map_buf, siz
 
         // Identity map every physical memory descriptor provided by UEFI
         for (uintptr_t addr = base; addr < base + size; addr += CSL_PAGE_SIZE) {
-            setup_table_4k(addr, addr, NONE);
+            int err = setup_table_4k(addr, addr, (enum VIRT_ADDR_PERMISSIONS)(EXECUTABLE | WRITABLE));
+            if (err) {
+                ERR("ERROR: setup_table_4k, %lu", err);
+                return;
+            };
         };
-    };
-
-    for (uintptr_t mmio = 0x08000000; mmio < 0x0A000000; mmio += CSL_PAGE_SIZE) {
-        setup_table_4k(mmio, mmio, NONE);
     };
 };
 
@@ -248,7 +278,11 @@ static void identity_map_payload()
         if (remap_addrs[i].active) {
             for (size_t size_4096 = 0; size_4096 < remap_addrs[i].size; size_4096 += 4096) {
                 INFO("For Phy Addr: %lx, Virt Addr = %lx, with Size = %lu\n", remap_addrs[i].phy_start_addr+size_4096, remap_addrs[i].virt_start_addr+size_4096, size_4096);
-                setup_table_4k(remap_addrs[i].phy_start_addr + size_4096, remap_addrs[i].virt_start_addr + size_4096, remap_addrs[i].virtual_addr_permissions);
+                int err = setup_table_4k(remap_addrs[i].phy_start_addr + size_4096, remap_addrs[i].virt_start_addr + size_4096, remap_addrs[i].virtual_addr_permissions);
+                if (err) {
+                    ERR("ERROR: setup_table_4k, %lu", err);
+                    return;
+                };
             };
         }
     };
@@ -262,5 +296,13 @@ void setup_tables() {
     identity_map_payload();
     identity_map_all(map_info, map_buf, num_entries);
 
+    INFO("IDENTITY MAPPING COMPLETE!\n");
+
     configure_mmu();
+    unmask_interrupts();
+    // INFO("L3 Descriptors Used: %d, Current MAX: %lu\n", L3_Leaf_entries, MAX_L3_DESCRIPTORS);
+
+    // volatile uint64_t *ptr = (uint64_t *)0x40000000;
+    // uint64_t x = *ptr; // should work
+    // *ptr = 1234;       // should fault
 };

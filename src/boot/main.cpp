@@ -59,6 +59,7 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
     efi.ImageHandle     = ImageHandle;
     efi.SystemTable     = SystemTable;
     efi.BootServices    = efi.SystemTable->BootServices;
+    payload_virtual_entry = 0;
 
     EFI_LOADED_IMAGE_PROTOCOL *LoadedImage;
 
@@ -97,9 +98,7 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
 
 EFI_STATUS EFIAPI payload_init()
 {
-    add_virtual_mapping(0x0000, 0xFF000, CSL_PAGE_SIZE*100, NONE);
-    payload_virtual_entry = 0xFFF0000;
-
+    // add_virtual_mapping(0x0000, 0xFF000, CSL_PAGE_SIZE*100, READ_ONLY);
     return csl_main();
 };
 

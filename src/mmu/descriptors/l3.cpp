@@ -4,20 +4,6 @@
 #define PHY_PAGE_ADDR_TOP   49
 #define PHY_PAGE_ADDR_BOT   12
 
-/** INFO: 
- * [63:59]  -> PAGE BASED HWD ATTRIBUTES
- * [58:55]  -> SOFTWARE DEFINED FLAGS (IGNORED)
- * [54]     -> UXN              — Unprivileged Execute Never (EL0 cannot execute)
- * [53]     -> PXN              — Privileged Execute Never (EL1 cannot execute)
- * [52]     -> CONTIGUOUS HINT  — TLB can merge contiguous entries  (IGNORE)
- * [49:12]  -> PHYSICAL PAGE ADDR (from addr -> [49:12])
- * [11:10]  -> SET TO 1 (Access Flag && Not-Global)
- * [9:8]    -> Shareability (from addr -> [1:0])
- * [7:5]    -> SET TO 0 (Access Permissions && Non-Secure)
- * [1]      -> TYPE (set 1)
- * [0]      -> VALIDITY
- */
-
 /* ----------------------------------------------------------------------- */
 /* HELPERS */
 /* ----------------------------------------------------------------------- */
@@ -29,9 +15,20 @@ bool Page_Descriptor::is_valid() const
 
 void Page_Descriptor::clear() { raw = 0; };
 
-void Page_Descriptor::validate()    // One-shot
+void Page_Descriptor::setup_L3_table(struct L3_Page_Descriptor_Info minimal_table_info)
 {
-    set_bit(raw, 0, 1);
+    raw |= 
+          (minimal_table_info.mair_index_info << 2)
+        | (minimal_table_info.rw_info  << 6)   // AP[2], RO bit
+        | (minimal_table_info.share_info << 8)
+        | (minimal_table_info.access_info << 10)
+        | (minimal_table_info.ng_info << 11)
+        | (minimal_table_info.gp_info << 50)
+        | (minimal_table_info.dbm_info << 51)
+        | (minimal_table_info.contiguous_info << 52)
+        | (minimal_table_info.priv_exec_info << 53)
+        | (minimal_table_info.exec_info << 54)
+        | (0 << 5);   // NS, RES0, Explicit
 };
 
 void Page_Descriptor::set_valid(bool state)
@@ -47,18 +44,34 @@ void Page_Descriptor::set_valid(bool state)
 void Page_Descriptor::init()
 {
     raw = 0;
-
-    for (size_t i = 10; i < 12; i++)    { set_bit(raw, i, 1); };
-    for (size_t i = 5; i < 8; i++)      { set_bit(raw, i, 0); };
-
-    set_bit(raw, 1, 1);
 };
 
-void Page_Descriptor::set_page_addr(uintptr_t phy_addr)
+void Page_Descriptor::validate(struct L3_Page_Descriptor_Info table, uintptr_t phy_addr)    // One-shot
 {
+
     ASSERT((phy_addr & 0xFFF) == 0);
+
+    raw = 0;
+
+    set_bit(raw,0,1);
+    set_bit(raw,1,1);
+    // for (size_t i = 10; i < 12; i++)  { set_bit(raw, i, 1); };
+    // for (size_t i = 5;  i < 8; i++)   { set_bit(raw, i, 0); };
 
     for (size_t i = PHY_PAGE_ADDR_BOT; i < PHY_PAGE_ADDR_TOP+1; i++) { // Include PHY_PAGE_ADDR_TOP.
         set_bit(raw, i, get_bit(phy_addr, i));
     };
+
+    setup_L3_table(table);
 };
+
+uintptr_t Page_Descriptor::get_page_addr()
+{
+    uintptr_t final = 0;
+
+    for (size_t i = PHY_PAGE_ADDR_BOT; i < PHY_PAGE_ADDR_TOP+1; i++) {
+        set_bit(final, i, get_bit(raw, i));
+    };
+
+    return final;
+}; 

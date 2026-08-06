@@ -9,7 +9,7 @@
 #define PAYLOAD_MAX_REMAP_ADDRS 32
 
 enum VIRT_ADDR_PERMISSIONS {
-    NONE        = 1 << 0,   /* To be used ONLY FOR INIT. Otherwise will Error out if active == true. */
+    READ_ONLY   = 1 << 0,   /* To be used ONLY FOR INIT. Otherwise will Error out if active == true. */
     WRITABLE    = 1 << 1,
     EXECUTABLE  = 1 << 2,
 };

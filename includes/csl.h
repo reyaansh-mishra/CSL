@@ -9,8 +9,9 @@
 #define CSL_VERSION             "0.0.1"
 #define CSL_FAKE_PAYLOAD_TEST
 #define CSL_PAGE_SIZE           4096
+#define MAX_L3_DESCRIPTORS      UINT16_MAX
 
-#define ASSERT(args)            if (!(args)) { ERR("ASSERT FAILED: "); print(args); pr_newline(); return;}
+#define ASSERT(args)            if (!(args)) { ERR("ASSERT FAILED: "); print(args); pr_newline();}
 
 typedef struct {
     EFI_HANDLE          ImageHandle;

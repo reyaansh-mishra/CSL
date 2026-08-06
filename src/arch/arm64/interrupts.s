@@ -1,6 +1,6 @@
 .section .text
 .global mask_interrupts
-// .global unmask_interrupts
+.global unmask_interrupts
 .global mask_FULL
 
 mask_interrupts:
@@ -9,9 +9,10 @@ mask_interrupts:
     isb
     ret
 
-// unmask_interrupts:
-//     msr     daifclr, #3       // Clears both 'I' and 'F' bits
-//     ret
+unmask_interrupts:
+    msr daifclr, #0xf
+    isb
+    ret
 
 mask_FULL:
     msr daifset, #0xf  /* Masks Debug, SError, IRQ, and FIQ */

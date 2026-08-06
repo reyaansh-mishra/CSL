@@ -100,15 +100,14 @@ void vprint(const char* fmt, va_list args)
 
             case 'x': {
                 unsigned n = va_arg(args, unsigned);
-                print((uint64_t)n);      // TODO
+                print_hex((uint64_t)n);      // TODO
                 break;
             }
 
-            case 'p': {
+            case 'p':
+            {
                 void *p = va_arg(args, void *);
-                print((uintptr_t)p);
-                efi_print("0x");
-                print(p);      // TODO
+                print_hex((uintptr_t)p);
                 break;
             }
 
@@ -122,7 +121,7 @@ void vprint(const char* fmt, va_list args)
 
                     case 'x': {
                         unsigned long n = va_arg(args, unsigned long);
-                        print_hex(n);
+                        print_hex((uint64_t)n);
                         break;
                     }
                 }
@@ -192,7 +191,7 @@ void print_hex(const uint64_t val) {
 
 /* DUMP YAY */
 
-extern "C" void exception_dump(uint64_t esr, uint64_t far, uint64_t elr, uint64_t spsr, uint64_t exception) {
+extern "C" void exception_dump(uint64_t esr, uint64_t far, uint64_t elr, uint64_t spsr, uint64_t* regs) {
     ERR("Unhandled Exception Caught!\n");
     print("ESR: "); print_hex(esr); pr_newline();
     print("FAR: "); print_hex(far); pr_newline();

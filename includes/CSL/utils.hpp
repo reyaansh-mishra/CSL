@@ -32,3 +32,5 @@ inline uint64_t round_up(uint64_t num, uint64_t to_multiple_of)
 
     return ( ( (num + (to_multiple_of-1))/to_multiple_of) * to_multiple_of);
 };
+
+#include <specific-includes/page_descriptor_helper.hpp>

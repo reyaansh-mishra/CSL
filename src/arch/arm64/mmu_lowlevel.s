@@ -1,4 +1,4 @@
-/* src/arch/arm64/mmu.s */
+/* src/arch/arm64/mmu_lowlevel.s */
 
 .section .text
 .global write_mair
