@@ -89,3 +89,33 @@ extern "C" void* memmove(void* dest, const void* src, size_t n) {
 bool is1GbAligned(uintptr_t ramBase) {
     return (ramBase & 0x3FFFFFFF) == 0;
 };
+
+void move_csl_to_addr(uintptr_t last_addr)
+{
+    INFO("Died in memcpy..?\n");
+    memcpy((void*)last_addr, (void*)efi.csl_base, efi.csl_size);
+
+
+    uintptr_t offset = (uintptr_t)&csl_continue_if_needed - efi.csl_base;
+
+    INFO("Died in br..? EXTRA INFO: last_addr = %lx, offset = %lx\n", last_addr, offset);
+    // print("Type = ");
+    // print((uint64_t)LAST_SAFE_DESC->Type);
+
+    // print("Start = ");
+    // print_hex((uintptr_t)LAST_SAFE_DESC->PhysicalStart);
+
+    // print("Pages = ");
+    // print((uint64_t)LAST_SAFE_DESC->NumberOfPages);
+
+    efi.csl_base = last_addr;
+    __asm__ volatile("dsb sy");
+    __asm__ volatile("isb");
+    __asm__ volatile(
+        "br %0"
+        :
+        : "r"(last_addr + offset)
+        : "memory"
+    );
+    __builtin_unreachable();
+};

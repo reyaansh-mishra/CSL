@@ -29,8 +29,9 @@ struct PAYLOAD_REMAP_ADDRS {
 extern struct PAYLOAD_REMAP_ADDRS   remap_addrs[PAYLOAD_MAX_REMAP_ADDRS];
 extern uint8_t                      remap_addrs_count;
 extern uintptr_t                    payload_virtual_entry;
-// extern bool                         exit_boot_services;
+extern bool                         payload_reloc_physically;
 
 /* FUNCTIONS */
 
 void add_virtual_mapping(uintptr_t phy_start_addr, uintptr_t virt_start_addr, size_t size, enum VIRT_ADDR_PERMISSIONS permissions);
+void payload_main();

@@ -22,6 +22,8 @@ EFI_GUID gEfiSimpleTextOutProtocolGuid =
 BlockAllocator  allocator;
 bool            pls_use_malloc_now;
 uintptr_t       payload_virtual_entry;
+bool            payload_reloc_physically;
+
 
 EFI_CONTEXT efi;
 
@@ -56,10 +58,11 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
 
     pls_use_malloc_now = false;
 
-    efi.ImageHandle     = ImageHandle;
-    efi.SystemTable     = SystemTable;
-    efi.BootServices    = efi.SystemTable->BootServices;
-    payload_virtual_entry = 0;
+    efi.ImageHandle         = ImageHandle;
+    efi.SystemTable         = SystemTable;
+    efi.BootServices        = efi.SystemTable->BootServices;
+    payload_virtual_entry   = 0;
+    payload_reloc_physically= false;
 
     EFI_LOADED_IMAGE_PROTOCOL *LoadedImage;
 
@@ -99,6 +102,7 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
 EFI_STATUS EFIAPI payload_init()
 {
     // add_virtual_mapping(0x0000, 0xFF000, CSL_PAGE_SIZE*100, READ_ONLY);
+    payload_reloc_physically = true;
     return csl_main();
 };
 

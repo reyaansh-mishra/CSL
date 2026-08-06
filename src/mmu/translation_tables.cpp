@@ -184,6 +184,9 @@ static int setup_l3(uintptr_t L3_leaf, uintptr_t phy_addr, uintptr_t va, enum VI
     current_L3_table->validate(table, phy_addr);    /* COMMIT */
     L3_Leaf_entries++;
 
+    if (L3_leaf == 0x7FFF0000) {INFO("FOUND MY L3!\n");};
+    if (va == 0x7FFF0000) {INFO("FOUND MY Virt L3!\n");};
+
     return SUCCESS;
 };
 
@@ -235,14 +238,14 @@ static int setup_table_4k(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSI
 
 static void identity_map_all(struct MemMapprInfo map_info, uint8_t* map_buf, size_t num_entries)
 {
-    INFO("Identity Mapping CSL!\n");
-    for (uintptr_t cursor_4k = efi.csl_base; cursor_4k < efi.csl_base + efi.csl_size; cursor_4k += CSL_PAGE_SIZE) {
-        int err = setup_table_4k(cursor_4k, cursor_4k, EXECUTABLE);
-        if (err) {
-            ERR("ERROR: setup_table_4k, %lu", err);
-            return;
-        };
-    };
+    // INFO("Identity Mapping CSL!\n");
+    // for (uintptr_t cursor_4k = efi.csl_base; cursor_4k < efi.csl_base + efi.csl_size; cursor_4k += CSL_PAGE_SIZE) {
+    //     int err = setup_table_4k(cursor_4k, cursor_4k, EXECUTABLE);
+    //     if (err) {
+    //         ERR("ERROR: setup_table_4k, %lu", err);
+    //         return;
+    //     };
+    // };
 
     INFO("Identity Mapping MMIO!\n");
     for (uintptr_t mmio = 0x08000000; mmio < 0x0A000000; mmio += CSL_PAGE_SIZE) {
@@ -271,38 +274,50 @@ static void identity_map_all(struct MemMapprInfo map_info, uint8_t* map_buf, siz
     };
 };
 
-static void identity_map_payload()
+void setup_tables()
 {
-    INFO("Identity Mapping Payload\n");
-    for (size_t i = 0; i < PAYLOAD_MAX_REMAP_ADDRS; i++) {
-        if (remap_addrs[i].active) {
-            for (size_t size_4096 = 0; size_4096 < remap_addrs[i].size; size_4096 += 4096) {
-                INFO("For Phy Addr: %lx, Virt Addr = %lx, with Size = %lu\n", remap_addrs[i].phy_start_addr+size_4096, remap_addrs[i].virt_start_addr+size_4096, size_4096);
-                int err = setup_table_4k(remap_addrs[i].phy_start_addr + size_4096, remap_addrs[i].virt_start_addr + size_4096, remap_addrs[i].virtual_addr_permissions);
-                if (err) {
-                    ERR("ERROR: setup_table_4k, %lu", err);
-                    return;
-                };
+    uintptr_t   last_addr                       = efi.csl_base;
+    auto        map_info   = getMemMap();
+    uint8_t*    map_buf                         = (uint8_t*)map_info.memory_map;
+    size_t      num_entries                     = map_info.memory_map_size / map_info.descriptor_size;
+
+    MemMapprInfo            mem_info        = getMemMap();
+    uint8_t*                entry           = (uint8_t *)mem_info.memory_map;
+    uint8_t*                end             = entry + mem_info.memory_map_size; // memory_map_size should be total bytes here
+
+    if (payload_reloc_physically != 0) {
+        while (entry < end) {
+                EFI_MEMORY_DESCRIPTOR *desc = (EFI_MEMORY_DESCRIPTOR *)entry;
+            if ((desc->Type == EfiConventionalMemory) && (desc->NumberOfPages >= (efi.csl_size / CSL_PAGE_SIZE))) {
+                last_addr = desc->PhysicalStart;
             };
+            entry += mem_info.descriptor_size;
+        };
+
+        if (!last_addr) {
+            ERR("No suitable relocation region");
+            return;
         }
     };
-};
+    if (payload_virtual_entry == 0) { payload_virtual_entry = last_addr; };
 
-void setup_tables() {
-    auto map_info = getMemMap();
-    uint8_t* map_buf = (uint8_t*)map_info.memory_map;
-    size_t num_entries = map_info.memory_map_size / map_info.descriptor_size;
-
-    identity_map_payload();
+    size_t pages = (efi.csl_size + CSL_PAGE_SIZE - 1) / CSL_PAGE_SIZE;
+    for (size_t i = 0; i < pages; ++i) {
+        setup_table_4k(
+            last_addr + i * CSL_PAGE_SIZE,
+            payload_virtual_entry + i * CSL_PAGE_SIZE,
+            (enum VIRT_ADDR_PERMISSIONS)(EXECUTABLE | WRITABLE)
+        );
+    }
     identity_map_all(map_info, map_buf, num_entries);
+
+    if (payload_reloc_physically == true) {
+        mask_FULL();
+    };
 
     INFO("IDENTITY MAPPING COMPLETE!\n");
 
     configure_mmu();
+    move_csl_to_addr(last_addr);
     unmask_interrupts();
-    // INFO("L3 Descriptors Used: %d, Current MAX: %lu\n", L3_Leaf_entries, MAX_L3_DESCRIPTORS);
-
-    // volatile uint64_t *ptr = (uint64_t *)0x40000000;
-    // uint64_t x = *ptr; // should work
-    // *ptr = 1234;       // should fault
 };

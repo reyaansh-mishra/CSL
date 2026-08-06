@@ -23,13 +23,20 @@ void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to boo
     print(itr);
     pr_newline();
 
-    // if (payload_virtual_entry != 0) {
-    //     add_virtual_mapping(efi.csl_base, payload_virtual_entry, efi.csl_size, EXECUTABLE);
-    // };
-
     INFO("RUN MMU\n");
     setup_tables();
     
     payload_main();
     return;
 };
+
+extern "C" [[noreturn]] void csl_continue_if_needed()
+{   
+    payload_main();
+
+    ERR("PAYLOAD RETURNED! BUSY LOOPING!\n");
+        while (true) {
+        __asm__ volatile("wfi");
+    };
+};
+
