@@ -1,10 +1,12 @@
 /* src/memory/MemMappr.cpp */
 
 #include <utils.hpp>
+#include <memory.h>
+#include <terminal.h>
 #include <payload-includes/payload.h>
 
-PAYLOAD_REMAP_ADDRS remap_addrs[PAYLOAD_MAX_REMAP_ADDRS] = {};
-uint8_t             remap_addrs_count = 0;
+struct PAYLOAD_REMAP_ADDRS  remap_addrs[PAYLOAD_MAX_REMAP_ADDRS] = {};
+uint8_t                     remap_addrs_count = 0;
 
 struct MemMapprInfo MemMapprInfo;
 
@@ -34,7 +36,7 @@ int mem_map_init() {
 
     memory_map_size += 2 * descriptor_size; // pad, common convention
 
-    void* alloc_addr = mem_alloc(memory_map_size);
+    void* alloc_addr = mem_alloc(memory_map_size, EfiLoaderData);
     if (alloc_addr == NULL) {
         ERR("MemMappr: allocation failed\n");
         return -ERR_ALLOC_FAILED;
@@ -50,9 +52,7 @@ int mem_map_init() {
     );
 
     if (EFI_ERROR(status)) {
-        ERR("\n MemMappr.cpp: mem_map_init:     status = efi.SystemTable->BootServices->GetMemoryMap( #2: Failed Alloc with Code: ");
-        print((uint64_t)status);
-        print("\n");
+        ERR("\n MemMappr.cpp: mem_map_init:     status = efi.SystemTable->BootServices->GetMemoryMap( #2: Failed Alloc with Code: %lu\n", status);
         return -ERR_ALLOC_FAILED;
     };
 
@@ -84,7 +84,7 @@ void add_virtual_mapping(uintptr_t phy_start_addr, uintptr_t virt_start_addr, si
     }
 
 
-    PAYLOAD_REMAP_ADDRS* remap_addr         = &remap_addrs[remap_addrs_count];
+    struct PAYLOAD_REMAP_ADDRS* remap_addr  = &remap_addrs[remap_addrs_count];
     remap_addr->phy_start_addr              = phy_start_addr;
     remap_addr->virt_start_addr             = virt_start_addr;
     remap_addr->size                        = size;

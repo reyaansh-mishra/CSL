@@ -1,6 +1,14 @@
 /* src/memory/memory.cpp */
 
+extern "C" {
+    #include <terminal.h>
+    #include <memory.h>
+};
+
 #include <utils.hpp>
+#include <block_allocator.hpp>
+#include <bootstrappr.hpp>
+
 
 void* mem_alloc(size_t size, EFI_MEMORY_TYPE memory_type) {
     if (pls_use_malloc_now) { return malloc(size/CSL_PAGE_SIZE); };
@@ -36,9 +44,7 @@ void* alloc_pages(UINTN num_pages, EFI_MEMORY_TYPE memory_type) {
     );
 
     if (EFI_ERROR(status)) {
-        ERR("memory.cpp: alloc_pages: AllocatePages failed with Code: ");
-        print_hex(status);
-        print("\n");
+        ERR("memory.cpp: alloc_pages: AllocatePages failed with Code: %lx\n", status);
         return NULL;
     }
 
@@ -58,7 +64,7 @@ void* alloc_page() {
     return page;
 };
 
-extern "C" void* memcpy(void* dest, const void* src, size_t n) {
+void* memcpy(void* dest, const void* src, size_t n) {
     uint8_t* d = (uint8_t*)dest;
     const uint8_t* s = (const uint8_t*)src;
     for (size_t i = 0; i < n; i++) {
@@ -67,7 +73,7 @@ extern "C" void* memcpy(void* dest, const void* src, size_t n) {
     return dest;
 }
 
-extern "C" void* memset(void* dest, int val, size_t n) {
+void* memset(void* dest, int val, size_t n) {
     uint8_t* d = (uint8_t*)dest;
     for (size_t i = 0; i < n; i++) {
         d[i] = (uint8_t)val;
@@ -75,7 +81,7 @@ extern "C" void* memset(void* dest, int val, size_t n) {
     return dest;
 }
 
-extern "C" void* memmove(void* dest, const void* src, size_t n) {
+void* memmove(void* dest, const void* src, size_t n) {
     uint8_t* d = (uint8_t*)dest;
     const uint8_t* s = (const uint8_t*)src;
     if (d < s) {

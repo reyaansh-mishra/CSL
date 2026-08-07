@@ -1,6 +1,11 @@
 /* src/mmu/descriptors/l1_l2.cpp */
 
 #include <utils.hpp>
+#include <mmu.hpp>
+#include <page_descriptor_helper.hpp>
+#include <terminal.h>
+#include <page_descriptor_helper.hpp>
+
 #define FIRST_ADDR_TABLE_BITS               38
 #define INFORMATIVE_TABLE_ENTRIES_IN_RAW    (2 + FIRST_ADDR_TABLE_BITS)
 
@@ -37,7 +42,6 @@ void Table_Descriptor::validate()    // One-shot
 void Table_Descriptor::set_valid(bool state)
 {
     set_bit(raw, 0, state);
-
 };
 
 /* ----------------------------------------------------------------------- */

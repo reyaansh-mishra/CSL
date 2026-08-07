@@ -3,7 +3,15 @@
  * ENTRY FILE 
  */
 
+extern "C" {
+    #include <arm64.h>
+    #include <terminal.h>
+    #include <memory.h>
+};
+
 #include <utils.hpp>
+#include <block_allocator.hpp>
+#include <bootstrappr.hpp>
 #include <Protocol/LoadedImage.h>
 
 
@@ -21,8 +29,8 @@ EFI_GUID gEfiSimpleTextOutProtocolGuid =
 
 BlockAllocator  allocator;
 bool            pls_use_malloc_now;
-uintptr_t       payload_virtual_entry;
-uint64_t        payload_reloc_physically;
+extern "C" uintptr_t       payload_virtual_entry    = 0;
+extern "C" uint64_t        payload_reloc_physically = 0;
 
 
 EFI_CONTEXT efi;
@@ -40,8 +48,7 @@ static EFI_STATUS EFIAPI csl_main(void)
 
     int err = mem_map_init();
     if (err != SUCCESS) {
-        ERR("csl_main: FAILED mem_map_init WITH ERR: ");
-        print(err);
+        ERR("csl_main: FAILED mem_map_init WITH ERR: %lu\n", err);
 
         return EFI_DEVICE_ERROR;
     };
@@ -63,8 +70,6 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
     efi.ImageHandle             = ImageHandle;
     efi.SystemTable             = SystemTable;
     efi.BootServices            = efi.SystemTable->BootServices;
-    payload_virtual_entry       = 0;
-    payload_reloc_physically    = false;
 
     EFI_LOADED_IMAGE_PROTOCOL *LoadedImage;
 
@@ -79,10 +84,7 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
     int err = payload_init();
 
     if (err != EFI_SUCCESS) {
-        ERR("CSL_BOOT_STUB: Unable to conitnue, Err: ");
-        print(err);
-        print("\n");
-
+        ERR("CSL_BOOT_STUB: Unable to conitnue, Err: %lu\n", err);
         return err;
     };
 
@@ -96,8 +98,9 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
 /* Current CSL TEST Builds */
 
 #ifdef CSL_FAKE_PAYLOAD_TEST
-
-#include <payload-includes/payload.h>
+extern "C" {
+    #include <payload-includes/payload.h>
+};
 #undef  INFO
 #define INFO(string) print("[PAYLOAD]: %s", string)
 
@@ -108,7 +111,7 @@ EFI_STATUS EFIAPI payload_init()
     return csl_main();
 };
 
-void payload_main(struct PAYLOAD_BOOT_INFO boot_struct) {
+extern "C" void payload_main(struct PAYLOAD_BOOT_INFO boot_struct) {
     print("We live to see another day......\n");
     INFO("PAYLOAD START\n");
 

@@ -1,5 +1,5 @@
 /* includes/CSL/specific-includes/page_descriptor_helper.hpp */
-
+#pragma once
 #include <csl.h>
 
 /** INFO

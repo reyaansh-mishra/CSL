@@ -1,6 +1,14 @@
 /* src/memory/block_allocator/block_allocator.cpp */
 
+extern "C" {
+    #include <terminal.h>
+    #include <memory.h>
+};
+
 #include <utils.hpp>
+#include <block_allocator.hpp>
+#include <bootstrappr.hpp>
+#include <block_allocator.hpp>
 
 #undef INFO
 #undef ERR

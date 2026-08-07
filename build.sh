@@ -27,6 +27,7 @@ COMMON_FLAGS=(
 
     -Iincludes
     -Iincludes/CSL
+    -Iincludes/CSL/specific-includes
     -Iincludes/uefi-headers
     -Iincludes/uefi-headers/AArch64
 )

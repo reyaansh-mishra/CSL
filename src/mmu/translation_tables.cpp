@@ -1,7 +1,17 @@
 /* src/mmu/translation_tables.cpp */
 
+extern "C" {
+    #include <memory.h>
+    #include <terminal.h>
+    #include <arm64.h>
+    #include <payload-includes/payload.h>
+};
+
 #include <utils.hpp>
-#include <payload-includes/payload.h>
+#include <mmu.hpp>
+#include <block_allocator.hpp>
+#include <page_descriptor_helper.hpp>
+#include <page_descriptor_helper.hpp>
 
 #define TTBR_BASE               (uint64_t)&L1_table[0]
 #define MALLOC_MAX_BLOCK_PAGES  100
@@ -203,9 +213,7 @@ static int setup_table_4k(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSI
 
     auto L2_table = get_or_create_l2_table(L1_bits);
     if (L2_table == ERR_ALLOC_FAILED || L2_table == ERROR_NO_MEMORY || L2_table == ERR_UNKNOWN) {
-        ERR("setup_table_4k: failed with error: ");
-        print(L2_table);
-        pr_newline();
+        ERR("setup_table_4k: failed with error: %lu\n", L2_table);
         return L2_table;
     };
 
@@ -215,9 +223,7 @@ static int setup_table_4k(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSI
 
     auto L3_leaf = get_or_create_l3_table(L2_table, virt);
     if (L3_leaf == ERR_ALLOC_FAILED || L3_leaf == ERROR_NO_MEMORY || L3_leaf == ERR_UNKNOWN || !L3_leaf) {
-        ERR("setup_table_4k: get_or_create_l3_table wailed, err: ");
-        print(L3_leaf);
-        pr_newline();
+        ERR("setup_table_4k: get_or_create_l3_table wailed, err: %lu\n", L3_leaf);
         return L3_leaf;
     };
 
@@ -227,9 +233,7 @@ static int setup_table_4k(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSI
 
     int err = setup_l3(L3_leaf, phy, virt, permissions);
     if (err) {
-        ERR("setup_table_4k: Error_In_L3: ");
-        print(err);
-        pr_newline();
+        ERR("setup_table_4k: Error_In_L3: %lu\n", err);
         return err;
     };
     

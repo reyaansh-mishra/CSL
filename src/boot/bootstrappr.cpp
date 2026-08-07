@@ -1,7 +1,13 @@
 /* src/boot/bootstrappr.cpp */
 
+extern "C" {
+    #include <terminal.h>
+    #include <memory.h>
+    #include <payload-includes/payload.h>
+};
+
+#include <mmu.hpp>
 #include <utils.hpp>
-#include <payload-includes/payload.h>
 
 struct PAYLOAD_BOOT_INFO boot_info;
 
@@ -10,12 +16,13 @@ static void setup_bootinfo() {
     boot_info.ImageSize     = efi.csl_size;
 };
 
-void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to bootstrap the PAYLOAD, not CSL. */
+#undef INFO
+#undef ERR
+#define INFO(fmt, ...)    print("[CSL] <bootstrappr>: " fmt, ##__VA_ARGS__)
+#define ERR(fmt, ...)     print("[ERR] [CSL] <bootstrappr>: " fmt, ##__VA_ARGS__)
 
-    #undef INFO
-    #undef ERR
-    #define INFO(string)    print("[CSL] <bootstrappr>: %s", (string))
-    #define ERR(string)     print("[ERR] [CSL] <bootstrappr>: %s", (string))
+
+void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to bootstrap the PAYLOAD, not CSL. */
 
     size_t itr              = 0;
     uint8_t*    entry       = (uint8_t*)mem_info.memory_map;
@@ -26,10 +33,7 @@ void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to boo
         itr++;
     };
 
-    INFO("Entries: ");
-    print(itr);
-    pr_newline();
-
+    INFO("Entries: %lu", itr);
     INFO("RUN MMU\n");
     setup_tables();
 };

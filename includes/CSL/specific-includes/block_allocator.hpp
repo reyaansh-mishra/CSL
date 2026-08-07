@@ -1,3 +1,4 @@
+#pragma once
 #include <csl.h>
 #define MAX_ALLOC_REGIONS   512
 
