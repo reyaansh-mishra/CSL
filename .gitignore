@@ -2,3 +2,5 @@
 *.fd
 vcpkg-configuration.json
 gemu.log
+qemu.log
+esp/EFI/BOOT/BOOTAA64.efi
