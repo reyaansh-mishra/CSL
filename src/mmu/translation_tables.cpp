@@ -274,34 +274,54 @@ static void identity_map_all(struct MemMapprInfo map_info, uint8_t* map_buf, siz
     };
 };
 
-void setup_tables()
+uintptr_t setup_csl_base()
 {
-    uintptr_t   last_addr                       = efi.csl_base;
-    auto        map_info   = getMemMap();
-    uint8_t*    map_buf                         = (uint8_t*)map_info.memory_map;
-    size_t      num_entries                     = map_info.memory_map_size / map_info.descriptor_size;
-
+    uintptr_t               last_addr       = efi.csl_base;
     MemMapprInfo            mem_info        = getMemMap();
-    uint8_t*                entry           = (uint8_t *)mem_info.memory_map;
-    uint8_t*                end             = entry + mem_info.memory_map_size; // memory_map_size should be total bytes here
+    uint8_t*                entry_incorrect = (uint8_t *)mem_info.memory_map;
+    uint8_t*                end             = entry_incorrect + mem_info.memory_map_size; // memory_map_size should be total bytes here
 
-    if (payload_reloc_physically != 0) {
-        while (entry < end) {
-                EFI_MEMORY_DESCRIPTOR *desc = (EFI_MEMORY_DESCRIPTOR *)entry;
-            if ((desc->Type == EfiConventionalMemory) && (desc->NumberOfPages >= (efi.csl_size / CSL_PAGE_SIZE))) {
-                last_addr = desc->PhysicalStart;
-            };
-            entry += mem_info.descriptor_size;
+    uint8_t*                entry           = nullptr;
+
+    size_t itr = 0;
+
+    INFO("%lx\n", payload_reloc_physically);
+
+    /* STEP 1: Get the nearest CORRECT-SIZED Descriptor */
+    while (entry_incorrect < end) {
+        EFI_MEMORY_DESCRIPTOR *desc = (EFI_MEMORY_DESCRIPTOR *)entry_incorrect;
+        if (payload_reloc_physically >= desc->PhysicalStart &&
+            payload_reloc_physically + efi.csl_size <= (desc->PhysicalStart + (desc->NumberOfPages*CSL_PAGE_SIZE)) &&
+            desc->Type == EfiConventionalMemory)
+        {
+            INFO("FOUND MY ENTRY! itr = %d\n", itr);
+            entry = (uint8_t*)desc;
+            break;
+        };
+        entry_incorrect += mem_info.descriptor_size;
+        itr++;
+    };
+
+    INFO("%d\n", itr);
+
+    /* STEP 2: IF we wanna reloc, set the realoc entry */
+    if ((payload_reloc_physically != 0) && (entry != nullptr)) {
+        EFI_MEMORY_DESCRIPTOR *desc = (EFI_MEMORY_DESCRIPTOR *)entry;
+            
+        if ((desc->Type == EfiConventionalMemory) && (desc->NumberOfPages >= (efi.csl_size / CSL_PAGE_SIZE))) {
+            last_addr = payload_reloc_physically;
         };
 
         if (!last_addr) {
             ERR("No suitable relocation region");
-            return;
-        }
+            return last_addr;
+        };
     };
+
+    /* STEP 3: IF we wanna setup virual map, set it. */
     if (payload_virtual_entry == 0) { payload_virtual_entry = last_addr; };
 
-    size_t pages = (efi.csl_size + CSL_PAGE_SIZE - 1) / CSL_PAGE_SIZE;
+    size_t pages = efi.csl_size/CSL_PAGE_SIZE;  // csl_size is page-aligned
     for (size_t i = 0; i < pages; ++i) {
         setup_table_4k(
             last_addr + i * CSL_PAGE_SIZE,
@@ -309,6 +329,18 @@ void setup_tables()
             (enum VIRT_ADDR_PERMISSIONS)(EXECUTABLE | WRITABLE)
         );
     }
+    return last_addr;
+};
+
+void setup_tables()
+{
+    auto        map_info   = getMemMap();
+    uint8_t*    map_buf                         = (uint8_t*)map_info.memory_map;
+    size_t      num_entries                     = map_info.memory_map_size / map_info.descriptor_size;
+    uintptr_t   last_addr                       = setup_csl_base();
+
+    INFO("%lx\n", last_addr);
+
     identity_map_all(map_info, map_buf, num_entries);
 
     if (payload_reloc_physically == true) {

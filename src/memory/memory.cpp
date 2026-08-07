@@ -99,15 +99,7 @@ void move_csl_to_addr(uintptr_t last_addr)
     uintptr_t offset = (uintptr_t)&csl_continue_if_needed - efi.csl_base;
 
     INFO("Died in br..? EXTRA INFO: last_addr = %lx, offset = %lx\n", last_addr, offset);
-    // print("Type = ");
-    // print((uint64_t)LAST_SAFE_DESC->Type);
-
-    // print("Start = ");
-    // print_hex((uintptr_t)LAST_SAFE_DESC->PhysicalStart);
-
-    // print("Pages = ");
-    // print((uint64_t)LAST_SAFE_DESC->NumberOfPages);
-
+    
     efi.csl_base = last_addr;
     __asm__ volatile("dsb sy");
     __asm__ volatile("isb");

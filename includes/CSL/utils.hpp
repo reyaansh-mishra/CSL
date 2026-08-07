@@ -26,11 +26,14 @@ extern EFI_GUID gEfiSimpleTextOutProtocolGuid;
 
 inline uint64_t round_up(uint64_t num, uint64_t to_multiple_of)
 {
-    if (to_multiple_of == 0)
-        return num; // or panic/assert
+    if (to_multiple_of == 0) return num;
+    return (((num + (to_multiple_of-1))/to_multiple_of) * to_multiple_of);
+};
 
-
-    return ( ( (num + (to_multiple_of-1))/to_multiple_of) * to_multiple_of);
+inline uint64_t round_down(uint64_t num, uint64_t to_multiple_of)
+{
+    if (to_multiple_of == 0) return num;
+    return (num / to_multiple_of) * to_multiple_of;
 };
 
 #include <specific-includes/page_descriptor_helper.hpp>

@@ -29,7 +29,7 @@ struct PAYLOAD_REMAP_ADDRS {
 extern struct PAYLOAD_REMAP_ADDRS   remap_addrs[PAYLOAD_MAX_REMAP_ADDRS];
 extern uint8_t                      remap_addrs_count;
 extern uintptr_t                    payload_virtual_entry;
-extern bool                         payload_reloc_physically;
+extern uint64_t                     payload_reloc_physically;
 
 /* FUNCTIONS */
 
