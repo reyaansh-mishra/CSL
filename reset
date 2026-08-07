@@ -1,0 +1,259 @@
+* [33mcommit 183aa6d46bd53733442f232feecaa9924449d517[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Fri Aug 7 19:04:03 2026 +0530
+[31m|[m 
+[31m|[m     Payload can now ACTUALLY say where it wanna run, not just "suggest"
+[31m|[m 
+* [33mcommit cd492ee35caacc2d22ea372bd41fa9811fcc5b6a[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Fri Aug 7 13:14:42 2026 +0530
+[31m|[m 
+[31m|[m     Added files to .gitignore
+[31m|[m 
+* [33mcommit fb576d1a58e80b6d91c8f83029ab8b5a0c6caa32[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Fri Aug 7 13:13:32 2026 +0530
+[31m|[m 
+[31m|[m     Added files to .gitignore
+[31m|[m 
+* [33mcommit 4f4813be4db39311b62c2b2d4dd541ba498344e8[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Thu Aug 6 21:08:43 2026 +0530
+[31m|[m 
+[31m|[m     Quick Additions to Events.md
+[31m|[m 
+* [33mcommit 34ba1876bb58353cf4b2c89cbcf3272b0e8bdb6d[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Thu Aug 6 20:39:58 2026 +0530
+[31m|[m 
+[31m|[m     CSL NEAR v1 RELEASE. PAYLOAD PHYSICAL REMAPPING WORKS
+[31m|[m 
+* [33mcommit f4e835fd574f7888ada7b9d053969b4fcc20b0dd[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Thu Aug 6 18:30:49 2026 +0530
+[31m|[m 
+[31m|[m     MAYBE Permissions now work :)
+[31m|[m 
+* [33mcommit 3d70b874e5c919ba62fbbda290001ac656824ddf[m
+[31m|[m Author: reyaansh-mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Sat Aug 1 19:37:35 2026 +0530
+[31m|[m 
+[31m|[m     Improved Readme
+[31m|[m     
+[31m|[m     Updated readme to clear up architecture support and goals
+[31m|[m 
+* [33mcommit 66f5a47f96d8d9ac959c7c70abe5a807bc47a3db[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Fri Jul 31 13:04:39 2026 +0530
+[31m|[m 
+[31m|[m     KILLED AMD64 SUPPORT
+[31m|[m 
+* [33mcommit 8eda3be3492356053f4f4c0f43ac21297067beac[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Fri Jul 31 13:03:35 2026 +0530
+[31m|[m 
+[31m|[m     KILLED AMD64 SUPPORT
+[31m|[m 
+* [33mcommit fefe3782cf651cfb4c553a6d288141faa188e43e[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Fri Jul 31 12:24:05 2026 +0530
+[31m|[m 
+[31m|[m     Payload can now dicate where in virtual addr it wants to be.
+[31m|[m 
+* [33mcommit 67fe0dcf916fa8863c1c326dbdb45b3b41dc4382[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Fri Jul 31 09:42:13 2026 +0530
+[31m|[m 
+[31m|[m     Fixed a few Allocator Bugs
+[31m|[m 
+* [33mcommit da1c707be31adf2f0e875d92ef74ab24323da44a[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Thu Jul 30 23:09:39 2026 +0530
+[31m|[m 
+[31m|[m     Dealloc Support
+[31m|[m 
+* [33mcommit 578b91009a36cd968a2a8f8ab34c28f644eb789c[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Thu Jul 30 22:34:28 2026 +0530
+[31m|[m 
+[31m|[m     Added Basic Bump ALLOCATOR (no dealloc)
+[31m|[m 
+* [33mcommit fbbd2b09631db72aa5a53a6e3a0014f36d95d99d[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Wed Jul 29 20:28:03 2026 +0530
+[31m|[m 
+[31m|[m     MMU MIGHT JUST ACTUALLY BE WORKING
+[31m|[m 
+* [33mcommit b7ae024d10143a7069616a2e95901d350933ec0c[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Wed Jul 29 18:37:52 2026 +0530
+[31m|[m 
+[31m|[m     Redid Translation Tables Framework
+[31m|[m 
+* [33mcommit d525dc1b60bdacd42d2736f6dc286772811eedf6[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Thu Jul 23 18:48:28 2026 +0530
+[31m|[m 
+[31m|[m     Known-good pre-MMU baseline
+[31m|[m 
+* [33mcommit 7a3130b81da00c8f55751296bb4f4377b63198e6[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Tue Jul 21 22:09:57 2026 +0530
+[31m|[m 
+[31m|[m     uhmuhm pre shit saving
+[31m|[m 
+* [33mcommit d98e84cae30049ef444a8142cb15ce430fe95a08[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Mon Jul 20 20:04:16 2026 +0530
+[31m|[m 
+[31m|[m     Added File Names In the Files
+[31m|[m 
+* [33mcommit 876dc1e522122b8d3056baba4e9682d4d50e57c4[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Mon Jul 20 18:51:31 2026 +0530
+[31m|[m 
+[31m|[m     Clarified Proto Versions for Boot Info Struct
+[31m|[m 
+* [33mcommit 16d5f36d8951060f8cab01208674853d2b664192[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Mon Jul 20 18:49:10 2026 +0530
+[31m|[m 
+[31m|[m     Added Support for AMD64 Platforms AS A COMPILE ONLY TARGET. AARCH64 IS STILL THE MAIN TARGET.
+[31m|[m 
+* [33mcommit 9a88fd078ea95d012e33989386b5c6c6182fbce3[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Sun Jul 19 21:49:57 2026 +0530
+[31m|[m 
+[31m|[m     Added Err Codes
+[31m|[m 
+* [33mcommit a0daaf20c18b0b46cf86497cd73fdab9b39a6837[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Sun Jul 19 21:17:17 2026 +0530
+[31m|[m 
+[31m|[m     Fix Typos
+[31m|[m 
+* [33mcommit 97116797043a051b2fd17dd9b5a193b6d13ead89[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Sun Jul 19 21:15:11 2026 +0530
+[31m|[m 
+[31m|[m     Upd. readme
+[31m|[m 
+* [33mcommit 9af02b5b487e721407257e980c9cb65163e2eedc[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Sun Jul 19 21:06:04 2026 +0530
+[31m|[m 
+[31m|[m     QOL Improvements - Payload Lifecyle Finalized
+[31m|[m 
+* [33mcommit c74a699a6ca92c9b78a64e54a61fb99f227c5bbb[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Sat Jul 18 21:02:44 2026 +0530
+[31m|[m 
+[31m|[m     Redid File Structure
+[31m|[m 
+* [33mcommit 9817e0ae9e788e523d34f31f6efcf0ca7f6aa263[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Thu Jul 16 22:07:40 2026 +0530
+[31m|[m 
+[31m|[m     Switch to C++
+[31m|[m 
+* [33mcommit fd4fd77dad7cdeac7d597f094c70660f952790b7[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Thu Jul 16 17:40:17 2026 +0530
+[31m|[m 
+[31m|[m     efi_print works, good morning guys new bootloader in town
+[31m|[m 
+* [33mcommit 82d05ff565338a400b7615ff6fd8ebcc948a05a1[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Thu Jul 16 17:39:10 2026 +0530
+[31m|[m 
+[31m|[m     efi_print works, good morning guys new bootloader in town
+[31m|[m 
+* [33mcommit 9dc03df7ac1cd1be33beb542fb33a76367546ef6[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Thu Jul 16 15:12:34 2026 +0530
+[31m|[m 
+[31m|[m     WIP UEFI
+[31m|[m 
+* [33mcommit e7fb608236c8ed455547a6b6e4f78d826e0f06d7[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Sat Jul 11 20:13:36 2026 +0530
+[31m|[m 
+[31m|[m     Removed Build
+[31m|[m 
+* [33mcommit 1e2e0762c6c2eebdced6ff3e005f1ca58f866704[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Sat Jul 11 20:12:50 2026 +0530
+[31m|[m 
+[31m|[m     Removed Build
+[31m|[m 
+* [33mcommit 5bee557938212f8b61b56f503b80de9ff09b02e6[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Sat Jul 11 20:02:40 2026 +0530
+[31m|[m 
+[31m|[m     Fixed Small bugs in utils/print.c
+[31m|[m 
+* [33mcommit 9bf130e8209c85adecae50379643e4a5baf5cc13[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Sat Jul 11 18:58:17 2026 +0530
+[31m|[m 
+[31m|[m     Added Events.md
+[31m|[m 
+* [33mcommit 5646cd1b31ff15cc118cfc63ecd66b22df40b75d[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Sat Jul 11 18:50:06 2026 +0530
+[31m|[m 
+[31m|[m     Added Minimal Build System
+[31m|[m 
+* [33mcommit 0096ebd2023bfb799327ed7c613f3f80eb7fdd04[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Fri Jul 10 21:25:20 2026 +0530
+[31m|[m 
+[31m|[m     Upd. Readme
+[31m|[m 
+* [33mcommit f97c695e0aaa1593abfac4a5b762e75112f30093[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Fri Jul 10 21:23:54 2026 +0530
+[31m|[m 
+[31m|[m     Upd. Readme
+[31m|[m 
+* [33mcommit 131011f6d243dec5ec437a6d8cde16c9b3f30c5e[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Fri Jul 10 21:23:09 2026 +0530
+[31m|[m 
+[31m|[m     Upd. Readme
+[31m|[m 
+* [33mcommit 6a2b17f1a293ad6b57b9e69021f9cf4100b3d57f[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Fri Jul 10 21:21:24 2026 +0530
+[31m|[m 
+[31m|[m     Upd. Readme
+[31m|[m 
+* [33mcommit 12638deceea0eb5ee2b2115ffb4078d8c8377ced[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Fri Jul 10 21:21:06 2026 +0530
+[31m|[m 
+[31m|[m     Upd. Readme
+[31m|[m 
+* [33mcommit c4e63385684daa45a1b9fcc49277e01fb95c2c86[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Fri Jul 10 21:15:00 2026 +0530
+[31m|[m 
+[31m|[m     Upd. Readme
+[31m|[m 
+* [33mcommit 4e120230c2fd1abcfb1bd9650b2b767ce12b8f6c[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Fri Jul 10 21:13:42 2026 +0530
+[31m|[m 
+[31m|[m     Upd. Readme
+[31m|[m 
+* [33mcommit 22c33f3dbadb32e33d008524c5375a86f60790fe[m
+[31m|[m Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+[31m|[m Date:   Fri Jul 10 21:10:02 2026 +0530
+[31m|[m 
+[31m|[m     Upd. Readme
+[31m|[m 
+* [33mcommit 339c51a641b5e25289ebe7c62e0cf03e18668e51[m
+  Author: Reyaansh Mishra <reyaanshmishr2@gmail.com>
+  Date:   Fri Jul 10 20:27:40 2026 +0530
+  
+      Init Commit

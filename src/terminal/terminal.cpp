@@ -88,7 +88,7 @@ void vprint(const char* fmt, va_list args)
 
             case 'd': {
                 int n = va_arg(args, int);
-                print(n);      // TODO
+                print(n);
                 break;
             }
 

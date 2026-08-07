@@ -3,6 +3,13 @@
 #include <utils.hpp>
 #include <payload-includes/payload.h>
 
+struct PAYLOAD_BOOT_INFO boot_info;
+
+static void setup_bootinfo() {
+    boot_info.ImageBase     = efi.csl_base;
+    boot_info.ImageSize     = efi.csl_size;
+};
+
 void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to bootstrap the PAYLOAD, not CSL. */
 
     #undef INFO
@@ -25,14 +32,14 @@ void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to boo
 
     INFO("RUN MMU\n");
     setup_tables();
-    
-    payload_main();
-    return;
 };
 
 extern "C" [[noreturn]] void csl_continue_if_needed()
-{   
-    payload_main();
+{
+    INFO("Setting Up boot_info...\n");
+    setup_bootinfo();
+    
+    payload_main(boot_info);
 
     ERR("PAYLOAD RETURNED! BUSY LOOPING!\n");
         while (true) {

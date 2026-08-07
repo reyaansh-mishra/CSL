@@ -108,9 +108,12 @@ EFI_STATUS EFIAPI payload_init()
     return csl_main();
 };
 
-void payload_main() {
+void payload_main(struct PAYLOAD_BOOT_INFO boot_struct) {
     print("We live to see another day......\n");
     INFO("PAYLOAD START\n");
+
+    INFO("PRINTING BOOT INFO STRUCT:\n");
+    print("ImageBase = %lx, ImageSize = %lu, BootArgs (NOT SUPPORTED YET) = %c\n", boot_struct.ImageBase, boot_struct.ImageSize, boot_struct.BootArgs);
 };
 
 #endif
