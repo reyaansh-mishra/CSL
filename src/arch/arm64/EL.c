@@ -1,6 +1,7 @@
 /* src/arch/arm64/EL.cpp */
 
-#include <utils.hpp>
+#include <utils.h>
+#include <specific-includes/terminal.h>
 
 uint32_t get_current_el(void) {
     uint64_t el_reg;
@@ -12,7 +13,7 @@ uint32_t get_current_el(void) {
     return (uint32_t)(el_reg >> 2);
 };
 
-extern "C" void not_in_el2(void) {
+void not_in_el2(void) {
     ERR("NOT IN EL2. BUSY-LOOPING.");
 
     while (TRUE) {

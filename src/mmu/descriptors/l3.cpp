@@ -1,6 +1,13 @@
 /* src/mmu/descriptors/l3.cpp */
 
 #include <utils.hpp>
+#include <specific-includes/mmu.hpp>
+#include <specific-includes/page_descriptor_helper.hpp>
+
+extern "C" {
+    #include <specific-includes/terminal.h>
+};
+
 #define PHY_PAGE_ADDR_TOP   49
 #define PHY_PAGE_ADDR_BOT   12
 

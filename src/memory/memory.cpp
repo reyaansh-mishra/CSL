@@ -1,6 +1,15 @@
 /* src/memory/memory.cpp */
 
 #include <utils.hpp>
+#include <specific-includes/block_allocator.hpp>
+
+extern "C" {
+    #include <specific-includes/terminal.h>
+    #include <specific-includes/memory.h>
+    #include <specific-includes/bootstrappr.h>
+};
+
+void csl_continue_if_needed();
 
 void* mem_alloc(size_t size, EFI_MEMORY_TYPE memory_type) {
     if (pls_use_malloc_now) { return malloc(size/CSL_PAGE_SIZE); };
@@ -15,6 +24,7 @@ void* mem_alloc(size_t size, EFI_MEMORY_TYPE memory_type) {
     );
 
     if (EFI_ERROR(status)) {
+        ERR("ALLOCATION FAILED. ERR: %lx\n", status);
         return NULL;
     }
 
@@ -36,9 +46,7 @@ void* alloc_pages(UINTN num_pages, EFI_MEMORY_TYPE memory_type) {
     );
 
     if (EFI_ERROR(status)) {
-        ERR("memory.cpp: alloc_pages: AllocatePages failed with Code: ");
-        print_hex(status);
-        print("\n");
+        ERR("memory.cpp: alloc_pages: AllocatePages failed with Code: %lx\n", status);
         return NULL;
     }
 

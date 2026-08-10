@@ -3,6 +3,9 @@
 #include <utils.hpp>
 #include <stdarg.h>
 
+extern "C" {
+    #include <specific-includes/terminal.h>
+};
 
 #define UART0_BASE              0x09000000
 
@@ -47,11 +50,52 @@ static inline void puts_raw(const char *s)  /* NOPE. dump_str_to_uart is canotic
     dump_str_to_uart(s, strlen(s));
 };
 
-void efi_print(const char *str) {
-    size_t string_len = strlen(str);
+void print(uint64_t val) {
+    char buf[24]; // enough for a 64-bit uint + null terminator
+    int i = 22;
+    buf[23] = '\0';
 
-    dump_str_to_uart(str, string_len);
+    if (val == 0) {
+        put_char('0');
+        return;
+    }
+
+    while (val > 0 && i >= 0) {
+        buf[i] = '0' + (val % 10);
+        val /= 10;
+        i--;
+    }
+
+    puts_raw(&buf[i + 1]);
 };
+
+void print(int val)
+{
+    if (val < 0) {
+        put_char('-');
+        print((uint64_t)(-(int64_t)val));
+        return;
+    }
+
+    print((uint64_t)val);
+};
+
+void print(bool state) {
+    if (state) puts_raw("TRUE");
+    else puts_raw("FALSE");
+};
+void pr_newline() { print("\n"); };
+
+void print_hex(const uint64_t val) {
+    puts_raw("0x");
+    for (int i = 60; i >= 0; i -= 4) {
+        uint8_t nibble = (val >> i) & 0xF;
+        char c = (nibble < 10) ? ('0' + nibble) : ('A' + (nibble - 10));
+        put_char(c);
+    };
+};
+
+
 
 void vprint(const char* fmt, va_list args)
 {
@@ -135,7 +179,7 @@ void vprint(const char* fmt, va_list args)
     };
 };
 
-void print(const char* fmt, ...)
+extern "C" void print(const char* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
@@ -143,55 +187,9 @@ void print(const char* fmt, ...)
     va_end(args);
 }
 
-void print(uint64_t val) {
-    char buf[24]; // enough for a 64-bit uint + null terminator
-    int i = 22;
-    buf[23] = '\0';
-
-    if (val == 0) {
-        put_char('0');
-        return;
-    }
-
-    while (val > 0 && i >= 0) {
-        buf[i] = '0' + (val % 10);
-        val /= 10;
-        i--;
-    }
-
-    puts_raw(&buf[i + 1]);
-};
-
-void print(int val)
-{
-    if (val < 0) {
-        put_char('-');
-        print((uint64_t)(-(int64_t)val));
-        return;
-    }
-
-    print((uint64_t)val);
-};
-
-void print(bool state) {
-    if (state) puts_raw("TRUE");
-    else puts_raw("FALSE");
-};
-void pr_newline() { print("\n"); };
-
-void print_hex(const uint64_t val) {
-    puts_raw("0x");
-    for (int i = 60; i >= 0; i -= 4) {
-        uint8_t nibble = (val >> i) & 0xF;
-        char c = (nibble < 10) ? ('0' + nibble) : ('A' + (nibble - 10));
-        put_char(c);
-    };
-};
-
-
 /* DUMP YAY */
 
-extern "C" void exception_dump(uint64_t esr, uint64_t far, uint64_t elr, uint64_t spsr, uint64_t* regs) {
+extern "C" void exception_dump(uint64_t esr, uint64_t far, uint64_t elr, uint64_t spsr /*, uint64_t* regs*/) {
     ERR("Unhandled Exception Caught!\n");
     print("ESR: "); print_hex(esr); pr_newline();
     print("FAR: "); print_hex(far); pr_newline();

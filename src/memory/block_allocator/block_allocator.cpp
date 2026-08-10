@@ -1,11 +1,17 @@
 /* src/memory/block_allocator/block_allocator.cpp */
 
 #include <utils.hpp>
+#include <specific-includes/block_allocator.hpp>
+
+extern "C" {
+    #include <specific-includes/terminal.h>
+    #include <specific-includes/memory.h>
+};
 
 #undef INFO
 #undef ERR
-#define INFO(string)    print("[CSL] <BlockAllocator>: %s", string)
-#define ERR(string)     print("[ERR] [CSL] <BlockAllocator>: %s", string)
+#define INFO(fmt, ...)  print("[CSL] <block allocator>: " fmt, ##__VA_ARGS__)
+#define ERR(fmt, ...)  print("[ERR] [CSL] <block allocator>: " fmt, ##__VA_ARGS__)
 
 struct ALLOCD_REGIONS   allocd_regions[512];
 size_t                  alloc_regions_ctr   = 0;

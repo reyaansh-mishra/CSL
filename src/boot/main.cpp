@@ -4,6 +4,16 @@
  */
 
 #include <utils.hpp>
+
+#include <specific-includes/block_allocator.hpp>
+
+extern "C" {
+    #include <specific-includes/terminal.h>
+    #include <specific-includes/bootstrappr.h>
+    #include <specific-includes/arm64.h>
+    #include <payload-includes/payload.h>
+};
+
 #include <Protocol/LoadedImage.h>
 
 
@@ -40,9 +50,7 @@ static EFI_STATUS EFIAPI csl_main(void)
 
     int err = mem_map_init();
     if (err != SUCCESS) {
-        ERR("csl_main: FAILED mem_map_init WITH ERR: ");
-        print(err);
-
+        ERR("csl_main: FAILED mem_map_init WITH ERR: %d\n", err);
         return EFI_DEVICE_ERROR;
     };
 
@@ -50,6 +58,7 @@ static EFI_STATUS EFIAPI csl_main(void)
 
     return EFI_SUCCESS;
 };
+
 
 extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
 {  /* Setup Core CSL UEFI Runtime */
@@ -79,10 +88,7 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
     int err = payload_init();
 
     if (err != EFI_SUCCESS) {
-        ERR("CSL_BOOT_STUB: Unable to conitnue, Err: ");
-        print(err);
-        print("\n");
-
+        ERR("CSL_BOOT_STUB: Unable to conitnue, Err: %lu\n", err);
         return err;
     };
 
@@ -108,7 +114,7 @@ EFI_STATUS EFIAPI payload_init()
     return csl_main();
 };
 
-void payload_main(struct PAYLOAD_BOOT_INFO boot_struct) {
+extern "C" void payload_main(struct PAYLOAD_BOOT_INFO boot_struct) {
     print("We live to see another day......\n");
     INFO("PAYLOAD START\n");
 

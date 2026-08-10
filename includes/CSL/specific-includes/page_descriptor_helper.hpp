@@ -1,6 +1,10 @@
 /* includes/CSL/specific-includes/page_descriptor_helper.hpp */
 
-#include <csl.h>
+#pragma once
+
+extern "C" {
+    #include <utils.h>
+};
 
 /** INFO
  * Standard EL2 (HCR_EL2.E2H = 0) Stage 1 Page Descriptor (4KB Granule)
@@ -121,7 +125,6 @@ enum EXECUTE_PERMISSION : uint64_t {
     EXEC_AVAIL      = 0b0,
     EXEC_UNAVAIL    = 0b1
 };
-
 
 struct L3_Page_Descriptor_Info {
     MAIR_INDEX          mair_index_info;

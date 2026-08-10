@@ -1,7 +1,13 @@
 /* src/memory/MemMappr.cpp */
 
 #include <utils.hpp>
-#include <payload-includes/payload.h>
+// #include <specific-includes/block_allocator.hpp>
+
+extern "C" {
+    #include <payload-includes/payload.h>
+    #include <specific-includes/memory.h>
+    #include <specific-includes/terminal.h>
+};
 
 PAYLOAD_REMAP_ADDRS remap_addrs[PAYLOAD_MAX_REMAP_ADDRS] = {};
 uint8_t             remap_addrs_count = 0;
@@ -32,9 +38,9 @@ int mem_map_init() {
         return -ERR_UNKNOWN;
     }
 
-    memory_map_size += 2 * descriptor_size; // pad, common convention
+    memory_map_size += descriptor_size; // No pad
 
-    void* alloc_addr = mem_alloc(memory_map_size);
+    void* alloc_addr = mem_alloc(memory_map_size, EfiLoaderData);
     if (alloc_addr == NULL) {
         ERR("MemMappr: allocation failed\n");
         return -ERR_ALLOC_FAILED;
@@ -50,9 +56,7 @@ int mem_map_init() {
     );
 
     if (EFI_ERROR(status)) {
-        ERR("\n MemMappr.cpp: mem_map_init:     status = efi.SystemTable->BootServices->GetMemoryMap( #2: Failed Alloc with Code: ");
-        print((uint64_t)status);
-        print("\n");
+        ERR("\n MemMappr.cpp: mem_map_init: status = efi.SystemTable->BootServices->GetMemoryMap( #2: Failed Alloc with Code: %lu\n", (uint64_t)status);
         return -ERR_ALLOC_FAILED;
     };
 

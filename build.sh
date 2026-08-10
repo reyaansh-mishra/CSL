@@ -20,8 +20,8 @@ COMMON_FLAGS=(
     -fno-unwind-tables
     -fno-asynchronous-unwind-tables
     -Werror
-    -g
-
+    -g -gdwarf
+    
     -Wno-unused-variable
     -Wno-c++17-extensions
 
@@ -42,6 +42,7 @@ CPPFLAGS=(
     "${COMMON_FLAGS[@]}"
     -fno-exceptions
     -fno-rtti
+    -fshort-wchar
     -MMD
     -MP
 )
@@ -51,16 +52,11 @@ ASFLAGS=(
 )
 
 LD=(
-    clang
-    -target $TARGET
-    -fuse-ld=lld-link
-    -nostdlib
-    -Wl,/entry:csl_bootstrap
-    -Wl,/subsystem:efi_application
-    -Wl,/debug
-    -Wl,/pdb:build/csl.pdb
-    -Wl,/map:build/csl.map   # <-- THIS WILL SAVE MY SANITY
+    ld.lld
+    -m arm64pe
+    --entry=csl_bootstrap
 )
+
 
 rm -rf build
 mkdir build
@@ -96,6 +92,37 @@ while IFS= read -r -d '' obj; do
 done < <(find build -type f -name '*.o' -print0)
 
 "${LD[@]}" "${OBJS[@]}" -o csl.efi
+
+echo "[UEFI] Patching PE subsystem → EFI_APPLICATION"
+
+python3 - "$PWD/csl.efi" <<'PY'
+import sys
+import struct
+
+path = sys.argv[1]
+
+with open(path, "r+b") as f:
+    # DOS header → PE header
+    f.seek(0x3c)
+    pe_offset = struct.unpack("<I", f.read(4))[0]
+
+    # PE signature + COFF header
+    f.seek(pe_offset + 4)
+    machine, sections, timestamp, symptr, symbols, opt_size, characteristics = \
+        struct.unpack("<HHIIIHH", f.read(20))
+
+    # PE32+ Optional Header:
+    # Subsystem is at offset 68 (0x44)
+    subsystem_offset = pe_offset + 4 + 20 + 0x44
+
+    f.seek(subsystem_offset)
+    old = struct.unpack("<H", f.read(2))[0]
+
+    print(f"[UEFI] Subsystem: 0x{old:X} → 0xA")
+
+    f.seek(subsystem_offset)
+    f.write(struct.pack("<H", 0xA))
+PY
 
 cp -v csl.efi esp/EFI/BOOT/BOOTAA64.efi
 

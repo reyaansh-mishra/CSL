@@ -1,6 +1,7 @@
 /* src/mmu/descriptors/page_descriptor_struct_helper/page_descriptor_struct_helper.cpp */
 
 #include <utils.hpp>
+#include <specific-includes/page_descriptor_helper.hpp>
 
 using PE = help_me_build_page_entry;
 

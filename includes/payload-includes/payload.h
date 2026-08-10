@@ -1,5 +1,6 @@
 /* includes/payload-includes/payload.h */
 
+#pragma once
 #include <csl.h>
 
 /* ------------------------------------------------------------ */

@@ -1,7 +1,11 @@
 /* includes/CSL/specific-includes/mmu.hpp */
 
 #pragma once
-#include <csl.h>
+
+extern "C" {
+    #include <utils.h>
+};
+
 
 class Table_Descriptor {
     public:
@@ -35,22 +39,9 @@ class Page_Descriptor {
         uint64_t raw = 0;
 };
 
-inline void set_bit(uint64_t& target, uint64_t bit, bool val)
-{
-    if (val)
-        target |= (1ULL << bit);
-    else
-        target &= ~(1ULL << bit);
-};
-
-inline bool get_bit(uint64_t target, uint64_t bit)
-{
-    return ((target >> bit) & 1ULL);
-};
-
 extern Table_Descriptor L1_table[512];
 
-void setup_tables();
+extern "C" void setup_tables();
 
 extern "C" void write_mair(uint64_t data);
 extern "C" void write_tcr(uint64_t data);

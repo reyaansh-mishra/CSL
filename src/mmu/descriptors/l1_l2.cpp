@@ -1,6 +1,13 @@
 /* src/mmu/descriptors/l1_l2.cpp */
 
 #include <utils.hpp>
+#include <specific-includes/mmu.hpp>
+#include <specific-includes/page_descriptor_helper.hpp>
+
+extern "C" {
+    #include <specific-includes/terminal.h>
+};
+
 #define FIRST_ADDR_TABLE_BITS               38
 #define INFORMATIVE_TABLE_ENTRIES_IN_RAW    (2 + FIRST_ADDR_TABLE_BITS)
 

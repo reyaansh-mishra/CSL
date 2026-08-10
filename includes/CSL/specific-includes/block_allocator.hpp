@@ -1,4 +1,11 @@
-#include <csl.h>
+/* includes/CSL/specific-includes/block_allocator.hpp */
+
+#pragma once
+
+extern "C" {
+    #include <utils.h>
+};
+
 #define MAX_ALLOC_REGIONS   512
 
 struct BLOCK {
