@@ -15,3 +15,9 @@ void vector_table();
 inline void install_vbar() {
     write_vbar_el2((uintptr_t)&vector_table);
 };
+
+void write_mair(uint64_t data);
+void write_tcr(uint64_t data);
+void write_ttbr0(uint64_t data);
+void enable_mmu();
+void disable_mmu();

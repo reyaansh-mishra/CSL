@@ -1,7 +1,7 @@
 /* src/mmu/descriptors/l3.cpp */
 
 #include <utils.hpp>
-#include <specific-includes/mmu.hpp>
+#include <mmu/page_and_table_descriptor.hpp>
 #include <specific-includes/page_descriptor_helper.hpp>
 
 extern "C" {

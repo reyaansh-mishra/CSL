@@ -59,6 +59,10 @@ static EFI_STATUS EFIAPI csl_main(void)
     return EFI_SUCCESS;
 };
 
+/**
+ * Entry point.
+ * Use:     Get a minimal CSL runtime up before Payload sets its configs up.
+ */
 
 extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
 {  /* Setup Core CSL UEFI Runtime */
@@ -110,7 +114,7 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
 EFI_STATUS EFIAPI payload_init()
 {
     // add_virtual_mapping(0x0000, 0xFF000, CSL_PAGE_SIZE*100, READ_ONLY);
-    payload_reloc_physically = 0x70001000;
+    // payload_reloc_physically = 0x70001000;
     return csl_main();
 };
 

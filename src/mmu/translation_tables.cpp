@@ -1,7 +1,7 @@
 /* src/mmu/translation_tables.cpp */
 
 #include <utils.hpp>
-#include <specific-includes/mmu.hpp>
+#include <mmu/page_and_table_descriptor.hpp>
 #include <specific-includes/page_descriptor_helper.hpp>
 #include <specific-includes/block_allocator.hpp>
 

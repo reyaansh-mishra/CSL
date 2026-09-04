@@ -42,9 +42,3 @@ class Page_Descriptor {
 extern Table_Descriptor L1_table[512];
 
 extern "C" void setup_tables();
-
-extern "C" void write_mair(uint64_t data);
-extern "C" void write_tcr(uint64_t data);
-extern "C" void write_ttbr0(uint64_t data);
-extern "C" void enable_mmu();
-extern "C" void disable_mmu();

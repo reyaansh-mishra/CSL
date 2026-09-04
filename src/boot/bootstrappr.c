@@ -22,6 +22,9 @@ static void setup_bootinfo() {
     boot_info.ImageSize     = efi.csl_size;
 };
 
+/**
+ * Use: Start bootstrapping Payload's requirements now that CSL is alive
+ */
 
 void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to bootstrap the PAYLOAD, not CSL. */
     size_t itr              = 0;
