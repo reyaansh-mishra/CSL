@@ -1,6 +1,9 @@
 /* src/boot/bootstrappr.cpp */
 
 #include <utils.h>
+#include <mmu.h>
+#include <arm64.h>
+#include <stack.h>
 
 #include <specific-includes/bootstrappr.h>
 #include <specific-includes/terminal.h>
@@ -22,12 +25,12 @@ static void setup_bootinfo() {
     boot_info.ImageSize     = efi.csl_size;
 };
 
-/**
- * Use: Start bootstrapping Payload's requirements now that CSL is alive
+/*
+ * Start bootstrapping Payload's requirements now that CSL is alive
  */
 
 void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to bootstrap the PAYLOAD, not CSL. */
-    size_t itr              = 0;
+    size_t      itr         = 0;
     uint8_t*    entry       = (uint8_t*)mem_info.memory_map;
     uint8_t*    end         = entry + mem_info.memory_map_size; // memory_map_size should be total bytes here
 
@@ -37,19 +40,28 @@ void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to boo
     };
 
     INFO("Entries: %lu\n", itr);
-    uint64_t current_pc = 0;
-
-    __asm__ volatile(
-        "mrs %0, elr_el2"
-        : "=r"(current_pc)
-        :
-        :
-    );
-
+    uintptr_t current_pc = get_current_pc();
     INFO("Current VA PC = %lx\n", current_pc);
 
-    INFO("RUN MMU\n");
-    setup_tables();
+    // bool debug_waiting = 1;
+    // INFO("Text At: %p\n", efi.csl_base + 0x1000);
+    // INFO("Waiting for Debugger to set debug_waiting == 0....\n");
+    // while (debug_waiting) {
+    //     asm volatile("yield");
+    // }
+
+    if (payload_reloc_physically == 0) {
+        if (payload_virtual_entry == 0) {
+            payload_virtual_entry = efi.csl_base;
+        }
+        payload_reloc_physically = efi.csl_base;
+    } else if (payload_virtual_entry == 0) {
+        payload_virtual_entry = efi.csl_base;
+    };
+
+    INFO("SETUP STACK && START MMU WORK\n");
+    INFO("start_mmu_work addr: %lx\n", start_mmu_work);
+    setup_stack((uintptr_t)start_mmu_work);
 };
 
 [[noreturn]] void csl_continue_if_needed()

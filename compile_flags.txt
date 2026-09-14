@@ -1,5 +1,6 @@
 --target=aarch64-none-elf
 -ffreestanding
+-nostdinc++
 -Wall
 -Wextra
 -fno-unwind-tables

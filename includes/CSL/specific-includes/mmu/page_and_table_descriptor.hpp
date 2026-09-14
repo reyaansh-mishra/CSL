@@ -6,7 +6,6 @@ extern "C" {
     #include <utils.h>
 };
 
-
 class Table_Descriptor {
     public:
         void init();
@@ -38,7 +37,5 @@ class Page_Descriptor {
         void setup_L3_table(struct L3_Page_Descriptor_Info minimal_table_info);
         uint64_t raw = 0;
 };
-
-extern Table_Descriptor L1_table[512];
 
 extern "C" void setup_tables();

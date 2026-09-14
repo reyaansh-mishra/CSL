@@ -10,7 +10,7 @@
 #define PAYLOAD_MAX_REMAP_ADDRS 32
 
 enum VIRT_ADDR_PERMISSIONS {
-    READ_ONLY   = 1 << 0,   /* To be used ONLY FOR INIT. Otherwise will Error out if active == true. */
+    READ_ONLY   = 1 << 0,
     WRITABLE    = 1 << 1,
     EXECUTABLE  = 1 << 2,
 };
@@ -25,16 +25,15 @@ struct PAYLOAD_REMAP_ADDRS {
 
     bool active;        /* Just-In-Case Check to make sure something bad doesnt happen */
 };
+extern struct   PAYLOAD_REMAP_ADDRS remap_addrs[PAYLOAD_MAX_REMAP_ADDRS];
 
 struct PAYLOAD_BOOT_INFO {
     uintptr_t   ImageBase;
     uint64_t    ImageSize;
     char*       BootArgs;
 } __attribute__((packed));
-
-
 extern struct   PAYLOAD_BOOT_INFO   boot_info;
-extern struct   PAYLOAD_REMAP_ADDRS remap_addrs[PAYLOAD_MAX_REMAP_ADDRS];
+
 extern uint8_t                      remap_addrs_count;
 extern uintptr_t                    payload_virtual_entry;
 extern uint64_t                     payload_reloc_physically;

@@ -1,6 +1,9 @@
 /* src/memory/block_allocator/block_allocator.cpp */
 
 #include <utils.hpp>
+
+#include <payload-includes/payload.h>
+#include <mmu.h>
 #include <specific-includes/block_allocator.hpp>
 
 extern "C" {
@@ -16,6 +19,8 @@ extern "C" {
 struct ALLOCD_REGIONS   allocd_regions[512];
 size_t                  alloc_regions_ctr   = 0;
 size_t                  live_alloc_count    = 0;
+
+BlockAllocator allocator;
 
 /* ----------------------------------------------------------------------- */
 /* INIT FUNCTIONS */
@@ -60,11 +65,15 @@ void* BlockAllocator::malloc(size_t page)
     size_t size = page*CSL_PAGE_SIZE;
     
     if (block.cursor + size > block.max_size) {
-        print("BlockAllocator: Out Of Mem: %lu + %lu >= %lu; Retrying with using Dealloc'd Regions.\n", block.used_size, size, block.max_size);
+        INFO("BlockAllocator: Out Of Mem: %lu + %lu >= %lu; Retrying with using Dealloc'd Regions.\n", block.used_size, size, block.max_size);
         
         int free_region = get_me_first_free_alloc_region(size);
         if (free_region == -NO_AVAIL_ENTRIES) {
             ERR("Nothing is genuinly avail. Sorry!\n");
+
+            while (true) {
+                __asm__ volatile("yield");
+            }
             return nullptr;
         }
         else {
@@ -76,7 +85,6 @@ void* BlockAllocator::malloc(size_t page)
     };
 
     uint64_t cursor = block.cursor;
-    // print("MALLOC: cursor: %lu, block.addr: %lx, block.used_size: %d\n", cursor, block.addr, block.used_size);
 
     block.used_size += size;
     block.cursor    += size;
@@ -84,6 +92,8 @@ void* BlockAllocator::malloc(size_t page)
     allocd_regions[alloc_regions_ctr].base              = (void*)((uint64_t)block.addr + (uint64_t)cursor);
     allocd_regions[alloc_regions_ctr].size              = size;
     allocd_regions[alloc_regions_ctr].currently_allocd  = true;  /* COMMIT */
+
+    memset(allocd_regions[alloc_regions_ctr].base, 0, allocd_regions[alloc_regions_ctr].size);
 
     alloc_regions_ctr++;
     live_alloc_count++;
@@ -107,3 +117,6 @@ void BlockAllocator::dealloc(void* ptr)
         };
     };
 };
+
+void* malloc(size_t pages)   { return allocator.malloc(pages); };
+void  free(void* ptr)        { allocator.dealloc(ptr); };

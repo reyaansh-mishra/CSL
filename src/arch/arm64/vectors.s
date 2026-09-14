@@ -18,10 +18,10 @@ vector_table:
     VENTRY serr_sp0;     b vec_common
 
     /* --- Current EL, SPx (EL2 -> EL2) --- */
-    VENTRY sync_spx;     b vec_common
-    VENTRY irq_spx;      b vec_common
-    VENTRY fiq_spx;      b vec_common
-    VENTRY serr_spx;     b vec_common
+    VENTRY sync_spx;     mov x5, #0; b vec_common
+    VENTRY irq_spx;      mov x5, #1; b vec_common
+    VENTRY fiq_spx;      mov x5, #2; b vec_common
+    VENTRY serr_spx;     mov x5, #3; b vec_common
 
     /* --- Lower EL, AArch64 --- */
     VENTRY sync_lower64; b vec_common
@@ -62,7 +62,8 @@ vec_common:
     mrs x1, far_el2
     mrs x2, elr_el2
     mrs x3, spsr_el2
-    mov x4, sp        // Pass pointer to saved registers context as 5th arg
+    mov x4, x5
+    mov x5, sp          // Pass pointer to saved registers context as 5th arg
 
     // 4. Call C handler: void exception_dump(uint64_t esr, uint64_t far, uint64_t elr, uint64_t spsr, uint64_t *regs)
     bl exception_dump

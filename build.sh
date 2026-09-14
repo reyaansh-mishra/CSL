@@ -46,6 +46,7 @@ CPPFLAGS=(
     -fshort-wchar
     -MMD
     -MP
+    -nostdinc++
     --std=c++26
 )
 

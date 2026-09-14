@@ -1,358 +1,279 @@
-/* src/mmu/translation_tables.cpp */
-
-#include <utils.hpp>
-#include <mmu/page_and_table_descriptor.hpp>
-#include <specific-includes/page_descriptor_helper.hpp>
-#include <specific-includes/block_allocator.hpp>
+/* src/mmu/mmu.cpp */
 
 extern "C" {
-    #include <payload-includes/payload.h>
-    #include <specific-includes/memory.h>
-    #include <specific-includes/terminal.h>
-    #include <specific-includes/arm64.h>
+    #include <mmu/orchestrator_required.h>
+    #include <memory.h>
+    #include <terminal.h>
+    #include <arm64.h>
 };
 
-#define TTBR_BASE               (uint64_t)&L1_table[0]
-#define MALLOC_MAX_BLOCK_PAGES  100
-// Common ARM64 MAIR attributes:
-#define MAIR_ATTR_DEVICE_nGnRnE  0x00  // Attr0: Device memory (UART, GIC, MMIO)
-#define MAIR_ATTR_NORMAL_NOCACHE 0x44  // Attr1: Normal Uncached RAM
-#define MAIR_ATTR_NORMAL_WB      0xFF  // Attr2: Normal Write-Back Cacheable RAM
+#include "mmu/page_descriptor_helper.hpp"
+#include <utils.hpp>
+#include <mmu/page_and_table_descriptor.hpp>
 
-/* ----------------------------------------------------------------------- */
-/* GLOBALS */
-/* ----------------------------------------------------------------------- */
+Table_Descriptor __attribute__((aligned(CSL_PAGE_SIZE))) L0_table[512];
 
-alignas(4096) Table_Descriptor      L1_table[512];
-size_t                              L3_Leaf_entries;
+#undef INFO
+#undef ERR
+#define INFO(fmt, ...)  print("[CSL] <mmu internals::setup perms>: " fmt, ##__VA_ARGS__)
+#define ERR(fmt, ...)   print("[ERR] [CSL] <mmu internals::setup perms>: " fmt, ##__VA_ARGS__)
 
-/* ----------------------------------------------------------------------- */
-/* HELPERS */
-/* ----------------------------------------------------------------------- */
-
-static inline uintptr_t get_bits_from_ptr(uintptr_t ptr, unsigned start_bit, unsigned stop_bit)   /* from Start -> Stop */
-{
-    return (ptr >> stop_bit) & ((1ULL << (start_bit - stop_bit + 1)) - 1);
-};
-
-static void ensure_malloc_exists()
-{
-    void* alloc_addr = alloc_pages(MALLOC_MAX_BLOCK_PAGES, EfiLoaderData);
-    allocator.init(alloc_addr, MALLOC_MAX_BLOCK_PAGES);
-
-    pls_use_malloc_now = true;
-};
-
-static void configure_mmu()
-{
-
-    ensure_malloc_exists();
-
-    INFO("EXITING BOOT SERVICES!\n");
-    efi.BootServices->ExitBootServices(efi.ImageHandle, getMemMap().map_key);
-
-    if (get_current_el() != 2) {
-        ERR("EL NOT AT 2! EXITING!\n");
-        return;
-    };
-
-    mask_FULL();
-    install_vbar();
-
-    INFO("Interrupts Masked and VBARS installed.\n");
-
-
-    uint64_t tcr    = 0;
-    uint64_t T0SZ   = 25;
-    uint64_t TG0    = 0b00;
-    uint64_t PS     = 0b0010;
-    uint64_t ATTR   = 0b0101;
-    uint64_t SH0    = 0b11;
-    for (size_t i = 0; i < 6; i++) {
-        set_bit(tcr, i, get_bit(T0SZ, i));
-    };
-    for (size_t i = 8; i < 12; i++) {
-        set_bit(tcr, i, get_bit(ATTR, i - 8));
-    };
-    for (size_t i = 12; i < 14; i++) {
-        set_bit(tcr, i, get_bit(SH0, i - 12));
-    };
-    for (size_t i = 14; i < 16; i++) {
-        set_bit(tcr, i, get_bit(TG0, i - 14));
-    };
-    for (size_t i = 16; i < 20; i++) {
-        set_bit(tcr, i, get_bit(PS, i - 16));
-    };
-
-    uint64_t mair_val = 
-        ((uint64_t)MAIR_ATTR_DEVICE_nGnRnE  << (0 * 8)) |  // Index 0
-        ((uint64_t)MAIR_ATTR_NORMAL_NOCACHE << (1 * 8)) |  // Index 1
-        ((uint64_t)MAIR_ATTR_NORMAL_WB      << (2 * 8));   // Index 2
-
-    disable_mmu();
-    write_mair(mair_val);
-    write_tcr(tcr);
-    write_ttbr0(TTBR_BASE);
-    enable_mmu();
-
-    INFO("Applied Private Translation Tables!\n");
-};
-
-/* ----------------------------------------------------------------------- */
-/* CORE FUNCTIONS */
-/* ----------------------------------------------------------------------- */
-
-static uintptr_t get_or_create_l2_table(uintptr_t L1_bits)
-{
-    Table_Descriptor*       current_L1_table = &L1_table[L1_bits];
-
-    if (current_L1_table->is_valid()) {
-        return current_L1_table->get_next_level();
-    };
-
-    // CORRECT L1 Table DOESNOT EXIST
-
-    uintptr_t current_l2_table_ptr = (uintptr_t)alloc_page();
-    if (!current_l2_table_ptr) {
-        ERR("get_or_create_l2_table: current_l2_table_ptr NULL");
-        return ERR_ALLOC_FAILED;
-    };
-
-    current_L1_table->init();
-    current_L1_table->set_next_table(current_l2_table_ptr);
-
-    current_L1_table->validate();       /* COMMIT */
-
-    /* ---------------------------------------------------------------------------------- */
-
-    return current_L1_table->get_next_level();
-};
-
-static uintptr_t get_or_create_l3_table(uintptr_t L2_table_ptr, uintptr_t va)
-{
-    size_t                  L2_index            = get_bits_from_ptr(va, 29, 21);
-    Table_Descriptor*       current_L2_table    = &((Table_Descriptor*)L2_table_ptr)[L2_index];
-
-    if (current_L2_table->is_valid()) {
-        return current_L2_table->get_next_level();
-    };
-
-    // L2 Table DOESNOT EXIST
-
-    uintptr_t L3_leaf = (uintptr_t)alloc_page();
-    if (!L3_leaf) {
-        ERR("get_or_create_l3_table: L3_leaf NULL");
-        return ERR_ALLOC_FAILED;
-    };
-
-    current_L2_table->init();
-    current_L2_table->set_next_table(L3_leaf);
-    
-    current_L2_table->validate();       /* COMMIT */
-
-    return current_L2_table->get_next_level();
-};
-
-static struct L3_Page_Descriptor_Info set_l3_perms(enum VIRT_ADDR_PERMISSIONS permissions)
-{
-    help_me_build_page_entry table;
-
-    table.set_default_values();
-
-    if ((permissions & READ_ONLY) != 0) {
-        table.set_exec(EXEC_UNAVAIL);
-    };
-
-    if ((permissions & EXECUTABLE) != 0) {
-        table.set_exec(EXEC_AVAIL);
-    } else {
-        table.set_exec(EXEC_UNAVAIL);
-    };
-
-    if ((permissions & WRITABLE) != 0) {
-        table.set_rw_perms(EL2_RW);
-    } else {
-        table.set_rw_perms(EL2_RO);
-    };
-    return table.get();
-};
-
-static int setup_l3(uintptr_t L3_leaf, uintptr_t phy_addr, uintptr_t va, enum VIRT_ADDR_PERMISSIONS permissions)
-{
-    size_t              L3_index            = get_bits_from_ptr(va, 20, 12);
-    Page_Descriptor*    current_L3_table    = &((Page_Descriptor *)L3_leaf)[L3_index];
-
-    if (current_L3_table->is_valid()) {
-        INFO("L3 Exists, phy_addr = %lx, to = %lx\n", phy_addr, current_L3_table->get_page_addr());
-        return SUCCESS;
-    };
-
-    auto table = set_l3_perms(permissions);
-
-    current_L3_table->init();
-    current_L3_table->validate(table, phy_addr);    /* COMMIT */
-    L3_Leaf_entries++;
-
-    if (L3_leaf == 0x7FFF0000) {INFO("FOUND MY L3!\n");};
-    if (va == 0x7FFF0000) {INFO("FOUND MY Virt L3!\n");};
-
-    return SUCCESS;
-};
-
-static int setup_table_4k(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSIONS permissions)
-{
-
-    ASSERT((phy & 0xFFF) == 0);
-    ASSERT((virt & 0xFFF) == 0);
-
-    /* Get L1 Table */
-    uintptr_t L1_bits = get_bits_from_ptr(virt, 38, 30);
-
-    // INFO("setup_table_4k: run get_or_create_l2_table\n");
-
-    auto L2_table = get_or_create_l2_table(L1_bits);
-    if (L2_table == ERR_ALLOC_FAILED || L2_table == ERROR_NO_MEMORY || L2_table == ERR_UNKNOWN) {
-        ERR("setup_table_4k: failed with error: %lx\n", L2_table);
-        return L2_table;
-    };
-
-    /* ---------------------------------------------------------------------------------- */
-
-    // INFO("setup_table_4k: run get_or_create_l3_table\n");
-
-    auto L3_leaf = get_or_create_l3_table(L2_table, virt);
-    if (L3_leaf == ERR_ALLOC_FAILED || L3_leaf == ERROR_NO_MEMORY || L3_leaf == ERR_UNKNOWN || !L3_leaf) {
-        ERR("setup_table_4k: get_or_create_l3_table wailed, err: %lx\n", L3_leaf);
-        return L3_leaf;
-    };
-
-    /* ---------------------------------------------------------------------------------- */
-
-    // INFO("setup_table_4k: run setup_l3\n");
-
-    int err = setup_l3(L3_leaf, phy, virt, permissions);
-    if (err) {
-        ERR("setup_table_4k: Error_In_L3: %lx\n", err);
-        return err;
-    };
-    
-    return 0;
-};
-
-static void identity_map_all(struct MemMapprInfo map_info, uint8_t* map_buf, size_t num_entries)
-{
-    // INFO("Identity Mapping CSL!\n");
-    // for (uintptr_t cursor_4k = efi.csl_base; cursor_4k < efi.csl_base + efi.csl_size; cursor_4k += CSL_PAGE_SIZE) {
-    //     int err = setup_table_4k(cursor_4k, cursor_4k, EXECUTABLE);
-    //     if (err) {
-    //         ERR("ERROR: setup_table_4k, %lu", err);
-    //         return;
-    //     };
+static struct L3_Page_Descriptor_Info setup_perms(enum VIRT_ADDR_PERMISSIONS __attribute__((unused)) perms) {
+    help_me_build_page_entry page;
+    page.set_default_values();
+    // if (perms & WRITABLE) {
+    //     page.set_rw_perms(EL2_RO);
+    // } else {
+    //     page.set_rw_perms(EL2_RW);
     // };
 
-    INFO("Identity Mapping MMIO!\n");
-    for (uintptr_t mmio = 0x08000000; mmio < 0x0A000000; mmio += CSL_PAGE_SIZE) {
-        int err = setup_table_4k(mmio, mmio, WRITABLE);
-        if (err) {
-            ERR("ERROR: setup_table_4k, %lu", err);
-            return;
-        };
-    };
+    // if (perms & EXECUTABLE)
+    //     page.set_exec(EXEC_AVAIL);
+    // else { page.set_exec(EXEC_UNAVAIL);INFO("EXEC PERMS DECLINED!\n"); }
 
-    INFO("Identity Mapping Rest of UEFI RAM!\n");
-    for (size_t i = 0; i < num_entries; i++) {
-        EFI_MEMORY_DESCRIPTOR* desc = (EFI_MEMORY_DESCRIPTOR*)(map_buf + (i * map_info.descriptor_size));
-
-        uintptr_t base = desc->PhysicalStart;
-        uintptr_t size = desc->NumberOfPages * CSL_PAGE_SIZE;
-
-        // Identity map every physical memory descriptor provided by UEFI
-        for (uintptr_t addr = base; addr < base + size; addr += CSL_PAGE_SIZE) {
-            int err = setup_table_4k(addr, addr, (enum VIRT_ADDR_PERMISSIONS)(EXECUTABLE | WRITABLE));
-            if (err) {
-                ERR("ERROR: setup_table_4k, %lu", err);
-                return;
-            };
-        };
-    };
+    return page.get();
 };
 
-uintptr_t setup_csl_base()
-{
-    uintptr_t               last_addr       = efi.csl_base;
-    MemMapprInfo            mem_info        = getMemMap();
-    uint8_t*                entry_incorrect = (uint8_t *)mem_info.memory_map;
-    uint8_t*                end             = entry_incorrect + mem_info.memory_map_size; // memory_map_size should be total bytes here
+#undef INFO
+#undef ERR
+#define INFO(fmt, ...)  print("[CSL] <mmu internals::L0>: " fmt, ##__VA_ARGS__)
+#define ERR(fmt, ...)   print("[ERR] [CSL] <mmu internals::L0>: " fmt, ##__VA_ARGS__)
 
-    uint8_t*                entry           = nullptr;
-
-    size_t itr = 0;
-
-    INFO("%lx\n", payload_reloc_physically);
-
-    /* STEP 1: Get the nearest CORRECT-SIZED Descriptor */
-    while (entry_incorrect < end) {
-        EFI_MEMORY_DESCRIPTOR *desc = (EFI_MEMORY_DESCRIPTOR *)entry_incorrect;
-        if (payload_reloc_physically >= desc->PhysicalStart &&
-            payload_reloc_physically + efi.csl_size <= (desc->PhysicalStart + (desc->NumberOfPages*CSL_PAGE_SIZE)) &&
-            desc->Type == EfiConventionalMemory)
-        {
-            INFO("FOUND MY ENTRY! itr = %d\n", itr);
-            entry = (uint8_t*)desc;
-            break;
-        };
-        entry_incorrect += mem_info.descriptor_size;
-        itr++;
-    };
-
-    INFO("%d\n", itr);
-
-    /* STEP 2: IF we wanna reloc, set the realoc entry */
-    if ((payload_reloc_physically != 0) && (entry != nullptr)) {
-        EFI_MEMORY_DESCRIPTOR *desc = (EFI_MEMORY_DESCRIPTOR *)entry;
-            
-        if ((desc->Type == EfiConventionalMemory) && (desc->NumberOfPages >= (efi.csl_size / CSL_PAGE_SIZE))) {
-            last_addr = payload_reloc_physically;
-        };
-
-        if (!last_addr) {
-            ERR("No suitable relocation region");
-            return last_addr;
-        };
-    };
-
-    /* STEP 3: IF we wanna setup virual map, set it. */
-    if (payload_virtual_entry == 0) { payload_virtual_entry = last_addr; };
-
-    size_t pages = efi.csl_size/CSL_PAGE_SIZE;  // csl_size is page-aligned
-    for (size_t i = 0; i < pages; ++i) {
-        setup_table_4k(
-            last_addr + i * CSL_PAGE_SIZE,
-            payload_virtual_entry + i * CSL_PAGE_SIZE,
-            (enum VIRT_ADDR_PERMISSIONS)(EXECUTABLE | WRITABLE)
-        );
+void setup_l0_entry(uintptr_t virt, uintptr_t next_table) {
+    uintptr_t           l0_bits = get_bits(virt, 47, 39);
+    Table_Descriptor*   L0      = &L0_table[l0_bits];
+    if (!L0->is_valid()) {  // Setup L0 table
+        L0->init();
+        L0->validate();
+        L0->set_next_table(next_table);
+    } else {
+        if (next_table == L0->get_next_level()) {   // OK
+            INFO("L0 Table ALREADY Exists!\n");
+        } else {
+            ERR("L0 Table EXISTS but with DIFFERENT Next Table! next_table: %lx, Actual Next table: %lx\n", next_table, L0->get_next_level());
+        }
     }
-    return last_addr;
+    print("L1 Table in L0: %lx\n", L0->get_next_level());
 };
 
-extern "C" void setup_tables()
-{
-    auto        map_info   = getMemMap();
-    uint8_t*    map_buf                         = (uint8_t*)map_info.memory_map;
-    size_t      num_entries                     = map_info.memory_map_size / map_info.descriptor_size;
-    uintptr_t   last_addr                       = setup_csl_base();
+#undef INFO
+#undef ERR
+#define INFO(fmt, ...)  print("[CSL] <mmu internals::L1>: " fmt, ##__VA_ARGS__)
+#define ERR(fmt, ...)   print("[ERR] [CSL] <mmu internals::L1>: " fmt, ##__VA_ARGS__)
 
-    INFO("%lx\n", last_addr);
+void setup_l1_entry(uintptr_t virt, uintptr_t next_table) {
+    uintptr_t           l0_bits     = get_bits(virt, 47, 39);
+    uintptr_t           l1_bits     = get_bits(virt, 38, 30);
 
-    identity_map_all(map_info, map_buf, num_entries);
+    uintptr_t           l1_table    = (uintptr_t)alloc_page();  // ACCEPTABLE if Leaked FOR NOW.
+    Table_Descriptor*   L1_table    = NULL;
 
-    if (payload_reloc_physically == true) {
-        mask_FULL();
+    Table_Descriptor*   L0          = &L0_table[l0_bits];
+    Table_Descriptor*   L1          = NULL;
+
+    if (!L0->is_valid()) {
+        setup_l0_entry(virt, l1_table);
+        L0 = &L0_table[l0_bits];
+        L1_table = (Table_Descriptor* )L0->get_next_level();
+        L1       = (Table_Descriptor* )&L1_table[l1_bits];
+    } else {
+        L1_table = (Table_Descriptor* )L0->get_next_level();
+        L1       = (Table_Descriptor* )&L1_table[l1_bits];
     };
 
-    INFO("IDENTITY MAPPING COMPLETE!\n");
+    if (!L1->is_valid()) {
+        L1->init();
+        L1->set_next_table(next_table);
+        L1->validate();
+    } else {
+        if (next_table == L1->get_next_level()) {   // OK
+            INFO("L1 Table ALREADY Exists!\n");
+        } else {
+            ERR("L1 Table EXISTS but with DIFFERENT Next Table! next_table: %lx, Actual Next table: %lx\n", next_table, L1->get_next_level());
+        }
+        free((void* )l1_table);
+    }
+};
 
-    configure_mmu();
-    move_csl_to_addr(last_addr);
-    unmask_interrupts();
+#undef INFO
+#undef ERR
+#define INFO(fmt, ...)  print("[CSL] <mmu internals::L2>: " fmt, ##__VA_ARGS__)
+#define ERR(fmt, ...)   print("[ERR] [CSL] <mmu internals::L2>: " fmt, ##__VA_ARGS__)
+
+void setup_l2_entry(uintptr_t virt, uintptr_t next_table) {
+    uintptr_t           l0_bits     = get_bits(virt, 47, 39);
+    uintptr_t           l1_bits     = get_bits(virt, 38, 30);
+    uintptr_t           l2_bits     = get_bits(virt, 29, 21);
+
+    uintptr_t           l2_table    = (uintptr_t)alloc_page();  // ACCEPTABLE if Leaked FOR NOW.
+    Table_Descriptor*   L1_table    = NULL;
+    Table_Descriptor*   L2_table    = NULL;
+
+    Table_Descriptor*   L0          = &L0_table[l0_bits];
+    Table_Descriptor*   L1          = NULL;
+    Table_Descriptor*   L2          = NULL;
+
+    if (!L0->is_valid()) {
+        setup_l1_entry(virt, l2_table);
+        L0 = &L0_table[l0_bits];
+        L1_table = (Table_Descriptor* )L0->get_next_level();
+        L1       = (Table_Descriptor* )&L1_table[l1_bits];
+
+        L2_table = (Table_Descriptor* )L1->get_next_level();
+        L2       = (Table_Descriptor* )&L2_table[l2_bits];
+
+    } else {
+        L1_table = (Table_Descriptor* )L0->get_next_level();
+        L1       = (Table_Descriptor* )&L1_table[l1_bits];
+    };
+
+    if (!L1->is_valid()) {
+        setup_l1_entry(virt, l2_table);
+        L1_table = (Table_Descriptor* )L0->get_next_level();
+        L1       = (Table_Descriptor* )&L1_table[l1_bits];
+
+        L2_table = (Table_Descriptor* )L1->get_next_level();
+        L2       = (Table_Descriptor* )&L2_table[l2_bits];
+    } else {
+        L2_table = (Table_Descriptor* )L1->get_next_level();
+        L2       = (Table_Descriptor* )&L2_table[l2_bits];
+    };
+
+    if (!L2->is_valid()) {
+        L2->init();
+        L2->set_next_table(next_table);
+        L2->validate();
+    } else {
+        if (next_table == L2->get_next_level()) {   // OK
+            INFO("L2 Table ALREADY Exists!\n");
+        } else {
+            ERR("L2 Table EXISTS but with DIFFERENT Next Table! next_table: %lx, Actual Next table: %lx\n", next_table, L2->get_next_level());
+        }
+        free((void* )l2_table);
+    }
+};
+
+#undef  INFO
+#undef  ERR
+#define INFO(fmt, ...)  print("[CSL] <mmu internals::L3>: " fmt, ##__VA_ARGS__)
+#define ERR(fmt, ...)   print("[ERR] [CSL] <mmu internals::L3>: " fmt, ##__VA_ARGS__)
+
+void setup_l3_entry(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSIONS perms) {
+    uintptr_t           l0_bits     = get_bits(virt, 47, 39);
+    uintptr_t           l1_bits     = get_bits(virt, 38, 30);
+    uintptr_t           l2_bits     = get_bits(virt, 29, 21);
+    uintptr_t           l3_bits     = get_bits(virt, 20, 12);
+
+    uintptr_t           l3_table    = (uintptr_t)alloc_page();  // ACCEPTABLE if Leaked FOR NOW.
+    Table_Descriptor*   L1_table    = NULL;
+    Table_Descriptor*   L2_table    = NULL;
+    Page_Descriptor*    L3_table    = NULL;
+
+    Table_Descriptor*   L0          = &L0_table[l0_bits];
+    Table_Descriptor*   L1          = NULL;
+    Table_Descriptor*   L2          = NULL;
+    Page_Descriptor*    L3          = NULL;
+
+
+    if (!L0->is_valid()) {
+        setup_l2_entry(virt, l3_table);
+        L0 = &L0_table[l0_bits];
+        L1_table = (Table_Descriptor* )L0->get_next_level();
+        L1       = (Table_Descriptor* )&L1_table[l1_bits];
+
+        L2_table = (Table_Descriptor* )L1->get_next_level();
+        L2       = (Table_Descriptor* )&L2_table[l2_bits];
+
+        L3_table = (Page_Descriptor*  )L2->get_next_level();
+        L3       = (Page_Descriptor* )&L3_table[l3_bits];
+    } else {
+        L1_table = (Table_Descriptor* )L0->get_next_level();
+        L1       = (Table_Descriptor* )&L1_table[l1_bits];
+    };
+
+    if (!L1->is_valid()) {
+        setup_l2_entry(virt, l3_table);
+        L1_table = (Table_Descriptor* )L0->get_next_level();
+        L1       = (Table_Descriptor* )&L1_table[l1_bits];
+
+        L2_table = (Table_Descriptor* )L1->get_next_level();
+        L2       = (Table_Descriptor* )&L2_table[l2_bits];
+
+        L3_table = (Page_Descriptor*  )L2->get_next_level();
+        L3       = (Page_Descriptor* )&L3_table[l3_bits];
+    } else {
+        L2_table = (Table_Descriptor* )L1->get_next_level();
+        L2       = (Table_Descriptor* )&L2_table[l2_bits];
+    };
+
+    if (!L2->is_valid()) {
+        setup_l2_entry(virt, l3_table);
+        L2_table = (Table_Descriptor* )L1->get_next_level();
+        L2       = (Table_Descriptor* )&L2_table[l2_bits];
+
+        L3_table = (Page_Descriptor*  )L2->get_next_level();
+        L3       = (Page_Descriptor* )&L3_table[l3_bits];
+    } else {
+        L3_table = (Page_Descriptor*  )L2->get_next_level();
+        L3       = (Page_Descriptor* )&L3_table[l3_bits];
+    };
+    if (!L3->is_valid()) {
+        L3->init();
+        L3->validate(setup_perms(perms), phy);
+    } else {
+        if (phy == L3->get_page_addr()) {   // OK
+            INFO("L3 PAGE ALREADY Exists!\n");
+        } else {
+            ERR("L3 PAGE EXISTS but with DIFFERENT Next Page! l3_page: %lx, Actual Next Page: %lx\n", phy, L3->get_page_addr());
+        }
+        free((void* )l3_table);
+    }
+};
+
+#undef INFO
+#undef ERR
+#define INFO(fmt, ...)  print("[CSL] <mmu internals::setup page>: " fmt, ##__VA_ARGS__)
+#define ERR(fmt, ...)   print("[ERR] [CSL] <mmu internals::setup page>: " fmt, ##__VA_ARGS__)
+
+void setup_table_for_page(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSIONS permissions) {
+    // INFO("Mapping %lx -> %lx\n", phy, virt);
+    setup_l3_entry(phy, virt, permissions);
+};
+
+// Putting here becuase why not
+
+/* AI GENERATED */
+uint64_t make_tcr()
+{
+    uint64_t tcr = 0;
+
+    tcr |= (16ULL << 0);   // T0SZ
+    tcr |= (0b11ULL << 12); // SH0
+    tcr |= (0b00ULL << 14); // TG0 = 4KB
+    tcr |= (0b0010ULL << 16); // PS
+
+    return tcr;
+};
+uint64_t make_mair()
+{
+    uint64_t mair = 0;
+
+    mair |= (0x00ULL << 0);  // Attr0 = Device-nGnRnE
+    mair |= (0xFFULL << 8);  // Attr1 = Normal WB cacheable
+
+    return mair;
+};
+/* END AI GENERATED */
+
+void mmu_bs() {
+    print("L0_table[0] raw = %lx, TTBR0 will be = %lx\n", *(uint64_t*)L0_table, (uint64_t)&L0_table[0]);
+    print("Current Stack = %lx\n", get_current_sp());
+    install_vbar();
+    disable_mmu();
+    write_ttbr0((uint64_t)&L0_table[0]);
+    write_tcr(make_tcr());
+    write_mair(make_mair());
+
+    INFO("YES YES NOW ACTUALLY ENABLING MMU, pc = %p\n", get_current_pc());
+    enable_mmu();
 };

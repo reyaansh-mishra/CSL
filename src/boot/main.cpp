@@ -29,7 +29,6 @@ EFI_GUID gEfiLoadedImageProtocolGuid =
 EFI_GUID gEfiSimpleTextOutProtocolGuid = 
     { 0xD35EE3B1, 0x5775, 0x11D1, { 0x9A, 0x60, 0x00, 0x80, 0xC7, 0x3C, 0x37, 0x19 } };
 
-BlockAllocator  allocator;
 bool            pls_use_malloc_now;
 uintptr_t       payload_virtual_entry;
 uint64_t        payload_reloc_physically;
@@ -66,6 +65,7 @@ static EFI_STATUS EFIAPI csl_main(void)
 
 extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
 {  /* Setup Core CSL UEFI Runtime */
+    mask_FULL();
 
     if (get_current_el() != 2) {
         not_in_el2();
@@ -77,7 +77,7 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
     efi.SystemTable             = SystemTable;
     efi.BootServices            = efi.SystemTable->BootServices;
     payload_virtual_entry       = 0;
-    payload_reloc_physically    = false;
+    payload_reloc_physically    = 0;
 
     EFI_LOADED_IMAGE_PROTOCOL *LoadedImage;
 
@@ -114,7 +114,8 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
 EFI_STATUS EFIAPI payload_init()
 {
     // add_virtual_mapping(0x0000, 0xFF000, CSL_PAGE_SIZE*100, READ_ONLY);
-    // payload_reloc_physically = 0x70001000;
+    payload_reloc_physically    = 0x40000000;
+    payload_virtual_entry       = 0x40000000;
     return csl_main();
 };
 
@@ -123,7 +124,7 @@ extern "C" void payload_main(struct PAYLOAD_BOOT_INFO boot_struct) {
     INFO("PAYLOAD START\n");
 
     INFO("PRINTING BOOT INFO STRUCT:\n");
-    print("ImageBase = %lx, ImageSize = %lu, BootArgs (NOT SUPPORTED YET) = %c\n", boot_struct.ImageBase, boot_struct.ImageSize, boot_struct.BootArgs);
+    print("\t\tImageBase = %lx, ImageSize = %lu, BootArgs (NOT SUPPORTED YET) = %c\n", boot_struct.ImageBase, boot_struct.ImageSize, boot_struct.BootArgs);
 };
 
 #endif

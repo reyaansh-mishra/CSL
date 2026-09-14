@@ -1,14 +1,14 @@
 /* src/mmu/descriptors/page_descriptor_struct_helper/page_descriptor_struct_helper.cpp */
 
 #include <utils.hpp>
-#include <specific-includes/page_descriptor_helper.hpp>
+#include <mmu/page_descriptor_helper.hpp>
 
 using PE = help_me_build_page_entry;
 
 void PE::set_default_values()
 {
     descriptor.mair_index_info = ATTR_IDX_0;
-    descriptor.rw_info         = EL2_RO;
+    descriptor.rw_info         = EL2_RW;
     descriptor.share_info      = INNER_S;
     descriptor.access_info     = NORM;
     descriptor.ng_info         = GLOBAL;
@@ -16,7 +16,7 @@ void PE::set_default_values()
     descriptor.dbm_info        = DBM_UNSET;
     descriptor.contiguous_info = CONT_UNSET;
     descriptor.priv_exec_info  = PX_ALLOW;
-    descriptor.exec_info       = EXEC_UNAVAIL;
+    descriptor.exec_info       = EXEC_AVAIL;
 };
 
 void PE::set_mair(enum MAIR_INDEX index)

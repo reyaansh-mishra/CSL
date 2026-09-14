@@ -1,8 +1,8 @@
 /* src/mmu/descriptors/l1_l2.cpp */
 
 #include <utils.hpp>
-#include <specific-includes/mmu.hpp>
-#include <specific-includes/page_descriptor_helper.hpp>
+#include <specific-includes/mmu/page_and_table_descriptor.hpp>
+#include <mmu/page_descriptor_helper.hpp>
 
 extern "C" {
     #include <specific-includes/terminal.h>
@@ -30,7 +30,9 @@ extern "C" {
 
 bool Table_Descriptor::is_valid() const
 {
-    if (get_bit(raw, 1) && get_bit(raw, 0)) { return true; } else { return false; };
+    if (get_bit(raw, 1) && get_bit(raw, 0))
+        return true;
+    else return false;
 };
 
 void Table_Descriptor::clear() { raw = 0; };
@@ -111,6 +113,5 @@ uintptr_t Table_Descriptor::get_next_level()
             set_bit(bit_final, i + 10, get_bit(bits_12_49, i-2)); // Start at 12 && Offset to Zero
         };
     };
-
     return bit_final;
 };

@@ -12,7 +12,7 @@ void mask_FULL();
 void write_vbar_el2(uintptr_t a);
 void vector_table();
 
-inline void install_vbar() {
+static inline void install_vbar() {
     write_vbar_el2((uintptr_t)&vector_table);
 };
 
@@ -21,3 +21,28 @@ void write_tcr(uint64_t data);
 void write_ttbr0(uint64_t data);
 void enable_mmu();
 void disable_mmu();
+
+static inline uintptr_t get_current_pc() {
+    uint64_t current_pc = 0;
+
+    __asm__ volatile(
+        "mrs %0, elr_el2"
+        : "=r"(current_pc)
+        :
+        :
+    );
+    return current_pc;
+};
+
+static inline uintptr_t get_current_sp() {
+    uint64_t current_sp = 0;
+
+    __asm__ volatile(
+        "mov %0, sp"
+        : "=r"(current_sp)
+        :
+        :
+    );
+    return current_sp;
+};
+

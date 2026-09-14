@@ -188,13 +188,15 @@ extern "C" void print(const char* fmt, ...)
 }
 
 /* DUMP YAY */
-
-extern "C" void exception_dump(uint64_t esr, uint64_t far, uint64_t elr, uint64_t spsr /*, uint64_t* regs*/) {
+// AI Generated
+extern "C" void exception_dump(uint64_t esr, uint64_t far, uint64_t elr, uint64_t spsr, uint64_t which /*, uint64_t* regs*/) {
+    print("\n\n");
     ERR("Unhandled Exception Caught!\n");
     print("ESR: "); print_hex(esr); pr_newline();
     print("FAR: "); print_hex(far); pr_newline();
     print("ELR: "); print_hex(elr); pr_newline();
     print("SPSR: "); print_hex(spsr); pr_newline();
+    print("WHICH: %lu\n", which);
 
     // Decode ESR for fast debugging
     uint32_t ec = (esr >> 26) & 0x3F;
@@ -203,7 +205,7 @@ extern "C" void exception_dump(uint64_t esr, uint64_t far, uint64_t elr, uint64_
         print((esr & (1 << 6)) ? "WRITE\n" : "READ\n");
     };
 
-    // Freeze here instead of looping eret
+    // Freeze here
     while (1) {
         __asm__ volatile("wfi");
     };

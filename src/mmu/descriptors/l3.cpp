@@ -2,7 +2,7 @@
 
 #include <utils.hpp>
 #include <mmu/page_and_table_descriptor.hpp>
-#include <specific-includes/page_descriptor_helper.hpp>
+#include <mmu/page_descriptor_helper.hpp>
 
 extern "C" {
     #include <specific-includes/terminal.h>

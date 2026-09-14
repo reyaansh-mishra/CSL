@@ -56,7 +56,7 @@ int mem_map_init() {
     );
 
     if (EFI_ERROR(status)) {
-        ERR("\n MemMappr.cpp: mem_map_init: status = efi.SystemTable->BootServices->GetMemoryMap( #2: Failed Alloc with Code: %lu\n", (uint64_t)status);
+        ERR("\nMemMappr.cpp: mem_map_init: status = efi.SystemTable->BootServices->GetMemoryMap( #2: Failed Alloc with Code: %lu\n", (uint64_t)status);
         return -ERR_ALLOC_FAILED;
     };
 
@@ -78,7 +78,6 @@ struct MemMapprInfo getMemMap() {
 
 #undef INFO
 #define INFO(string) pr_info("[PAYLOAD]: %s", string)
-
 
 void add_virtual_mapping(uintptr_t phy_start_addr, uintptr_t virt_start_addr, size_t size, enum VIRT_ADDR_PERMISSIONS permissions)
 {
