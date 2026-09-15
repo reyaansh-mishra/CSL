@@ -30,7 +30,8 @@ static void setup_bootinfo() {
  */
 
 void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to bootstrap the PAYLOAD, not CSL. */
-    size_t      itr         = 0;
+    size_t      itr __attribute__((unused));
+    itr = 0;
     uint8_t*    entry       = (uint8_t*)mem_info.memory_map;
     uint8_t*    end         = entry + mem_info.memory_map_size; // memory_map_size should be total bytes here
 
@@ -39,9 +40,9 @@ void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to boo
         itr++;
     };
 
-    INFO("Entries: %lu\n", itr);
-    uintptr_t current_pc = get_current_pc();
-    INFO("Current VA PC = %p\n", current_pc);
+    // INFO("Entries: %lu\n", itr);
+    // uintptr_t current_pc = get_current_pc();
+    // INFO("Current VA PC = %p\n", current_pc);
 
     // bool debug_waiting = 1;
     // INFO("Text At: %p\n", efi.csl_base + 0x1000);
@@ -60,7 +61,7 @@ void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to boo
     };
 
     INFO("SETUP STACK && START MMU WORK\n");
-    INFO("start_mmu_work addr: %p\n", start_mmu_work);
+    // INFO("start_mmu_work addr: %p\n", start_mmu_work);
     setup_stack((uintptr_t)start_mmu_work);
 };
 

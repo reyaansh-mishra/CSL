@@ -109,11 +109,11 @@ void move_csl_to_addr(uintptr_t addr)
     uintptr_t offset = (uintptr_t)&csl_continue_if_needed - efi.csl_base;
     uint64_t csl_base_old = efi.csl_base;
     efi.csl_base = addr;
-    INFO("Died in memcpy..?\n");
+    // INFO("Died in memcpy..?\n");
     memcpy((void*)addr, (void*)csl_base_old, efi.csl_size);
     
     INFO("!!!JUMPING!!!\n");
-    INFO("Died in br..? EXTRA INFO: last_addr = %p, offset = %p\n", addr, offset);
+    // INFO("Died in br..? EXTRA INFO: last_addr = %p, offset = %p\n", addr, offset);
     
     __asm__ volatile("dsb sy");
     __asm__ volatile("isb");
