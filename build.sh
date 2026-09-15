@@ -34,6 +34,7 @@ COMMON_FLAGS=(
 
 CFLAGS=(
     "${COMMON_FLAGS[@]}"
+    --std=c23
     -fno-stack-protector
     -MMD
     -MP

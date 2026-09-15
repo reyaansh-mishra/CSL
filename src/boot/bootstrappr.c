@@ -41,13 +41,13 @@ void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to boo
 
     INFO("Entries: %lu\n", itr);
     uintptr_t current_pc = get_current_pc();
-    INFO("Current VA PC = %lx\n", current_pc);
+    INFO("Current VA PC = %p\n", current_pc);
 
     // bool debug_waiting = 1;
     // INFO("Text At: %p\n", efi.csl_base + 0x1000);
     // INFO("Waiting for Debugger to set debug_waiting == 0....\n");
     // while (debug_waiting) {
-    //     asm volatile("yield");
+    //     __asm__ volatile("yield");
     // }
 
     if (payload_reloc_physically == 0) {
@@ -60,12 +60,13 @@ void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to boo
     };
 
     INFO("SETUP STACK && START MMU WORK\n");
-    INFO("start_mmu_work addr: %lx\n", start_mmu_work);
+    INFO("start_mmu_work addr: %p\n", start_mmu_work);
     setup_stack((uintptr_t)start_mmu_work);
 };
 
 [[noreturn]] void csl_continue_if_needed()
 {
+    install_vbar(); // Reinstall because VBARS have changed
     INFO("Setting Up boot_info...\n");
     setup_bootinfo();
     

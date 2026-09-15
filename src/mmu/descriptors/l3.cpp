@@ -25,17 +25,17 @@ void Page_Descriptor::clear() { raw = 0; };
 void Page_Descriptor::setup_L3_table(struct L3_Page_Descriptor_Info minimal_table_info)
 {
     raw |= 
-          (minimal_table_info.mair_index_info << 2)
-        | (minimal_table_info.rw_info  << 6)   // AP[2], RO bit
-        | (minimal_table_info.share_info << 8)
-        | (minimal_table_info.access_info << 10)
-        | (minimal_table_info.ng_info << 11)
-        | (minimal_table_info.gp_info << 50)
-        | (minimal_table_info.dbm_info << 51)
-        | (minimal_table_info.contiguous_info << 52)
-        | (minimal_table_info.priv_exec_info << 53)
-        | (minimal_table_info.exec_info << 54)
-        | (0 << 5);   // NS, RES0, Explicit
+          (minimal_table_info.mair_index_info   << 2)
+        | (minimal_table_info.rw_info           << 6)   // AP[2], RO bit
+        | (minimal_table_info.share_info        << 8)
+        | (minimal_table_info.access_info       << 10)
+        | (minimal_table_info.ng_info           << 11)
+        | (minimal_table_info.gp_info           << 50)
+        | (minimal_table_info.dbm_info          << 51)
+        | (minimal_table_info.contiguous_info   << 52)
+        | (minimal_table_info.priv_exec_info    << 53)
+        | (minimal_table_info.exec_info         << 54)
+        | (0                                    << 5);   // NS, RES0, Explicit
 };
 
 void Page_Descriptor::set_valid(bool state)

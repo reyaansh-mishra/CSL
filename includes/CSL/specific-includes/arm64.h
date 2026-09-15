@@ -1,6 +1,7 @@
 /* includes/CSL/arm64.hpp */
 
 #include <csl.h>
+#define LINKER_PREF_ADDR    0x140000000
 
 uint32_t get_current_el(void);
 void not_in_el2(void);
@@ -19,6 +20,9 @@ static inline void install_vbar() {
 void write_mair(uint64_t data);
 void write_tcr(uint64_t data);
 void write_ttbr0(uint64_t data);
+void write_hcr(uint64_t data);
+uint64_t read_hcr();
+
 void enable_mmu();
 void disable_mmu();
 

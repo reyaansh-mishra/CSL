@@ -45,7 +45,7 @@ static EFI_STATUS EFIAPI csl_main(void)
     print(CSL_VERSION);
     print("\n");
 
-    INFO("BASE = %lx, SIZE = %d\n", efi.csl_base, efi.csl_size);
+    INFO("BASE = %p, SIZE = %d\n", efi.csl_base, efi.csl_size);
 
     int err = mem_map_init();
     if (err != SUCCESS) {
@@ -87,7 +87,6 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
     efi.csl_base = (uintptr_t)LoadedImage->ImageBase;
     efi.csl_size = round_up(LoadedImage->ImageSize, CSL_PAGE_SIZE);
 
-
     terminal_reset();
     int err = payload_init();
 
@@ -124,7 +123,7 @@ extern "C" void payload_main(struct PAYLOAD_BOOT_INFO boot_struct) {
     INFO("PAYLOAD START\n");
 
     INFO("PRINTING BOOT INFO STRUCT:\n");
-    print("\t\tImageBase = %lx, ImageSize = %lu, BootArgs (NOT SUPPORTED YET) = %c\n", boot_struct.ImageBase, boot_struct.ImageSize, boot_struct.BootArgs);
+    print("\t\tImageBase = %p, ImageSize = %lu, BootArgs (NOT SUPPORTED YET) = %c\n", boot_struct.ImageBase, boot_struct.ImageSize, boot_struct.BootArgs);
 };
 
 #endif

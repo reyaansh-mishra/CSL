@@ -50,10 +50,10 @@ void setup_l0_entry(uintptr_t virt, uintptr_t next_table) {
         if (next_table == L0->get_next_level()) {   // OK
             INFO("L0 Table ALREADY Exists!\n");
         } else {
-            ERR("L0 Table EXISTS but with DIFFERENT Next Table! next_table: %lx, Actual Next table: %lx\n", next_table, L0->get_next_level());
+            ERR("L0 Table EXISTS but with DIFFERENT Next Table! next_table: %p, Actual Next table: %p\n", next_table, L0->get_next_level());
         }
     }
-    print("L1 Table in L0: %lx\n", L0->get_next_level());
+    print("L1 Table in L0: %p\n", L0->get_next_level());
 };
 
 #undef INFO
@@ -89,7 +89,7 @@ void setup_l1_entry(uintptr_t virt, uintptr_t next_table) {
         if (next_table == L1->get_next_level()) {   // OK
             INFO("L1 Table ALREADY Exists!\n");
         } else {
-            ERR("L1 Table EXISTS but with DIFFERENT Next Table! next_table: %lx, Actual Next table: %lx\n", next_table, L1->get_next_level());
+            ERR("L1 Table EXISTS but with DIFFERENT Next Table! next_table: %p, Actual Next table: %p\n", next_table, L1->get_next_level());
         }
         free((void* )l1_table);
     }
@@ -147,7 +147,7 @@ void setup_l2_entry(uintptr_t virt, uintptr_t next_table) {
         if (next_table == L2->get_next_level()) {   // OK
             INFO("L2 Table ALREADY Exists!\n");
         } else {
-            ERR("L2 Table EXISTS but with DIFFERENT Next Table! next_table: %lx, Actual Next table: %lx\n", next_table, L2->get_next_level());
+            ERR("L2 Table EXISTS but with DIFFERENT Next Table! next_table: %p, Actual Next table: %p\n", next_table, L2->get_next_level());
         }
         free((void* )l2_table);
     }
@@ -224,7 +224,7 @@ void setup_l3_entry(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSIONS pe
         if (phy == L3->get_page_addr()) {   // OK
             INFO("L3 PAGE ALREADY Exists!\n");
         } else {
-            ERR("L3 PAGE EXISTS but with DIFFERENT Next Page! l3_page: %lx, Actual Next Page: %lx\n", phy, L3->get_page_addr());
+            ERR("L3 PAGE EXISTS but with DIFFERENT Next Page! l3_page: %p, Actual Next Page: %p\n", phy, L3->get_page_addr());
         }
         free((void* )l3_table);
     }
@@ -236,7 +236,7 @@ void setup_l3_entry(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSIONS pe
 #define ERR(fmt, ...)   print("[ERR] [CSL] <mmu internals::setup page>: " fmt, ##__VA_ARGS__)
 
 void setup_table_for_page(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSIONS permissions) {
-    // INFO("Mapping %lx -> %lx\n", phy, virt);
+    INFO("Mapping %p -> %p\n", phy, virt);
     setup_l3_entry(phy, virt, permissions);
 };
 
@@ -247,13 +247,19 @@ uint64_t make_tcr()
 {
     uint64_t tcr = 0;
 
-    tcr |= (16ULL << 0);   // T0SZ
-    tcr |= (0b11ULL << 12); // SH0
-    tcr |= (0b00ULL << 14); // TG0 = 4KB
-    tcr |= (0b0010ULL << 16); // PS
+    tcr |= (16ULL << 0);       // T0SZ  [5:0]   = 16 (48-bit Virtual Address space)
+    tcr |= (0b01ULL << 8);     // IRGN0 [9:8]
+    tcr |= (0b01ULL << 10);    // ORGN0 [11:10]
+    tcr |= (0b11ULL << 12);    // SH0   [13:12]
+    tcr |= (0b00ULL << 14);    // TG0   [15:14] = 4KB
+    tcr |= (0b010ULL << 16);   // PS    [18:16] = 40-bit
+
+    tcr |= (1ULL << 23);       // RES1 — REQUIRED for TCR_EL2 (E2H=0)
+    tcr |= (1ULL << 31);       // RES1 — REQUIRED for TCR_EL2 (E2H=0)
 
     return tcr;
-};
+}
+
 uint64_t make_mair()
 {
     uint64_t mair = 0;
@@ -266,8 +272,17 @@ uint64_t make_mair()
 /* END AI GENERATED */
 
 void mmu_bs() {
-    print("L0_table[0] raw = %lx, TTBR0 will be = %lx\n", *(uint64_t*)L0_table, (uint64_t)&L0_table[0]);
-    print("Current Stack = %lx\n", get_current_sp());
+    // print("L0_table[0] raw = %p, TTBR0 will be = %p\n", *(uint64_t*)L0_table, (uint64_t)&L0_table[0]);
+    // print("Current Stack = %p\n", get_current_sp());
+
+    disable_mmu();
+
+    INFO("Disabling Virtualization!\n");
+    uint64_t hcr = read_hcr();
+    hcr &= ~(1ULL << 34);   // clear E2H
+    hcr &= ~(1ULL << 27);   // clear TGE
+    write_hcr(hcr);
+
     install_vbar();
     disable_mmu();
     write_ttbr0((uint64_t)&L0_table[0]);

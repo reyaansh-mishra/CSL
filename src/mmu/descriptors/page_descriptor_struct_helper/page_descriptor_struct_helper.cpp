@@ -7,7 +7,7 @@ using PE = help_me_build_page_entry;
 
 void PE::set_default_values()
 {
-    descriptor.mair_index_info = ATTR_IDX_0;
+    descriptor.mair_index_info = ATTR_IDX_1;
     descriptor.rw_info         = EL2_RW;
     descriptor.share_info      = INNER_S;
     descriptor.access_info     = NORM;

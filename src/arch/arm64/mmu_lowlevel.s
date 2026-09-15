@@ -4,6 +4,8 @@
 .global write_mair
 .global write_tcr
 .global write_ttbr0
+.global write_hcr
+.global read_hcr
 .global enable_mmu
 .global disable_mmu
 
@@ -31,7 +33,7 @@ write_ttbr0:
 enable_mmu:
     mrs x0, sctlr_el2
     orr x0, x0, #1
-    /* LATER 
+    /* LATER
     orr x0, x0, #(1 << 0)
     orr x0, x0, #(1 << 2)
     orr x0, x0, #(1 << 12)
@@ -46,4 +48,12 @@ disable_mmu:
     msr sctlr_el2, x0
     cleanup
     ret
-    
+
+write_hcr:
+    msr hcr_el2, x0
+    cleanup
+    ret
+
+read_hcr:
+    mrs x0, hcr_el2
+    ret

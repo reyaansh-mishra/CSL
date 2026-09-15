@@ -28,7 +28,7 @@ void* mem_alloc(size_t size, EFI_MEMORY_TYPE memory_type) {
     );
 
     if (EFI_ERROR(status)) {
-        ERR("ALLOCATION FAILED. ERR: %lx\n", status);
+        ERR("ALLOCATION FAILED. ERR: %p\n", status);
         return NULL;
     }
     return buffer;
@@ -113,7 +113,7 @@ void move_csl_to_addr(uintptr_t addr)
     memcpy((void*)addr, (void*)csl_base_old, efi.csl_size);
     
     INFO("!!!JUMPING!!!\n");
-    INFO("Died in br..? EXTRA INFO: last_addr = %lx, offset = %lx\n", addr, offset);
+    INFO("Died in br..? EXTRA INFO: last_addr = %p, offset = %p\n", addr, offset);
     
     __asm__ volatile("dsb sy");
     __asm__ volatile("isb");

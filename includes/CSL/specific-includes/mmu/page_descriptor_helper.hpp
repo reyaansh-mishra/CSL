@@ -137,7 +137,7 @@ struct L3_Page_Descriptor_Info {
     CONTIGUOUS          contiguous_info;
     PRIVLGD_EXEC_PERM   priv_exec_info;
     EXECUTE_PERMISSION  exec_info;
-};
+} __attribute__((packed));
 
 class help_me_build_page_entry {
     public:
