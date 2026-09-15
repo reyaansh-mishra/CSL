@@ -23,6 +23,9 @@ struct PAYLOAD_BOOT_INFO boot_info;
 static void setup_bootinfo() {
     boot_info.ImageBase     = efi.csl_base;
     boot_info.ImageSize     = efi.csl_size;
+    
+    boot_info.ram_base      = efi.ram_base;
+    boot_info.ram_size      = efi.ram_size;
 };
 
 /*
@@ -34,11 +37,27 @@ void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to boo
     itr = 0;
     uint8_t*    entry       = (uint8_t*)mem_info.memory_map;
     uint8_t*    end         = entry + mem_info.memory_map_size; // memory_map_size should be total bytes here
+    bool        we_know_ram_base = false;
 
+    uint64_t ram_bytes = 0;
+
+    /* AI GENERATED */
     while (entry < end) {
+        EFI_MEMORY_DESCRIPTOR* desc = (EFI_MEMORY_DESCRIPTOR*)entry;
+
+        if (desc->Type == EfiConventionalMemory) {
+            if (!we_know_ram_base) {
+                efi.ram_base = desc->PhysicalStart;
+                we_know_ram_base = true;
+            }
+            ram_bytes += desc->NumberOfPages * CSL_PAGE_SIZE;
+        }
+
         entry += mem_info.descriptor_size;
         itr++;
-    };
+    }
+    efi.ram_size = ram_bytes;
+    /* END OF AI GENERATED */
 
     // INFO("Entries: %lu\n", itr);
     // uintptr_t current_pc = get_current_pc();
@@ -65,7 +84,7 @@ void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to boo
     setup_stack((uintptr_t)start_mmu_work);
 };
 
-[[noreturn]] void csl_continue_if_needed()
+void csl_continue_if_needed()
 {
     install_vbar(); // Reinstall because VBARS have changed
     INFO("Setting Up boot_info...\n");
@@ -73,9 +92,7 @@ void bootstrappr(struct MemMapprInfo mem_info) {   /* Bootstrappr is used to boo
     
     payload_main(boot_info);
 
-    ERR("PAYLOAD RETURNED! BUSY LOOPING!\n");
-        while (true) {
-        __asm__ volatile("wfi");
-    };
+    ERR("PAYLOAD RETURNED! EXITING!\n");
+    SYSTEM_POWEROFF();
 };
 

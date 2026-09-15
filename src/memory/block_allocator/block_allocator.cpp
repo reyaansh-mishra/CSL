@@ -34,13 +34,14 @@ void BlockAllocator::init(void* block_alloc_addr, size_t max_pages)
     block.used_size = 0;
 
     block.cursor    = 0;
+    alloc_regions_ctr = 0;
 };
 
 /* ----------------------------------------------------------------------- */
 /* HELPER FUNCTIONS */
 /* ----------------------------------------------------------------------- */
 
-static int get_me_first_free_alloc_region(size_t size)
+static int  get_me_first_free_alloc_region(size_t size)
 {
     for (size_t i = 0; i < alloc_regions_ctr; i++) {
         if ((allocd_regions[i].currently_allocd == false) && (allocd_regions[i].size >= size)) {

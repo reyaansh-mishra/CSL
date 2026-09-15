@@ -13,6 +13,8 @@ enum VIRT_ADDR_PERMISSIONS {
     READ_ONLY   = 1 << 0,
     WRITABLE    = 1 << 1,
     EXECUTABLE  = 1 << 2,
+
+    DEVICE      = 1 << 3,
 };
 
 struct PAYLOAD_REMAP_ADDRS {
@@ -29,7 +31,11 @@ extern struct   PAYLOAD_REMAP_ADDRS remap_addrs[PAYLOAD_MAX_REMAP_ADDRS];
 
 struct PAYLOAD_BOOT_INFO {
     uintptr_t   ImageBase;
-    uint64_t    ImageSize;
+    size_t      ImageSize;
+
+    uintptr_t   ram_base;
+    size_t      ram_size;
+
     char*       BootArgs;
 } __attribute__((packed));
 extern struct   PAYLOAD_BOOT_INFO   boot_info;

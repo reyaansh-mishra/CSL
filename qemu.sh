@@ -1,7 +1,7 @@
 qemu-system-aarch64 \
   	-machine virt,virtualization=on,secure=off \
   	-cpu max \
-	-m 20G \
+	-m 5G \
 	-drive if=pflash,format=raw,readonly=on,file=EFI.fd \
 	-drive if=pflash,format=raw,file=NVRAM.fd \
 	-drive format=raw,file=fat:rw:esp \

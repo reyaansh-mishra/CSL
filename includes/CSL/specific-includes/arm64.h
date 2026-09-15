@@ -50,3 +50,4 @@ static inline uintptr_t get_current_sp() {
     return current_sp;
 };
 
+void SYSTEM_POWEROFF();

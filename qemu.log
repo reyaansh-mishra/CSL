@@ -35,143 +35,45 @@ Taking exception 13 [Secure Monitor Call] on CPU 0
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3810000
-...with SPSR 0x80000309
-...with ELR 0x461f3d10
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x461f3d10
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3c18000
-...with SPSR 0x20000309
-...with ELR 0x46711958
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x46711958
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3c18000
-...with SPSR 0x80000309
-...with ELR 0x47208148
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x47208148
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3810000
-...with SPSR 0x20000309
-...with ELR 0x471f6b20
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471f6b20
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3c18000
-...with SPSR 0x80000309
-...with ELR 0x47208148
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x47208148
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3810000
-...with SPSR 0x60000309
-...with ELR 0x471f7340
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471f7340
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3c18000
-...with SPSR 0x20000309
-...with ELR 0x45fe72c8
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45fe72c8
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3c18000
-...with SPSR 0x60000b09
-...with ELR 0x47200a30
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x47200a30
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3c18000
-...with SPSR 0x20000309
-...with ELR 0x45f449d8
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45f449d8
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3c18000
-...with SPSR 0x60000309
-...with ELR 0x45d22950
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45d22950
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3810000
-...with SPSR 0x80000309
-...with ELR 0x45d9c378
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45d9c378
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
 ...with SPSR 0x309
-...with ELR 0x45d34000
+...with ELR 0x466d3f34
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45d34000
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466d3f34
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
-...with ESR 0x0/0x3810000
+...with ESR 0x0/0x3c18000
 ...with SPSR 0x60000309
-...with ELR 0x45da14d0
+...with ELR 0x466fe69c
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45da14d0
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x4720b510
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x4720b510
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3810000
-...with SPSR 0x80000309
-...with ELR 0x45e9305c
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45e9305c
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466fe69c
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3c18000
 ...with SPSR 0x20000309
-...with ELR 0x45e5abb8
+...with ELR 0x471f6624
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45e5abb8
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471f6624
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3810000
-...with SPSR 0x60000309
-...with ELR 0x4720bcd8
+...with SPSR 0x309
+...with ELR 0x461b5cb0
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x4720bcd8
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x461b5cb0
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
-...with ESR 0x0/0x3000000
-...with SPSR 0x60000309
-...with ELR 0x461eb024
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x461eb024
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3010000
+...with ESR 0x0/0x3c18000
 ...with SPSR 0x80000309
-...with ELR 0x45ea5f1c
+...with ELR 0x471fb170
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45ea5f1c
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471fb170
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3810000
-...with SPSR 0x80000309
-...with ELR 0x4720107c
+...with SPSR 0x80000b09
+...with ELR 0x4600a000
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x4720107c
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x4600a000
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3c18000
@@ -181,186 +83,368 @@ Taking exception 5 [IRQ] on CPU 0
 Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466fe6b8
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
-...with ESR 0x0/0x3400000
-...with SPSR 0x60000309
-...with ELR 0x461e62cc
+...with ESR 0x0/0x3c18000
+...with SPSR 0x80000309
+...with ELR 0x471fad28
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x461e62cc
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471fad28
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3c18000
+...with SPSR 0x20000309
+...with ELR 0x45d1d834
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45d1d834
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3810000
+...with SPSR 0x60000b09
+...with ELR 0x45d6ea98
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45d6ea98
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3810000
+...with SPSR 0x60000309
+...with ELR 0x45da850c
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45da850c
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3800000
-...with SPSR 0x20000309
-...with ELR 0x462e06b4
+...with SPSR 0x80000309
+...with ELR 0x45d95ec8
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x462e06b4
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45d95ec8
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
-...with ESR 0x0/0x3400000
+...with ESR 0x0/0x3800000
+...with SPSR 0x20000b09
+...with ELR 0x471f6000
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471f6000
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3810000
 ...with SPSR 0x80000309
 ...with ELR 0x4720b480
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
 Exception return from AArch64 EL2 to AArch64 EL2 PC 0x4720b480
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
+...with ESR 0x0/0x3810000
+...with SPSR 0x60000309
+...with ELR 0x471fa218
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471fa218
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3c18000
+...with SPSR 0x60000309
+...with ELR 0x46724438
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x46724438
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3810000
+...with SPSR 0x60000309
+...with ELR 0x461e6668
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x461e6668
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
 ...with ESR 0x0/0x3410000
 ...with SPSR 0x20000309
-...with ELR 0x47200d50
+...with ELR 0x45ea49e8
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x47200d50
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45ea49e8
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
-...with ESR 0x0/0x3810000
-...with SPSR 0x60000309
-...with ELR 0x45e81a24
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45e81a24
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3810000
-...with SPSR 0x80000309
-...with ELR 0x466f7178
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x466f7178
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3810000
-...with SPSR 0x80000309
-...with ELR 0x466f7178
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x466f7178
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3810000
-...with SPSR 0x80000309
-...with ELR 0x466f7178
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x466f7178
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3810000
-...with SPSR 0x80000309
-...with ELR 0x466f7178
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x466f7178
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3810000
-...with SPSR 0x80000309
-...with ELR 0x466f7178
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x466f7178
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x466f7178
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x466f7178
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3810000
-...with SPSR 0x80000309
-...with ELR 0x466f7178
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x466f7178
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3810000
-...with SPSR 0x80000309
-...with ELR 0x466f7178
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x466f7178
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3810000
-...with SPSR 0x80000309
-...with ELR 0x466f7178
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3810000
-...with SPSR 0x80000309
-...with ELR 0x466f7178
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3810000
-...with SPSR 0x60000309
-...with ELR 0x45e7a720
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45e7a720
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3000000
+...with ESR 0x0/0x3010000
 ...with SPSR 0x20000309
-...with ELR 0x466c83f8
+...with ELR 0x4720835c
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466c83f8
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x4720835c
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3410000
+...with SPSR 0x20000b09
+...with ELR 0x471f6000
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471f6000
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3410000
+...with SPSR 0x60000309
+...with ELR 0x47202840
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x47202840
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3410000
+...with SPSR 0x60000b09
+...with ELR 0x466d8db8
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466d8db8
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3400000
+...with SPSR 0x309
+...with ELR 0x462e2134
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x462e2134
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3410000
+...with SPSR 0x60000309
+...with ELR 0x461153a0
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x461153a0
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x60000309
+...with ELR 0x466a27cc
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466a27cc
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3810000
+...with SPSR 0x80000309
+...with ELR 0x466f7178
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x466f7178
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3810000
+...with SPSR 0x80000309
+...with ELR 0x466f7178
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x466f7178
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3810000
+...with SPSR 0x80000309
+...with ELR 0x466f7178
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x466f7178
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3810000
+...with SPSR 0x80000309
+...with ELR 0x466f7178
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x466f7178
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3810000
+...with SPSR 0x80000309
+...with ELR 0x466f7178
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x466f7178
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x466f7178
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x466f7178
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3810000
+...with SPSR 0x80000309
+...with ELR 0x466f7178
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x466f7178
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3810000
+...with SPSR 0x80000309
+...with ELR 0x466f7178
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x466f7178
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3810000
+...with SPSR 0x80000309
+...with ELR 0x466f7178
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3810000
+...with SPSR 0x80000309
+...with ELR 0x466f7178
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x60000309
+...with ELR 0x45e85170
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45e85170
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3000000
+...with SPSR 0x60000309
+...with ELR 0x471fae14
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471fae14
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3000000
 ...with SPSR 0x80000309
-...with ELR 0x471f612c
+...with ELR 0x466fe6b8
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471f612c
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466fe6b8
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x471f8cdc
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471f8cdc
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x466fe6b8
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466fe6b8
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x466fe6b8
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466fe6b8
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3010000
+...with SPSR 0x80000309
+...with ELR 0x466fe6b8
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466fe6b8
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3400000
+...with SPSR 0x20000309
+...with ELR 0x45faa8fc
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45faa8fc
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3400000
+...with SPSR 0x80000309
+...with ELR 0x45f5c098
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45f5c098
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3400000
+...with SPSR 0x80000309
+...with ELR 0x45f3dfd4
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45f3dfd4
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3400000
+...with SPSR 0x80000309
+...with ELR 0x466fe6b8
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466fe6b8
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x466fe6b8
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466fe6b8
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x60000309
+...with ELR 0x4720c0e0
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x4720c0e0
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3410000
+...with SPSR 0x80000309
+...with ELR 0x471f7210
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471f7210
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3410000
+...with SPSR 0x60000309
+...with ELR 0x47202840
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x47202840
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x60000309
+...with ELR 0x47202840
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x47202840
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3800000
@@ -378,136 +462,38 @@ Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466fe6b8
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x466fe6b8
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466fe6b8
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3010000
 ...with SPSR 0x60000309
-...with ELR 0x471f6ed8
+...with ELR 0x471f6bfc
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471f6ed8
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3400000
-...with SPSR 0x20000309
-...with ELR 0x45fad220
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45fad220
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3400000
-...with SPSR 0x20000309
-...with ELR 0x462e2200
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x462e2200
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3400000
-...with SPSR 0x80000309
-...with ELR 0x45f3e6cc
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x45f3e6cc
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3400000
-...with SPSR 0x80000309
-...with ELR 0x466fe6b8
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466fe6b8
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471f6bfc
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3800000
-...with SPSR 0x20000309
-...with ELR 0x471f66a8
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471f66a8
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x60000309
-...with ELR 0x47202840
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x47202840
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3410000
 ...with SPSR 0x80000309
-...with ELR 0x46022400
+...with ELR 0x4720b480
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x46022400
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x4720b480
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
-...with ESR 0x0/0x3410000
-...with SPSR 0x60000309
-...with ELR 0x47202840
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x47202840
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x60000309
-...with ELR 0x471fb784
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471fb784
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
+...with ESR 0x0/0x3000000
 ...with SPSR 0x309
-...with ELR 0x471f66c8
+...with ELR 0x471f6b3c
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471f66c8
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x471f62a4
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471f62a4
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x466fe6b8
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466fe6b8
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3410000
-...with SPSR 0x60000309
-...with ELR 0x471f66b8
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471f66b8
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x471fb774
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471fb774
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3410000
-...with SPSR 0x60000309
-...with ELR 0x471f66b8
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471f66b8
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471f6b3c
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3c18000
-...with SPSR 0x40000b09
-...with ELR 0x46115ed8
+...with SPSR 0x80000309
+...with ELR 0x47209ef0
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x46115ed8
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x47209ef0
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3410000
 ...with SPSR 0x80000309
-...with ELR 0x4601cb60
+...with ELR 0x466d5cac
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x4601cb60
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466d5cac
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3410000
@@ -518,21 +504,14 @@ Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466f7178
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3880000
-...with SPSR 0x40000309
-...with ELR 0x1400026c4
+...with SPSR 0x20000309
+...with ELR 0x140004250
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x1400026c4
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140004250
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3880000
 ...with SPSR 0x80000309
-...with ELR 0x140003970
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003970
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
 ...with ELR 0x466fe6b8
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
 Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466fe6b8
@@ -540,167 +519,178 @@ Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3800000
 ...with SPSR 0x80000309
-...with ELR 0x140003958
+...with ELR 0x14000397c
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003958
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x14000397c
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x14000396c
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x14000396c
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x1400039e8
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x1400039e8
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3410000
 ...with SPSR 0x40000309
-...with ELR 0x140002638
+...with ELR 0x140002014
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140002638
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140002014
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3800000
 ...with SPSR 0x80000309
-...with ELR 0x466fe6b8
+...with ELR 0x140003994
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466fe6b8
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003994
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3800000
 ...with SPSR 0x80000309
-...with ELR 0x140003970
+...with ELR 0x14000396c
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003970
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x1400039ec
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x1400039ec
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x1400039b4
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x1400039b4
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x466fe6b8
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466fe6b8
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x140003970
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003970
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x140003970
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003970
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x140003970
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003970
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x140003970
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003970
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x140003970
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003970
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x466fe6b8
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466fe6b8
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x140003970
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003970
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x140003970
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003970
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x140003970
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003970
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x14000396c
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3800000
 ...with SPSR 0x20000309
-...with ELR 0x1400022c8
+...with ELR 0x1400014d0
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x1400022c8
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x1400014d0
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3800000
 ...with SPSR 0x80000309
-...with ELR 0x14000260c
+...with ELR 0x466fe6b8
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x14000260c
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466fe6b8
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x40000309
+...with ELR 0x1400026b8
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x1400026b8
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x466fe6b8
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466fe6b8
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x14000396c
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x14000396c
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x14000397c
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x14000397c
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x140003994
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003994
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x140003994
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003994
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x466fe6b8
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x466fe6b8
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x14000396c
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x14000396c
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x140003994
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003994
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x140003994
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003994
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x140003994
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003994
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x80000309
+...with ELR 0x14000397c
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x14000397c
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3800000
 ...with SPSR 0x60000309
-...with ELR 0x140001718
+...with ELR 0x471f7340
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140001718
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471f7340
+Taking exception 5 [IRQ] on CPU 0
+...from EL2 to EL2
+...with ESR 0x0/0x3800000
+...with SPSR 0x60000309
+...with ELR 0x471f6ed8
+...to EL2 PC 0x466ff280 PSTATE 0x4023c9
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x471f6ed8
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3800000
 ...with SPSR 0x80000309
-...with ELR 0x140003970
+...with ELR 0x14000397c
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003970
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x14000397c
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3800000
 ...with SPSR 0x80000309
-...with ELR 0x140003958
+...with ELR 0x140003994
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003958
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003994
 Taking exception 5 [IRQ] on CPU 0
 ...from EL2 to EL2
 ...with ESR 0x0/0x3800000
 ...with SPSR 0x80000309
-...with ELR 0x140003970
+...with ELR 0x140003994
 ...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003970
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x140003970
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003970
-Taking exception 5 [IRQ] on CPU 0
-...from EL2 to EL2
-...with ESR 0x0/0x3800000
-...with SPSR 0x80000309
-...with ELR 0x140003970
-...to EL2 PC 0x466ff280 PSTATE 0x4023c9
-Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003970
+Exception return from AArch64 EL2 to AArch64 EL2 PC 0x140003994
+Taking exception 13 [Secure Monitor Call] on CPU 0
+...from EL2 to EL3
+...with ESR 0x17/0x5e000000
+...handled as PSCI call

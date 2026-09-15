@@ -39,13 +39,11 @@ EFI_CONTEXT efi;
 static EFI_STATUS EFIAPI csl_main(void)
 { /* Actually run CSL */
 
-    round_down(payload_reloc_physically, CSL_PAGE_SIZE);
+    payload_reloc_physically = round_down(payload_reloc_physically, CSL_PAGE_SIZE);
 
-    INFO("CSL Version ");
-    print(CSL_VERSION);
-    print("\n");
-
+    INFO("CSL Version %s\n", CSL_VERSION);
     INFO("BASE = %p, SIZE = %d\n", efi.csl_base, efi.csl_size);
+    INFO("RAM BASE = %p, SIZE = %d\n");
 
     int err = mem_map_init();
     if (err != SUCCESS) {
@@ -54,7 +52,6 @@ static EFI_STATUS EFIAPI csl_main(void)
     };
 
     bootstrappr(getMemMap());
-
     return EFI_SUCCESS;
 };
 
@@ -119,7 +116,6 @@ EFI_STATUS EFIAPI payload_init()
 };
 
 extern "C" void payload_main(struct PAYLOAD_BOOT_INFO boot_struct) {
-    print("We live to see another day......\n");
     INFO("PAYLOAD START\n");
 
     INFO("PRINTING BOOT INFO STRUCT:\n");

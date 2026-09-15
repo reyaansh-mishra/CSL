@@ -21,15 +21,19 @@ Table_Descriptor __attribute__((aligned(CSL_PAGE_SIZE))) L0_table[512];
 static struct L3_Page_Descriptor_Info setup_perms(enum VIRT_ADDR_PERMISSIONS __attribute__((unused)) perms) {
     help_me_build_page_entry page;
     page.set_default_values();
-    // if (perms & WRITABLE) {
-    //     page.set_rw_perms(EL2_RO);
-    // } else {
-    //     page.set_rw_perms(EL2_RW);
-    // };
+    if (perms & WRITABLE) {
+        page.set_rw_perms(EL2_RW);
+    } else {
+        page.set_rw_perms(EL2_RO);
+    };
 
-    // if (perms & EXECUTABLE)
-    //     page.set_exec(EXEC_AVAIL);
-    // else { page.set_exec(EXEC_UNAVAIL);INFO("EXEC PERMS DECLINED!\n"); }
+    if (perms & EXECUTABLE)
+        page.set_exec(EXEC_AVAIL);
+    else page.set_exec(EXEC_UNAVAIL);
+
+    if (perms & DEVICE)
+        page.set_mair(ATTR_IDX_0);
+    else page.set_mair(ATTR_IDX_1);
 
     return page.get();
 };

@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define CSL_VERSION             "0.0.1"
+#define CSL_VERSION             "0.9.0"
 #define CSL_FAKE_PAYLOAD_TEST
 #define CSL_PAGE_SIZE           4096
 #define CSL_STACK_SIZE          CSL_PAGE_SIZE*4
@@ -18,6 +18,9 @@ typedef struct {
 
     uintptr_t csl_base;
     uint64_t  csl_size;
+
+    uintptr_t   ram_base;
+    size_t      ram_size;
 } EFI_CONTEXT;
 
 extern  EFI_CONTEXT efi;
