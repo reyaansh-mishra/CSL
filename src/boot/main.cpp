@@ -4,14 +4,15 @@
  */
 
 #include <utils.hpp>
-
 #include <specific-includes/block_allocator.hpp>
 
 extern "C" {
+    #include <csl.h>
     #include <specific-includes/terminal.h>
     #include <specific-includes/bootstrappr.h>
     #include <specific-includes/arm64.h>
     #include <payload-includes/payload.h>
+    #include <memory.h>
 };
 
 #include <Protocol/LoadedImage.h>
@@ -41,16 +42,11 @@ static EFI_STATUS EFIAPI csl_main(void)
 
     payload_reloc_physically = round_down(payload_reloc_physically, CSL_PAGE_SIZE);
 
-    INFO("CSL Version %s\n", CSL_VERSION);
-    INFO("BASE = %p, SIZE = %d\n", efi.csl_base, efi.csl_size);
-    INFO("RAM BASE = %p, SIZE = %d\n");
+    INFO("CSL v%s\n", CSL_VERSION);
+    INFO("Revision Desc:\n\t%s\n", CSL_VERSION_DESC);
+    INFO("BASE = %p, SIZE = %d\n", efi.csl_base_phy, efi.csl_size);
 
-    int err = mem_map_init();
-    if (err != SUCCESS) {
-        ERR("csl_main: FAILED mem_map_init WITH ERR: %d\n", err);
-        return EFI_DEVICE_ERROR;
-    };
-
+    INFO("!!! STARTING CORE CSL APPLICATION !!!\n");
     bootstrappr(getMemMap());
     return EFI_SUCCESS;
 };
@@ -68,7 +64,7 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
         not_in_el2();
     };
 
-    pls_use_malloc_now      = false;
+    pls_use_malloc_now          = false;
 
     efi.ImageHandle             = ImageHandle;
     efi.SystemTable             = SystemTable;
@@ -81,8 +77,8 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
     EFI_STATUS status = efi.BootServices->OpenProtocol(efi.ImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **)&LoadedImage, ImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
     if (EFI_ERROR(status)) { return status; };
 
-    efi.csl_base = (uintptr_t)LoadedImage->ImageBase;
-    efi.csl_size = round_up(LoadedImage->ImageSize, CSL_PAGE_SIZE);
+    efi.csl_base_phy    = (uintptr_t)LoadedImage->ImageBase;
+    efi.csl_size        = round_up(LoadedImage->ImageSize, CSL_PAGE_SIZE);
 
     terminal_reset();
     int err = payload_init();
@@ -91,11 +87,7 @@ extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TA
         ERR("CSL_BOOT_STUB: Unable to conitnue, Err: %lu\n", err);
         return err;
     };
-
-    while (TRUE) {
-        __asm__ volatile("wfi");
-    };
-
+    SYSTEM_HALT();
     return EFI_SUCCESS;
 };
 
@@ -111,7 +103,7 @@ EFI_STATUS EFIAPI payload_init()
 {
     // add_virtual_mapping(0x0000, 0xFF000, CSL_PAGE_SIZE*100, READ_ONLY);
     payload_reloc_physically    = 0x40000000;
-    payload_virtual_entry       = 0x40000000;
+    payload_virtual_entry       = 0x100000000;
     return csl_main();
 };
 
@@ -119,7 +111,7 @@ extern "C" void payload_main(struct PAYLOAD_BOOT_INFO boot_struct) {
     INFO("PAYLOAD START\n");
 
     INFO("PRINTING BOOT INFO STRUCT:\n");
-    print("\t\tImageBase = %p, ImageSize = %lu, BootArgs (NOT SUPPORTED YET) = %c\n", boot_struct.ImageBase, boot_struct.ImageSize, boot_struct.BootArgs);
+    print("\t\tImageBase_phy = %p, ImageSize = %lu, BootArgs (NOT SUPPORTED YET) = %c\n", boot_struct.ImageBase_phy, boot_struct.ImageSize, boot_struct.BootArgs);
 };
 
 #endif

@@ -95,3 +95,40 @@ Jump payload
 ---
 
 [15/09/2026 @ 5:36PM]: CSL' MMU subsystem is finished.
+
+---
+
+[17/09/26 @ 11:35PM]: 
+```
+❯ git add . -v && git commit -a -m "Fixed phy vs virt Confusion + Misc bugfixes" && git tag v0.9.1
+add '.gitignore'
+add 'csl.efi'
+add 'includes/CSL/specific-includes/arm64.h'
+add 'includes/CSL/specific-includes/bootstrappr.h'
+add 'includes/CSL/specific-includes/memory.h'
+add 'includes/CSL/utils.h'
+add 'includes/csl.h'
+add 'includes/payload-includes/payload.h'
+add 'qemu.log'
+add 'qemu.sh'
+add 'readme.md'
+add 'src/arch/arm64/system.s'
+add 'src/boot/bootstrappr.c'
+add 'src/boot/main.cpp'
+add 'src/memory/MemMappr.cpp'
+add 'src/memory/memory.cpp'
+add 'src/mmu/orchestrator.c'
+remove 'src/mmu/stack.c'
+add 'src/mmu/translation_tables.cpp'
+add 'includes/CSL/specific-includes/uefi/mem-map.h'
+add 'src/arch/arm64/stack.c'
+[main d4c0850] Fixed phy vs virt Confusion + Misc bugfixes
+ 20 files changed, 1742 insertions(+), 367 deletions(-)
+ create mode 100644 includes/CSL/specific-includes/uefi/mem-map.h
+ rename src/{mmu => arch/arm64}/stack.c (56%)
+~/Projects/CSL main ⇡1 ❯                                                                                                             11:34:39 PM
+```
+
+---
+
+

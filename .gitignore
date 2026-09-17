@@ -1,5 +1,5 @@
 **/build/
 *.fd
-gemu.log
+qemu.log
 esp/EFI/BOOT/BOOTAA64.efi
 csl.efi

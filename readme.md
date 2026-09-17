@@ -1,4 +1,3 @@
-#### Current CSL Version:   0.0.1
 # Common System Loader
 - A Personal project for my Low Level Projects
 - AArch64/ARM64 only

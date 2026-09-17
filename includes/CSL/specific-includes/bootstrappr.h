@@ -1,9 +1,9 @@
 /* includes/CSL/bootstrappr.hpp */
 
 #include <csl.h>
-#include "memory.h"
+#include <uefi/mem-map.h>
 
-void bootstrappr(struct MemMapprInfo mem_info);
-void csl_continue_if_needed();
+void bootstrappr(UEFI_MEMORY_MAP mem_info);
+[[noreturn]] void csl_continue_if_needed();
 
 extern size_t number_of_pages;

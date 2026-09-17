@@ -12,7 +12,7 @@ extern "C" {
 PAYLOAD_REMAP_ADDRS remap_addrs[PAYLOAD_MAX_REMAP_ADDRS] = {};
 uint8_t             remap_addrs_count = 0;
 
-struct MemMapprInfo MemMapprInfo;
+UEFI_MEMORY_MAP MemMapprInfo = {0, 0, 0, 0, 0, 0};
 
 int mem_map_init() {
     UINTN memory_map_size = 0;
@@ -68,11 +68,17 @@ int mem_map_init() {
     MemMapprInfo.memory_map         = (EFI_MEMORY_DESCRIPTOR *)alloc_addr;
     MemMapprInfo.map_key            = map_key;
 
-    INFO("Initialized MemMappr!\n");
+    INFO("Saved UEFI Memory Map!\n");
     return SUCCESS;
 };
 
-struct MemMapprInfo getMemMap() {
+UEFI_MEMORY_MAP getMemMap() {
+    if (!MemMapprInfo.active) {
+        int err = mem_map_init();
+        if (err) {
+            ERR("MemMapInit: %d", mem_map_init());
+        };
+    }
     return MemMapprInfo;
 };
 

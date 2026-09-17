@@ -57,7 +57,6 @@ void setup_l0_entry(uintptr_t virt, uintptr_t next_table) {
             ERR("L0 Table EXISTS but with DIFFERENT Next Table! next_table: %p, Actual Next table: %p\n", next_table, L0->get_next_level());
         }
     }
-    // print("L1 Table in L0: %p\n", L0->get_next_level());
 };
 
 #undef INFO
@@ -240,7 +239,6 @@ void setup_l3_entry(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSIONS pe
 #define ERR(fmt, ...)   print("[ERR] [CSL] <mmu internals::setup page>: " fmt, ##__VA_ARGS__)
 
 void setup_table_for_page(uintptr_t phy, uintptr_t virt, enum VIRT_ADDR_PERMISSIONS permissions) {
-    // INFO("Mapping %p -> %p\n", phy, virt);
     setup_l3_entry(phy, virt, permissions);
 };
 
@@ -276,11 +274,6 @@ uint64_t make_mair()
 /* END AI GENERATED */
 
 void mmu_bs() {
-    // print("L0_table[0] raw = %p, TTBR0 will be = %p\n", *(uint64_t*)L0_table, (uint64_t)&L0_table[0]);
-    // print("Current Stack = %p\n", get_current_sp());
-
-    disable_mmu();
-
     INFO("Disabling Virtualization!\n");    // UEFI Dropped us into Virtualized.
     uint64_t hcr = read_hcr();
     hcr &= ~(1ULL << 34);   // clear E2H
@@ -293,6 +286,5 @@ void mmu_bs() {
     write_tcr(make_tcr());
     write_mair(make_mair());
 
-    // INFO("YES YES NOW ACTUALLY ENABLING MMU, pc = %p\n", get_current_pc());
     enable_mmu();
 };

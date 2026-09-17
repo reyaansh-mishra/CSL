@@ -2,20 +2,13 @@
 
 #pragma once
 #include <csl.h>
-
-struct MemMapprInfo {
-    EFI_MEMORY_DESCRIPTOR*  memory_map;
-    UINTN                   memory_map_size;
-    UINTN                   map_key;
-    UINTN                   descriptor_size;
-    UINT32                  descriptor_version;
-};
+#include <uefi/mem-map.h>
 
 int                 mem_map_init();
 void*               mem_alloc(size_t size, EFI_MEMORY_TYPE memory_type);
 void*               alloc_page();
 void*               alloc_pages(UINTN num_pages, EFI_MEMORY_TYPE memory_type);
-struct MemMapprInfo getMemMap();
+UEFI_MEMORY_MAP     getMemMap();
 void*               memcpy(void* dest, const void* src, size_t n);
 void*               memmove(void* dest, const void* src, size_t n);
 void*               memset(void* dest, int val, size_t n);
@@ -25,4 +18,3 @@ bool                is1GbAligned(uintptr_t ramBase);
 
 void* malloc(size_t pages);
 void  free(void* ptr);
-

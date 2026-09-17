@@ -1,7 +1,6 @@
 /* includes/CSL/arm64.hpp */
 
 #include <csl.h>
-#define LINKER_PREF_ADDR    0x140000000
 
 uint32_t get_current_el(void);
 void not_in_el2(void);
@@ -51,3 +50,4 @@ static inline uintptr_t get_current_sp() {
 };
 
 void SYSTEM_POWEROFF();
+void SYSTEM_HALT();

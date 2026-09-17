@@ -3,6 +3,8 @@
 #pragma once
 #include <csl.h>
 
+#include <uefi/mem-map.h>
+
 /* ------------------------------------------------------------ */
 /* Stuff for PAYLOAD */
 /* ------------------------------------------------------------ */
@@ -25,16 +27,16 @@ struct PAYLOAD_REMAP_ADDRS {
 
     enum VIRT_ADDR_PERMISSIONS virtual_addr_permissions;
 
-    bool active;        /* Just-In-Case Check to make sure something bad doesnt happen */
+    bool active;        /* Just-In-Case Check */
 };
 extern struct   PAYLOAD_REMAP_ADDRS remap_addrs[PAYLOAD_MAX_REMAP_ADDRS];
 
 struct PAYLOAD_BOOT_INFO {
-    uintptr_t   ImageBase;
+    uintptr_t   ImageBase_phy;
+    uintptr_t   ImageBase_virt;
     size_t      ImageSize;
 
-    uintptr_t   ram_base;
-    size_t      ram_size;
+    UEFI_MEMORY_MAP uefi_memory_map;
 
     char*       BootArgs;
 } __attribute__((packed));

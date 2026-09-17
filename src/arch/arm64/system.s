@@ -1,6 +1,8 @@
-// AI MADE
-
 .global SYSTEM_POWEROFF
+.global SYSTEM_HALT
+
+/* AI GENERATED */
+
 SYSTEM_POWEROFF:
     // 1. Load the PSCI SYSTEM_OFF Function ID into x0
     // ID: 0x84000008 (SMC32 convention used for system-wide commands)
@@ -13,3 +15,9 @@ SYSTEM_POWEROFF:
 trap:
     wfi
     b       trap
+
+/* END AI GENERATED */
+
+SYSTEM_HALT:
+    wfi
+    b SYSTEM_HALT

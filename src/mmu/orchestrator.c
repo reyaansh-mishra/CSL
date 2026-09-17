@@ -12,7 +12,8 @@
 
 #define UART0_BASE 0x09000000
 
-struct MemMapprInfo memory_map;
+UEFI_MEMORY_MAP memory_map;
+uint64_t csl_base_old = 0;
 
 static void snapshot_mem_map() {
     memory_map = getMemMap();
@@ -25,8 +26,8 @@ static void snapshot_mem_map() {
 
 void map_csl_addrs(uintptr_t to) {
     size_t      itr     = 0;
-    uintptr_t   base    = efi.csl_base;
-    uintptr_t   end     = efi.csl_base + efi.csl_size;
+    uintptr_t   base    = efi.csl_base_phy;
+    uintptr_t   end     = efi.csl_base_phy + efi.csl_size;
 
     while ((base + itr*CSL_PAGE_SIZE) < end) {   // Do whatever we want here
         setup_table_for_page(
@@ -61,11 +62,9 @@ void map_payload_addrs() {
  */
 
 void setup_mmu_tables() {
-    snapshot_mem_map();
-    // uintptr_t csl_virtual_addr = payload_virtual_entry;
-    
+    snapshot_mem_map();    
     INFO("IDENTITY MAPPING CSL!\n");
-    map_csl_addrs(efi.csl_base);
+    map_csl_addrs(efi.csl_base_phy);
 
     // ------------------------------------------------------------------------------------------------------------
 
@@ -75,25 +74,34 @@ void setup_mmu_tables() {
 
 /*
  * 1. Map the Addresses
+ * 2. Build the Offset
+ * 3. RETURN
  */
 
-void setup_csl_for_jump() {
-    uintptr_t   csl_jump_addr   = payload_reloc_physically;
+uintptr_t setup_csl_for_jump(uintptr_t addr) {
     size_t      csl_size        = efi.csl_size;
 
-    for (size_t i = 0; i < csl_size; i+=CSL_PAGE_SIZE) {
+    for (size_t i = 0; i <= csl_size; i+=CSL_PAGE_SIZE) {
         setup_table_for_page(
-                csl_jump_addr + i,
+                addr + i,
                     payload_virtual_entry + i,
             (enum VIRT_ADDR_PERMISSIONS)(EXECUTABLE | WRITABLE)
         );
     };
+
+    uintptr_t offset = (uintptr_t)&csl_continue_if_needed - efi.csl_base_phy;
+    csl_base_old = efi.csl_base_phy;
+    efi.csl_base_phy = addr;
+    memcpy((void*)addr, (void*)csl_base_old, efi.csl_size);
+    return offset;
 };
 
-void jump() {
-    if (payload_reloc_physically != efi.csl_base)
-        move_csl_to_addr(payload_reloc_physically);
-    else INFO("Did not jump.\n");
+void jump(uintptr_t offset) {
+    if (payload_virtual_entry != csl_base_old)
+        move_csl_to_addr(payload_virtual_entry + offset);
+    else {
+        INFO("Did not jump.\n\tpayload_reloc = %p", payload_virtual_entry);
+    }
 };
 
 /*
@@ -106,13 +114,14 @@ void jump() {
 
 void start_mmu_work() {
     setup_mmu_tables();
+    uintptr_t offset = 0;
 
     INFO("MAPPING COMPLETE!\n");
-    if (payload_reloc_physically != efi.csl_base) {
+    if (payload_reloc_physically != efi.csl_base_phy) {
         INFO("Prepping for Jump!\n");
-        setup_csl_for_jump();
+        offset = setup_csl_for_jump(payload_reloc_physically);
         INFO("Prepped for Jump!\n");
-    };
+    }
     setup_table_for_page(UART0_BASE, UART0_BASE, WRITABLE);
     uintptr_t current_map = round_down(get_current_pc(), CSL_PAGE_SIZE);
     setup_table_for_page(current_map, current_map, EXECUTABLE);
@@ -121,8 +130,13 @@ void start_mmu_work() {
 
     efi.BootServices->ExitBootServices(efi.ImageHandle, getMemMap().map_key);
     INFO("Exited EFI Boot Services!\n");
+    disable_mmu();
     
     INFO("ENABLING MMU!\n");
     mmu_bs();
-    jump();
+
+    if (payload_reloc_physically != efi.csl_base_phy)
+        jump(offset);
+    else
+        csl_continue_if_needed();
 };

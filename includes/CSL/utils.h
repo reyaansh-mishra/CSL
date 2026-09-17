@@ -3,8 +3,6 @@
 #pragma once
 #include <csl.h>
 
-#define ABSOLUTE_LINKER_PREF_ADDR   0x140000000
-
 #define INFO(fmt, ...)                      print("[CSL]: " fmt, ##__VA_ARGS__)
 #define ERR(fmt, ...)                       print("[ERR] [CSL]: " fmt, ##__VA_ARGS__)
 #define ASSERT(args) \
