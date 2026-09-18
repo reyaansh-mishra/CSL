@@ -14,7 +14,7 @@ extern "C" {
 #undef INFO
 #undef ERR
 #define INFO(fmt, ...)  print("[CSL] <block allocator>: " fmt, ##__VA_ARGS__)
-#define ERR(fmt, ...)  print("[ERR] [CSL] <block allocator>: " fmt, ##__VA_ARGS__)
+#define ERR(fmt, ...)   print("[ERR] [CSL] <block allocator>: " fmt, ##__VA_ARGS__)
 
 struct ALLOCD_REGIONS   allocd_regions[512];
 size_t                  alloc_regions_ctr   = 0;

@@ -3,6 +3,8 @@
 #include <csl.h>
 #include <uefi/mem-map.h>
 
+#define PAYLOAD_BOOT_INFO_VERSION   1
+
 void bootstrappr(UEFI_MEMORY_MAP mem_info);
 [[noreturn]] void csl_continue_if_needed();
 

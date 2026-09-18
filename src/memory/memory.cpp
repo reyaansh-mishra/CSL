@@ -13,6 +13,11 @@ extern "C" {
 
 #define BLCK_ALLOCATOR_INIT_PAGES   3000
 
+#undef INFO
+#undef ERR
+#define INFO(fmt, ...)  print("[CSL] <memory>: " fmt, ##__VA_ARGS__)
+#define ERR(fmt, ...)   print("[ERR] [CSL] <memory>: " fmt, ##__VA_ARGS__)
+
 void csl_continue_if_needed();
 
 void* mem_alloc(size_t size, EFI_MEMORY_TYPE memory_type) {

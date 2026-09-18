@@ -14,8 +14,7 @@
 #undef INFO
 #undef ERR
 #define INFO(fmt, ...)  print("[CSL] <bootstrappr>: " fmt, ##__VA_ARGS__)
-#define ERR(fmt, ...)  print("[ERR] [CSL] <bootstrappr>: " fmt, ##__VA_ARGS__)
-
+#define ERR(fmt, ...)   print("[ERR] [CSL] <bootstrappr>: " fmt, ##__VA_ARGS__)
 
 void setup_tables();
 struct PAYLOAD_BOOT_INFO boot_info;
@@ -48,7 +47,8 @@ void bootstrappr(UEFI_MEMORY_MAP mem_info) {   /* Bootstrappr is used to bootstr
     //     __asm__ volatile("yield");
     // }
 
-    boot_info.uefi_memory_map = mem_info;
+    boot_info.version           = PAYLOAD_BOOT_INFO_VERSION;
+    boot_info.uefi_memory_map   = mem_info;
 
     if (!payload_reloc_physically)  {
         payload_reloc_physically = efi.csl_base_phy;
@@ -74,7 +74,7 @@ void bootstrappr(UEFI_MEMORY_MAP mem_info) {   /* Bootstrappr is used to bootstr
     install_vbar(); // Reinstall because VBARS have changed
     INFO("Setting Up boot_info...\n");
     setup_bootinfo();
-    
+
     payload_main(boot_info);
 
     ERR("PAYLOAD RETURNED! EXITING!\n");

@@ -6,11 +6,12 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define CSL_VERSION             "0.9.1"
-#define CSL_VERSION_DESC        "Fixed the phy vs virt Confusion + misc bugfixes"
-#define CSL_FAKE_PAYLOAD_TEST
+#define CSL_VERSION             "1.0.0"
+#define CSL_VERSION_DESC        "RELEASE"
 #define CSL_PAGE_SIZE           4096
 #define CSL_STACK_SIZE          CSL_PAGE_SIZE*4
+
+#define CSL_FAKE_PAYLOAD_TEST
 
 typedef struct {
     EFI_HANDLE          ImageHandle;

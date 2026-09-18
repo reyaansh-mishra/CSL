@@ -10,7 +10,7 @@
 
 ## Goals:
 1. Prepare a minimal execution environment such that the Payload can begin executing C/C++ code immediately.
-3. Load Initrd if needed (LATER_GOAL)
+3. Load Initrd if needed (LATER GOAL)
 4. Transfer control to the Payload.
 
 ## Non-Goals:
@@ -26,10 +26,10 @@
 
 On entry to the Payload:
 
-- The Payload is provided a BOOT_INFORMATION struct as its entry arg
-- The Payload is **PHYSICALLY** executing from a fixed load address defined by **UEFI** during boot
-- The MMU is enabled using the translation tables constructed by CSL, as defined by Payload (otherwise full identity map).
-- The CPU is executing at EL2 OR EL1 based on Payload-Set config.
+- The Payload is provided a PAYLOAD_BOOT_INFO struct as its entry arg
+- The Payload is **PHYSICALLY** executing from a fixed load address defined by **UEFI** during boot, unless specified by the Payload
+- The MMU is enabled using the translation tables constructed by CSL, as defined by Payload.
+- The CPU is executing at EL2 OR EL1 based on Payload-Set config (LATER GOAL).
 - Interrupts are be disabled.
 
 ## Payload Lifecycle:
@@ -50,7 +50,10 @@ Hence, CSL Should make sure that Interrupts are disabled, even though we may hav
 ## Protocol Versions for Boot Info Struct
 
 ### v1
-1. uint8_t  boot_info_version
-2. uint64_t ram_phy_base
-3. size_t   ram_size
-4. __attribute__((packed))
+1. uint8_t          version
+2. uintptr_t        ImageBase_phy
+3. uintptr_t        ImageBase_virt
+4. size_t           ImageSize
+5. UEFI_MEMORY_MAP  uefi_memory_map
+6. char*            BootArgs;
+7. __attribute__((packed))

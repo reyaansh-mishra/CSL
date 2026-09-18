@@ -36,14 +36,14 @@ uint64_t        payload_reloc_physically;
 
 
 EFI_CONTEXT efi;
+bool drop_to_el1 = false;
 
 static EFI_STATUS EFIAPI csl_main(void)
 { /* Actually run CSL */
 
     payload_reloc_physically = round_down(payload_reloc_physically, CSL_PAGE_SIZE);
 
-    INFO("CSL v%s\n", CSL_VERSION);
-    INFO("Revision Desc:\n\t%s\n", CSL_VERSION_DESC);
+    INFO("CSL v%s,\n\tRevision Desc: \"%s\"\n", CSL_VERSION, CSL_VERSION_DESC);
     INFO("BASE = %p, SIZE = %d\n", efi.csl_base_phy, efi.csl_size);
 
     INFO("!!! STARTING CORE CSL APPLICATION !!!\n");

@@ -14,6 +14,12 @@ uint8_t             remap_addrs_count = 0;
 
 UEFI_MEMORY_MAP MemMapprInfo = {0, 0, 0, 0, 0, 0};
 
+#undef INFO
+#undef ERR
+#define INFO(fmt, ...)  print("[CSL] <MemMappr>: " fmt, ##__VA_ARGS__)
+#define ERR(fmt, ...)   print("[ERR] [CSL] <MemMappr>: " fmt, ##__VA_ARGS__)
+
+
 int mem_map_init() {
     UINTN memory_map_size = 0;
     EFI_MEMORY_DESCRIPTOR *memory_map = 0;
@@ -74,9 +80,11 @@ int mem_map_init() {
 
 UEFI_MEMORY_MAP getMemMap() {
     if (!MemMapprInfo.active) {
+        MemMapprInfo.active = true;
         int err = mem_map_init();
         if (err) {
             ERR("MemMapInit: %d", mem_map_init());
+            MemMapprInfo.active = false;
         };
     }
     return MemMapprInfo;
