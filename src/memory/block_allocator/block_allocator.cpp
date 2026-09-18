@@ -3,13 +3,15 @@
 #include <utils.hpp>
 
 #include <payload-includes/payload.h>
-#include <mmu.h>
 #include <specific-includes/block_allocator.hpp>
 
 extern "C" {
     #include <specific-includes/terminal.h>
     #include <specific-includes/memory.h>
+    #include <mmu.h>
 };
+
+#define BLCK_ALLOCATOR_INIT_PAGES   3000
 
 #undef INFO
 #undef ERR
@@ -117,6 +119,17 @@ void BlockAllocator::dealloc(void* ptr)
             return;
         };
     };
+};
+
+void enable_malloc() {
+    INFO("ENABLING CSL BLOCK ALLOCATOR WITH NUMBER OF PAGES: %d\n", BLCK_ALLOCATOR_INIT_PAGES);
+    uintptr_t block = (uintptr_t)alloc_pages(BLCK_ALLOCATOR_INIT_PAGES, EfiLoaderData);
+
+    for (size_t i = 0; i < BLCK_ALLOCATOR_INIT_PAGES; i++) {
+        setup_table_for_page(block + i*CSL_PAGE_SIZE, block + i*CSL_PAGE_SIZE, (enum VIRT_ADDR_PERMISSIONS)(WRITABLE | EXECUTABLE));
+    }
+    allocator.init((void* )block, BLCK_ALLOCATOR_INIT_PAGES);
+    pls_use_malloc_now = true;
 };
 
 void* malloc(size_t pages)   { return allocator.malloc(pages); };

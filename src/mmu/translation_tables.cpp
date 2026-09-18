@@ -6,9 +6,7 @@ extern "C" {
     #include <terminal.h>
     #include <arm64.h>
 };
-
-#include "mmu/page_descriptor_helper.hpp"
-#include <utils.hpp>
+#include <mmu/page_descriptor_helper.hpp>
 #include <mmu/page_and_table_descriptor.hpp>
 
 Table_Descriptor __attribute__((aligned(CSL_PAGE_SIZE))) L0_table[512];

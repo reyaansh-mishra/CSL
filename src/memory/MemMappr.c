@@ -1,15 +1,11 @@
 /* src/memory/MemMappr.cpp */
 
-#include <utils.hpp>
-// #include <specific-includes/block_allocator.hpp>
+#include <utils.h>
+#include <payload-includes/payload.h>
+#include <specific-includes/memory.h>
+#include <specific-includes/terminal.h>
 
-extern "C" {
-    #include <payload-includes/payload.h>
-    #include <specific-includes/memory.h>
-    #include <specific-includes/terminal.h>
-};
-
-PAYLOAD_REMAP_ADDRS remap_addrs[PAYLOAD_MAX_REMAP_ADDRS] = {};
+struct PAYLOAD_REMAP_ADDRS remap_addrs[PAYLOAD_MAX_REMAP_ADDRS] = {};
 uint8_t             remap_addrs_count = 0;
 
 UEFI_MEMORY_MAP MemMapprInfo = {0, 0, 0, 0, 0, 0};
@@ -101,7 +97,7 @@ void add_virtual_mapping(uintptr_t phy_start_addr, uintptr_t virt_start_addr, si
     }
 
 
-    PAYLOAD_REMAP_ADDRS* remap_addr         = &remap_addrs[remap_addrs_count];
+    struct PAYLOAD_REMAP_ADDRS* remap_addr         = &remap_addrs[remap_addrs_count];
     remap_addr->phy_start_addr              = phy_start_addr;
     remap_addr->virt_start_addr             = virt_start_addr;
     remap_addr->size                        = size;

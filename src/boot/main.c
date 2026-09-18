@@ -1,19 +1,16 @@
 /* 
- * src/boot/main.cpp 
+ * src/boot/main.c
  * ENTRY FILE 
  */
 
-#include <utils.hpp>
-#include <specific-includes/block_allocator.hpp>
+#include <csl.h>
+#include <utils.h>
 
-extern "C" {
-    #include <csl.h>
-    #include <specific-includes/terminal.h>
-    #include <specific-includes/bootstrappr.h>
-    #include <specific-includes/arm64.h>
-    #include <payload-includes/payload.h>
-    #include <memory.h>
-};
+#include <specific-includes/terminal.h>
+#include <specific-includes/bootstrappr.h>
+#include <specific-includes/arm64.h>
+#include <payload-includes/payload.h>
+#include <memory.h>
 
 #include <Protocol/LoadedImage.h>
 
@@ -56,7 +53,7 @@ static EFI_STATUS EFIAPI csl_main(void)
  * Use:     Get a minimal CSL runtime up before Payload sets its configs up.
  */
 
-extern "C" EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
+EFI_STATUS EFIAPI csl_bootstrap(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE* SystemTable)
 {  /* Setup Core CSL UEFI Runtime */
     mask_FULL();
 
@@ -107,7 +104,7 @@ EFI_STATUS EFIAPI payload_init()
     return csl_main();
 };
 
-extern "C" void payload_main(struct PAYLOAD_BOOT_INFO boot_struct) {
+void payload_main(struct PAYLOAD_BOOT_INFO boot_struct) {
     INFO("PAYLOAD START\n");
 
     INFO("PRINTING BOOT INFO STRUCT:\n");

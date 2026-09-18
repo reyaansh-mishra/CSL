@@ -6,8 +6,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define CSL_VERSION             "1.0.0"
-#define CSL_VERSION_DESC        "RELEASE"
+#define CSL_VERSION             "1.0.1"
+#define CSL_VERSION_DESC        "Cleanup unnecessary C++ Source Files"
 #define CSL_PAGE_SIZE           4096
 #define CSL_STACK_SIZE          CSL_PAGE_SIZE*4
 
