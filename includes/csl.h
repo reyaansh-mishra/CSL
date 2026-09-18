@@ -11,8 +11,6 @@
 #define CSL_PAGE_SIZE           4096
 #define CSL_STACK_SIZE          CSL_PAGE_SIZE*4
 
-#define CSL_FAKE_PAYLOAD_TEST
-
 typedef struct {
     EFI_HANDLE          ImageHandle;
     EFI_SYSTEM_TABLE*   SystemTable;

@@ -51,3 +51,6 @@ extern bool         drop_to_el1;
 /* FUNCTIONS */
 void add_virtual_mapping(uintptr_t phy_start_addr, uintptr_t virt_start_addr, size_t size, enum VIRT_ADDR_PERMISSIONS permissions);
 void payload_main(struct PAYLOAD_BOOT_INFO boot_struct);
+int payload_init();
+
+EFI_STATUS EFIAPI csl_main();
