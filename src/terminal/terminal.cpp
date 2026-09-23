@@ -96,7 +96,7 @@ void print_hex(const uint64_t val) {
 };
 
 
-
+/* AI GENERATED */
 void vprint(const char* fmt, va_list args)
 {
     while (*fmt) {
@@ -178,6 +178,7 @@ void vprint(const char* fmt, va_list args)
         }
     };
 };
+/* END AI GENERATED */
 
 extern "C" void print(const char* fmt, ...)
 {
