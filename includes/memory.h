@@ -2,14 +2,10 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <core.h>
 
-enum MEMORY_PROVIDER {
-    PROVIDER_BUILT_IN,
-    PROVIDER_EXTERNAL
-};
 typedef uintptr_t (*memory_provider_alloc_t)(size_t size);
-
 
 PAGES   malloc(size_t pages);
 void    free(PAGES pages);

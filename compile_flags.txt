@@ -10,6 +10,8 @@
 
 -Iincludes
 -Iprivate-includes
+-Iprivate-includes/UEFI
+-Iprivate-includes/UEFI/AArch64
 
 -fno-exceptions
 -fno-stack-protector

@@ -1,0 +1,190 @@
+/* src/terminal/terminal.cpp */
+
+#include <stdarg.h>
+#include <stdint.h>
+#include <stddef.h>
+
+extern "C" {
+    #include <terminal.h>
+    #include <UEFI_CONTEXT.h>
+};
+
+#define UART0_BASE              0x09000000
+
+volatile uint32_t* const uart = (volatile uint32_t*)UART0_BASE;
+
+
+void terminal_reset() {
+    uefi_context.SystemTable->ConOut->ClearScreen(uefi_context.SystemTable->ConOut);
+};
+
+/* -------------------------------------------------------- */
+/* General Util func(s) to be relocated later */
+/* -------------------------------------------------------- */
+
+inline size_t strlen(const char* str) 
+{
+	size_t len = 0;
+	while (str[len])
+		len++;
+	return len;
+}
+
+/* -------------------------------------------------------- */
+/* FB + UART Logic */
+/* -------------------------------------------------------- */
+
+static void put_char(const char c) {
+    if (c == '\n')
+        *uart = '\r';
+
+    *uart = c;
+};
+
+void dump_str_to_uart(const char* str, size_t string_length) {
+    for (size_t i = 0; i < string_length; i++) {
+        put_char(str[i]);
+    };
+};
+
+static inline void puts_raw(const char *s)  /* NOPE. dump_str_to_uart is canotical or whatever the spelling is. */
+{
+    dump_str_to_uart(s, strlen(s));
+};
+
+void print(uint64_t val) {
+    char buf[24]; // enough for a 64-bit uint + null terminator
+    int i = 22;
+    buf[23] = '\0';
+
+    if (val == 0) {
+        put_char('0');
+        return;
+    }
+
+    while (val > 0 && i >= 0) {
+        buf[i] = '0' + (val % 10);
+        val /= 10;
+        i--;
+    }
+
+    puts_raw(&buf[i + 1]);
+};
+
+void print(int val)
+{
+    if (val < 0) {
+        put_char('-');
+        print((uint64_t)(-(int64_t)val));
+        return;
+    }
+
+    print((uint64_t)val);
+};
+
+void print(bool state) {
+    if (state) puts_raw("TRUE");
+    else puts_raw("FALSE");
+};
+void pr_newline() { print("\n"); };
+
+void print_hex(const uint64_t val) {
+    puts_raw("0x");
+    for (int i = 60; i >= 0; i -= 4) {
+        uint8_t nibble = (val >> i) & 0xF;
+        char c = (nibble < 10) ? ('0' + nibble) : ('A' + (nibble - 10));
+        put_char(c);
+    };
+};
+
+
+
+void vprint(const char* fmt, va_list args)
+{
+    while (*fmt) {
+        if (*fmt != '%') {
+            put_char(*fmt++);
+            continue;
+        }
+
+
+        if (*fmt == '\0') break;
+
+
+        fmt++; // Skip '%'
+
+        switch (*fmt++) {
+            case '%':
+                put_char('%');
+                break;
+
+            case 'c': {
+                char c = (char)va_arg(args, int);
+                put_char(c);
+                break;
+            }
+
+            case 's': {
+                const char* s = va_arg(args, const char*);
+                if (!s)
+                    s = "(null)";
+                puts_raw(s);
+                break;
+            }
+
+            case 'd': {
+                int n = va_arg(args, int);
+                print(n);
+                break;
+            }
+
+            case 'u': {
+                unsigned n = va_arg(args, unsigned);
+                print((uint64_t)n);     // TODO
+                break;
+            }
+
+            case 'x': {
+                unsigned n = va_arg(args, unsigned);
+                print_hex((uint64_t)n);      // TODO
+                break;
+            }
+
+            case 'p':
+            {
+                void *p = va_arg(args, void *);
+                print_hex((uintptr_t)p);
+                break;
+            }
+
+            case 'l':
+                switch (*fmt++) {
+                    case 'u': {
+                        unsigned long n = va_arg(args, unsigned long);
+                        print((uint64_t)n);   // decimal
+                        break;
+                    }
+
+                    case 'x': {
+                        unsigned long n = va_arg(args, unsigned long);
+                        print_hex((uint64_t)n);
+                        break;
+                    }
+                }
+                break;
+
+            default:
+                put_char('%');
+                put_char(fmt[-1]); // Unknown specifier
+                break;
+        }
+    };
+};
+
+extern "C" void printf(const char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    vprint(fmt, args);
+    va_end(args);
+}
