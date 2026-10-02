@@ -1,12 +1,11 @@
 /* src/arch/arm64/stack.c */
 
 #include <utils.h>
-#include <csl.h>
 #include <stack.h>
-#include <arm64.h>
+#include <aarch64.h>
 #include <terminal.h>
 
-static uint8_t csl_stack[CSL_STACK_SIZE] __attribute__((aligned(16)));
+static uint8_t csl_stack[STACK_SIZE] __attribute__((aligned(16)));
 
 void setup_stack(uintptr_t next_func) {
     __asm__ volatile(
@@ -16,7 +15,7 @@ void setup_stack(uintptr_t next_func) {
         "mov sp, %1\n"
         "br x1\n"
         :
-        : "r"(next_func), "r"((uint64_t)csl_stack + CSL_STACK_SIZE)
+        : "r"(next_func), "r"((uint64_t)csl_stack + STACK_SIZE)
         : "x1", "memory"
     );
 };

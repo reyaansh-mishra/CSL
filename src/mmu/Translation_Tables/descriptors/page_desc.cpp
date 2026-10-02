@@ -15,14 +15,7 @@ extern "C" {
 /* HELPERS */
 /* ----------------------------------------------------------------------- */
 
-bool Page_Descriptor::is_valid() const
-{
-    return (get_bit(raw, 1) && get_bit(raw, 0));
-};
-
-void Page_Descriptor::clear() { raw = 0; };
-
-void Page_Descriptor::setup_L3_table(struct L3_Page_Descriptor_Info minimal_table_info)
+void Page_Descriptor::setup_table(struct Descriptor_Info minimal_table_info)
 {
     raw |= 
           (minimal_table_info.mair_index_info   << 2)
@@ -38,24 +31,14 @@ void Page_Descriptor::setup_L3_table(struct L3_Page_Descriptor_Info minimal_tabl
         | (0                                    << 5);   // NS, RES0, Explicit
 };
 
-void Page_Descriptor::set_valid(bool state)
-{
-    set_bit(raw, 0, state);
-};
-
 
 /* ----------------------------------------------------------------------- */
 /* CORE FUNCTIONS */
 /* ----------------------------------------------------------------------- */
 
-void Page_Descriptor::init()
-{
-    raw = 0;
-};
 
-void Page_Descriptor::validate(struct L3_Page_Descriptor_Info table, uintptr_t phy_addr)    // One-shot
+void Page_Descriptor::activate(struct Descriptor_Info table, uintptr_t phy_addr)    // One-shot
 {
-
     ASSERT((phy_addr & 0xFFF) == 0);
 
     raw = 0;
@@ -65,14 +48,14 @@ void Page_Descriptor::validate(struct L3_Page_Descriptor_Info table, uintptr_t p
     // for (size_t i = 10; i < 12; i++)  { set_bit(raw, i, 1); };
     // for (size_t i = 5;  i < 8; i++)   { set_bit(raw, i, 0); };
 
-    for (size_t i = PHY_PAGE_ADDR_BOT; i < PHY_PAGE_ADDR_TOP+1; i++) { // Include PHY_PAGE_ADDR_TOP.
+    for (size_t i = PHY_PAGE_ADDR_BOT; i <= PHY_PAGE_ADDR_TOP; i++) { // Include PHY_PAGE_ADDR_TOP
         set_bit(raw, i, get_bit(phy_addr, i));
     };
 
-    setup_L3_table(table);
+    setup_table(table);
 };
 
-uintptr_t Page_Descriptor::get_page_addr()
+uintptr_t Page_Descriptor::get_page()
 {
     uintptr_t final = 0;
 

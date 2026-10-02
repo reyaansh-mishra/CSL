@@ -6,6 +6,7 @@
 #include <core.h>
 
 typedef uintptr_t (*memory_provider_alloc_t)(size_t size);
+typedef uintptr_t (*memory_provider_free_t)(uintptr_t ptr);
 
 PAGES   malloc(size_t pages);
 void    free(PAGES pages);

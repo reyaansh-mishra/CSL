@@ -1,4 +1,4 @@
-/* src/mmu/descriptors/l1_l2.cpp */
+/* src/mmu/descriptors/l0_l1_l2.cpp */
 
 #include <utils.hpp>
 #include <mmu/page_and_table_descriptor.hpp>
@@ -27,42 +27,6 @@ extern "C" {
 /* HELPERS */
 /* ----------------------------------------------------------------------- */
 
-
-bool Table_Descriptor::is_valid() const
-{
-    if (get_bit(raw, 1) && get_bit(raw, 0))
-        return true;
-    else return false;
-};
-
-void Table_Descriptor::clear() { raw = 0; };
-
-void Table_Descriptor::validate()    // One-shot
-{
-    set_bit(raw, 0, 1);
-
-};
-
-void Table_Descriptor::set_valid(bool state)
-{
-    set_bit(raw, 0, state);
-
-};
-
-/* ----------------------------------------------------------------------- */
-/* CORE FUNCTIONS */
-/* ----------------------------------------------------------------------- */
-
-
-void Table_Descriptor::init() /* Make sure Table Descriptor is in a ""State"" */
-{
-    raw = 0;
-
-    set_bit(raw, 1, 1);
-    set_bit(raw, 10, 1);
-};
-
-
 void Table_Descriptor::set_next_table(uintptr_t addr)   // Expects the physical base address of an L2/L3 table.
 {
 
@@ -90,7 +54,20 @@ void Table_Descriptor::set_next_table(uintptr_t addr)   // Expects the physical 
     return;
 };
 
-uintptr_t Table_Descriptor::get_next_level()
+
+void Table_Descriptor::activate(uintptr_t ptr_to_next_table)    // One-shot
+{
+    set_next_table(ptr_to_next_table);
+    set_bit(raw, 1, 1);
+    set_bit(raw, 0, 1);
+};
+
+/* ----------------------------------------------------------------------- */
+/* CORE FUNCTIONS */
+/* ----------------------------------------------------------------------- */
+
+
+uintptr_t Table_Descriptor::get_next_table()
 {
     uintptr_t bits_8_9      = 0;
     uintptr_t bits_12_49    = 0;

@@ -126,7 +126,7 @@ enum EXECUTE_PERMISSION : uint64_t {
     EXEC_UNAVAIL    = 0b1
 };
 
-struct L3_Page_Descriptor_Info {
+struct Descriptor_Info {
     MAIR_INDEX          mair_index_info;
     CHMOD_LEVEL         rw_info;
     SHAREABILITY        share_info;
@@ -153,8 +153,8 @@ class help_me_build_page_entry {
         void set_pxn(enum PRIVLGD_EXEC_PERM);
         void set_exec(enum EXECUTE_PERMISSION);
 
-        inline struct L3_Page_Descriptor_Info get() { return descriptor; };
+        inline struct Descriptor_Info get() { return descriptor; };
 
     private:
-        struct L3_Page_Descriptor_Info descriptor;
+        struct Descriptor_Info descriptor;
 };

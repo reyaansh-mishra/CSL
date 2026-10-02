@@ -1,41 +1,52 @@
-/* includes/CSL/specific-includes/mmu.hpp */
+/* private-includes/mmu/page_and_table_descriptor.hpp */
 
 #pragma once
 
 extern "C" {
+    #include <core.h>
     #include <utils.h>
 };
 
-class Table_Descriptor {
+class GenericDescriptor {
     public:
         void init();
-        void clear();
-        void set_next_table(uintptr_t ptr_to_table);
-        void set_valid(bool);
-        bool is_valid() const;
-        void validate();        // One-Shot
+        void reset();
+        bool is_active() const;
+        bool is_page_desc() const;
 
-        uintptr_t get_next_level();
+        bool is_block() const;
 
-    private:
+    protected:
         uint64_t raw = 0;
 };
 
-class Page_Descriptor {
+class Table_Descriptor : public GenericDescriptor {
     public:
-        void        init();
-        void        clear();
-        void        set_valid(bool);
-        bool        is_valid() const;
-        void        validate(struct L3_Page_Descriptor_Info table, uintptr_t phy_addr);        // One-Shot
-
-        uintptr_t get_page_addr();
-
-        void set_mair();
-
+        void        activate(uintptr_t ptr_to_next_table);        // One-Shot
+        uintptr_t   get_next_table();
     private:
-        void setup_L3_table(struct L3_Page_Descriptor_Info minimal_table_info);
-        uint64_t raw = 0;
+        void        set_next_table(uintptr_t ptr_to_next_table);
 };
 
+class Page_Descriptor : public GenericDescriptor {
+    public:
+        void        activate(struct Descriptor_Info table, uintptr_t phy_addr);        // One-Shot
+        void        set_mair();
+        uintptr_t   get_page();
+
+    private:
+        void        setup_table(struct Descriptor_Info minimal_table_info);
+};
+
+class L2_final : public Page_Descriptor {
+    public:
+        void    activate(struct Descriptor_Info table, uintptr_t phy_addr);        // One-Shot
+};
+
+class L1_final : public Page_Descriptor {
+    public:
+        void    activate(struct Descriptor_Info table, uintptr_t phy_addr);        // One-Shot
+};
+
+extern Table_Descriptor __attribute__((aligned(PAGE_SIZE))) L0_table[512];
 extern "C" void setup_tables();
