@@ -88,7 +88,7 @@ find $SRC_DIR -type f | while read -r file; do
     esac
 done
 
-echo "[LD] csl.efi"
+echo "[AR] csl.lib"
 
 OBJS=()
 
@@ -96,39 +96,4 @@ while IFS= read -r -d '' obj; do
     OBJS+=("$obj")
 done < <(find build -type f -name '*.o' -print0)
 
-"${LD[@]}" "${OBJS[@]}" -o csl.efi
-
-echo "[UEFI] Patching PE subsystem → EFI_APPLICATION"
-
-python3 - "$PWD/csl.efi" <<'PY'
-import sys
-import struct
-
-path = sys.argv[1]
-
-with open(path, "r+b") as f:
-    # DOS header → PE header
-    f.seek(0x3c)
-    pe_offset = struct.unpack("<I", f.read(4))[0]
-
-    # PE signature + COFF header
-    f.seek(pe_offset + 4)
-    machine, sections, timestamp, symptr, symbols, opt_size, characteristics = \
-        struct.unpack("<HHIIIHH", f.read(20))
-
-    # PE32+ Optional Header:
-    # Subsystem is at offset 68 (0x44)
-    subsystem_offset = pe_offset + 4 + 20 + 0x44
-
-    f.seek(subsystem_offset)
-    old = struct.unpack("<H", f.read(2))[0]
-
-    print(f"[UEFI] Subsystem: 0x{old:X} → 0xA")
-
-    f.seek(subsystem_offset)
-    f.write(struct.pack("<H", 0xA))
-PY
-
-cp -v csl.efi esp/EFI/BOOT/BOOTAA64.efi
-
-llvm-readobj --coff-basereloc csl.efi
+llvm-ar rcs csl.lib "${OBJS[@]}"
