@@ -4,7 +4,7 @@
 
 #include <core.h>
 #include <memory/block_alloc.h>
-#include <memory/maymory.h>
+#include <memory/memory.h>
 #include <SYSTEM_STATE.h>
 #include <stddef.h>
 #include <stdint.h>

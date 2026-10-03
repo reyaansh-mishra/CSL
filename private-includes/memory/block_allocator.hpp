@@ -1,0 +1,36 @@
+/* private-includes/memory/block_allocator.hpp */
+
+#pragma once
+
+extern "C" {
+    #include <utils.h>
+};
+
+#define MAX_ALLOC_REGIONS   512
+
+struct BLOCK {
+    void*   addr;           // Base of allocation arena
+    size_t  max_size;       // Total arena size
+    size_t  used_size;      // Total bytes currently allocated
+    size_t  cursor;         // Offset of next search position
+};
+
+struct ALLOCD_REGIONS {
+    void*   base;
+    size_t  size;
+
+    bool    currently_allocd;
+};
+
+class BlockAllocator {
+    public:
+        void    init(void* block_alloc_addr, size_t max_size);
+        void*   malloc(size_t pages);
+        void    dealloc(void* ptr);
+    private:
+        struct BLOCK        block;
+};
+
+extern          BlockAllocator   allocator;
+extern struct   ALLOCD_REGIONS   allocd_regions[512];
+extern size_t                    alloc_regions_ctr;

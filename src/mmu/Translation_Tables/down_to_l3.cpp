@@ -42,7 +42,7 @@ static struct Descriptor_Info setup_perms(PAGE_PERMS perms) {
 #define INFO(fmt, ...)  printf("[CSL] <mmu internals::L0>: " fmt, ##__VA_ARGS__)
 #define ERR(fmt, ...)   printf("[ERR] [CSL] <mmu internals::L0>: " fmt, ##__VA_ARGS__)
 
-void setup_l0(uintptr_t virt, uintptr_t next_table) {
+static void setup_l0(uintptr_t virt, uintptr_t next_table) {
     uintptr_t           l0_bits = get_bits(virt, 47, 39);
     Table_Descriptor*   L0      = &L0_table[l0_bits];
     if (!L0->is_active()) {  // Setup L0 table
@@ -62,7 +62,7 @@ void setup_l0(uintptr_t virt, uintptr_t next_table) {
 #define INFO(fmt, ...)  printf("[CSL] <mmu internals::L1>: " fmt, ##__VA_ARGS__)
 #define ERR(fmt, ...)   printf("[ERR] [CSL] <mmu internals::L1>: " fmt, ##__VA_ARGS__)
 
-void setup_l1(uintptr_t virt, uintptr_t next_table) {
+static void setup_l1(uintptr_t virt, uintptr_t next_table) {
     uintptr_t           l0_bits     = get_bits(virt, 47, 39);
     uintptr_t           l1_bits     = get_bits(virt, 38, 30);
 
@@ -95,7 +95,7 @@ void setup_l1(uintptr_t virt, uintptr_t next_table) {
 #define INFO(fmt, ...)  printf("[CSL] <mmu internals::L2>: " fmt, ##__VA_ARGS__)
 #define ERR(fmt, ...)   printf("[ERR] [CSL] <mmu internals::L2>: " fmt, ##__VA_ARGS__)
 
-void setup_l2(uintptr_t virt, uintptr_t next_table) {
+static void setup_l2(uintptr_t virt, uintptr_t next_table) {
     uintptr_t           l0_bits     = get_bits(virt, 47, 39);
     uintptr_t           l1_bits     = get_bits(virt, 38, 30);
     uintptr_t           l2_bits     = get_bits(virt, 29, 21);
@@ -133,7 +133,7 @@ void setup_l2(uintptr_t virt, uintptr_t next_table) {
 #define INFO(fmt, ...)  printf("[CSL] <mmu internals::L3>: " fmt, ##__VA_ARGS__)
 #define ERR(fmt, ...)   printf("[ERR] [CSL] <mmu internals::L3>: " fmt, ##__VA_ARGS__)
 
-void setup_l3(uintptr_t phy, uintptr_t virt, PAGE_PERMS perms) {
+static void setup_l3(uintptr_t phy, uintptr_t virt, PAGE_PERMS perms) {
     uintptr_t           l0_bits     = get_bits(virt, 47, 39);
     uintptr_t           l1_bits     = get_bits(virt, 38, 30);
     uintptr_t           l2_bits     = get_bits(virt, 29, 21);

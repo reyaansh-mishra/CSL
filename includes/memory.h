@@ -8,7 +8,11 @@
 typedef uintptr_t (*memory_provider_alloc_t)(size_t size);
 typedef uintptr_t (*memory_provider_free_t)(uintptr_t ptr);
 
+void* memcpy(void* destination, const void* source, size_t size);
+void* memset(void* dest, int val, size_t size);
+void* memmove(void* dest, const void* src, size_t size);
+
 PAGES   malloc(size_t pages);
 void    free(PAGES pages);
 
-void set_provider_for_uefi(memory_provider_alloc_t addr_of_func_to_call);   // EXACTLY of the signature of: <name>(size in size_t)
+void set_provider_for_uefi(memory_provider_alloc_t addr_of_func_to_call);

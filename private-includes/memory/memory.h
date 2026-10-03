@@ -1,4 +1,4 @@
-/* private-includes/memory/maymory.h */
+/* private-includes/memory/memory.h */
 
 #include <memory.h>
 
