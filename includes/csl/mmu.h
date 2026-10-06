@@ -15,5 +15,5 @@ typedef enum VIRT_ADDR_PERMISSIONS PAGE_PERMS;
 
 void map_pages(PAGES phy, PAGES virt, PAGE_PERMS perms);    // ALSO generates
                                                             // Respective TT
-
+void identity_map_csl();
 void setup_mmu();   // DISABLES MMU

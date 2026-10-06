@@ -3,10 +3,12 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <core.h>
 
-typedef uintptr_t (*memory_provider_alloc_t)(size_t size);
-typedef uintptr_t (*memory_provider_free_t)(uintptr_t ptr);
+#include <core.h>
+#include <mem_map.h>
+
+typedef void *(*malloc_provider_t)(size_t);
+typedef void  (*free_provider_t)(void *);
 
 void* memcpy(void* destination, const void* source, size_t size);
 void* memset(void* dest, int val, size_t size);
@@ -15,4 +17,5 @@ void* memmove(void* dest, const void* src, size_t size);
 PAGES   malloc(size_t pages);
 void    free(PAGES pages);
 
-void set_provider_for_uefi(memory_provider_alloc_t addr_of_func_to_call);
+int mem_map_init();
+UEFI_MEMORY_MAP getMemMap();

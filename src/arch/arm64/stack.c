@@ -7,7 +7,7 @@
 
 static uint8_t csl_stack[STACK_SIZE] __attribute__((aligned(16)));
 
-void setup_stack(uintptr_t next_func) {
+void enable_stack(uintptr_t next_func) {
     __asm__ volatile(
         "msr SPSel, #1\n"   // Switch to SP_EL2, EL2h
         "isb\n"

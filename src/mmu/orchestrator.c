@@ -21,6 +21,8 @@ static inline bool is_block_aligned(uintptr_t addr, size_t pages) {
 void map_pages(PAGES phy, PAGES virt, PAGE_PERMS perms) {
     ASSERT(phy.num_of_pages == virt.num_of_pages);
 
+    INFO("MAPPING!\n");
+
     uintptr_t p    = phy.start;
     uintptr_t v    = virt.start;
     size_t    left = phy.num_of_pages;
@@ -46,3 +48,13 @@ void map_pages(PAGES phy, PAGES virt, PAGE_PERMS perms) {
         left -= step;
     }
 }
+
+void identity_map_csl() {
+    INFO("Ident map CSL\n");
+    PAGES phy = {efi.csl_base_phy, round_up(efi.csl_size/PAGE_SIZE, PAGE_SIZE)};
+    map_pages(
+        phy,
+        phy,
+        (PAGE_PERMS)(EXECUTABLE)
+    );
+};

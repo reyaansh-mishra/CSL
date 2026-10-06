@@ -26,8 +26,9 @@ COMMON_FLAGS=(
     -Wno-c++17-extensions
 
     -Iincludes
-    -Iprivate-includes
+    -Iincludes/csl
 
+    -Iprivate-includes
     -Iprivate-includes/UEFI
     -Iprivate-includes/UEFI/AArch64
 )

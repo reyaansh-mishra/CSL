@@ -1,6 +1,7 @@
 /* includes/aarch64.h */
 
 #include <core.h>
+#include <system.h>
 #include <stdint.h>
 
 uint64_t get_current_el();
@@ -47,3 +48,5 @@ static inline uintptr_t get_current_sp() {
     );
     return current_sp;
 };
+
+void not_in_el2();

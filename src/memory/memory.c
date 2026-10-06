@@ -13,8 +13,10 @@ PAGES malloc(size_t pages) {
     switch ((int)uefi_died) {
         case true:
             return (PAGES){.start = block_alloc(pages*PAGE_SIZE), .num_of_pages = pages};
+            break;
         case false:
-            return (PAGES){.start = uefi_malloc_provider(pages*PAGE_SIZE), .num_of_pages = pages};
+            return (PAGES){.start = (uintptr_t)uefi_malloc_provider(pages*PAGE_SIZE), .num_of_pages = pages};
+            break;
     };
     return (PAGES){0};
 };
@@ -23,8 +25,10 @@ void free(PAGES pages) {
     switch ((int)uefi_died) {
         case true:
             block_free(pages.start);
+            break;
         case false:
-            uefi_free_provider(pages.start);
+            uefi_free_provider((void *)pages.start);
+            break;
     };
 };
 

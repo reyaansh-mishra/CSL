@@ -6,6 +6,7 @@ extern "C" {
     #include <terminal.h>
     #include <aarch64.h>
     #include <mmu/orchestrator_required.h>
+    #include <SYSTEM_STATE.h>
 };
 #include <mmu/page_descriptor_helper.hpp>
 #include <mmu/page_and_table_descriptor.hpp>
@@ -70,7 +71,7 @@ static void setup_l1(uintptr_t virt, uintptr_t next_table) {
 
     Table_Descriptor*   L0          = &L0_table[l0_bits];
     Table_Descriptor*   L1          = NULL;
-\
+
     if (!L0->is_active()) setup_l0(virt, l1_table);
     L1 = &((Table_Descriptor *)L0->get_next_table())[l1_bits];
     
@@ -212,14 +213,18 @@ uint64_t make_mair()
 
 
 void setup_mmu() {
+    identity_map_csl();
+    efi.BootServices->ExitBootServices(efi.ImageHandle, getMemMap().map_key);
+    uefi_died = true;
+    disable_mmu();
     INFO("Disabling Virtualization!\n");    // UEFI Dropped us into Virtualized.
     uint64_t hcr = read_hcr();
     hcr &= ~(1ULL << 34);   // clear E2H
     hcr &= ~(1ULL << 27);   // clear TGE
     write_hcr(hcr);
 
-    disable_mmu();
     write_ttbr0((uint64_t)&L0_table[0]);
     write_tcr(make_tcr());
     write_mair(make_mair());
+    INFO("Enable MMU When Ready!\n");
 };
